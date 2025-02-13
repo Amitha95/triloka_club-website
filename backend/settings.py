@@ -26,7 +26,12 @@ SECRET_KEY = 'django-insecure-=e#elq^l4h(i2q07l%z1j!x@e@8$h0l@tvt90m-zc^z+)w2#wg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'triloka-club-website.onrender.com',  # Add your Render domain
+    '127.0.0.1',  # Allow local development
+    'localhost'
+]
+
 
 
 # Application definition
