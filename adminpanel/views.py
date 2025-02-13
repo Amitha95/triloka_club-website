@@ -1,3 +1,4 @@
-from django.shortcuts import render
+from django.http import HttpResponse
 
-# Create your views here.
+def adminpanel(request):
+    return HttpResponse("Welcome to the Admin Panel")

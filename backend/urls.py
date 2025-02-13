@@ -26,4 +26,3 @@ urlpatterns = [
     path("contact/", include("contact.urls")),
     path("adminpanel/", include("adminpanel.urls")),
 ]
-
