@@ -1,0 +1,44 @@
+<!-- base.html -->
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Triloka Club{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo-container">
+            <img src="{% static 'images/trilokalogo.jpeg' %}" alt="Logo" class="logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'events' %}">Events</a></li>
+                <li><a href="{% url 'gallery' %}">Gallery</a></li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
+            </ul>
+        </nav>
+        <button class="login-btn" onclick="openLoginModal()">Login</button>
+    </header>
+
+    <!-- Content -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Triloka Arts and Sports Club. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function openLoginModal() {
+            // JavaScript to open modal
+        }
+    </script>
+</body>
+</html>
