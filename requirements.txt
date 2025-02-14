@@ -2,6 +2,9 @@ asgiref==3.8.1
 Django==5.1.6
 django-crispy-forms==2.3
 gunicorn==20.1.0
+packaging==24.2
 pillow==11.1.0
+setuptools==75.8.0
 sqlparse==0.5.3
 tzdata==2025.1
+whitenoise==6.9.0
