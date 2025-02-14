@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-=e#elq^l4h(i2q07l%z1j!x@e@8$h0l@tvt90m-zc^z+)w2#wg'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     'triloka-club-website.onrender.com',  # Add your Render domain
@@ -41,14 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'admin_interface',  # Custom Admin Theme
+    'colorfield',  # Required for admin themes
      # My Apps
-    "home",
-    "gallery",
-    "events",
-    "users",
-    "contact",
-    "adminpanel",
+    "triloka",
+    
 ]
 
 MIDDLEWARE = [
@@ -68,7 +65,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'triloka/templates')],  
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -131,7 +128,7 @@ USE_TZ = True
 
 # Static Files (CSS, JS)
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATICFILES_DIRS = [  os.path.join(BASE_DIR, "triloka", "static"), ]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Media Files (User Uploads)

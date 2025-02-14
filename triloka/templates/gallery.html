@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Gallery {{ year_start }}-{{ year_end }}{% endblock %}
+
+{% block content %}
+<h2 class="text-center">Gallery ({{ year_start }} - {{ year_end }})</h2>
+<div class="container">
+    <a href="{% url 'gallery_years' %}" class="btn btn-primary mb-3">Back to Year Selection</a>
+    <div class="row">
+        {% for photo in photos %}
+        <div class="col-md-4 d-flex align-items-stretch">  <!-- Ensures equal height -->
+            <div class="card mb-3 w-100"> <!-- w-100 makes the card fill its container -->
+                <img src="{{ photo.image.url }}" class="card-img-top" alt="{{ photo.title }}">
+                <div class="card-body d-flex flex-column">  <!-- Flexbox for equal height -->
+                    <h5 class="card-title">{{ photo.title }}</h5>
+                    <p class="mt-auto">{{ photo.date }}</p> <!-- Pushes content to the bottom -->
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No images available for this date range.</p>
+        {% endfor %}
+    </div>
+</div>
+<br><br><br>
+{% endblock %}
+

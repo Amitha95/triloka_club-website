@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+{% endblock %}
+{% block title %}Home - Triloka Club{% endblock %}
+
+{% block content %}
+<!-- Banner Section -->
+<div class="banner">
+    <img src="{% static 'images/trilokabanner.png' %}" alt="Banner Image" class="banner-img" style="width: 100vw; /* Full viewport width */
+    height: 600px; /* Fixed height */
+    position: relative ; /* Keeps banner fixed */
+    top: 0;
+    left: 0;
+   ">
+</div>
+
+<!-- Cards Section -->
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Our Featured Sections</h2>
+    <div class="row">
+        <!-- Card 1 -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{% static 'images/card1.jpg' %}" class="card-img-top" alt="Card Image">
+                <div class="card-body">
+                    <h5 class="card-title">Card Title 1</h5>
+                    <p class="card-text">This is a short description for card 1.</p>
+                    <a href="#" class="btn btn-primary">Learn More</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{% static 'images/card2.jpg' %}" class="card-img-top" alt="Card Image">
+                <div class="card-body">
+                    <h5 class="card-title">Card Title 2</h5>
+                    <p class="card-text">This is a short description for card 2.</p>
+                    <a href="#" class="btn btn-primary">Learn More</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{% static 'images/card3.jpg' %}" class="card-img-top" alt="Card Image">
+                <div class="card-body">
+                    <h5 class="card-title">Card Title 3</h5>
+                    <p class="card-text">This is a short description for card 3.</p>
+                    <a href="#" class="btn btn-primary">Learn More</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{% static 'images/card4.jpg' %}" class="card-img-top" alt="Card Image">
+                <div class="card-body">
+                    <h5 class="card-title">Card Title 4</h5>
+                    <p class="card-text">This is a short description for card 4.</p>
+                    <a href="#" class="btn btn-primary">Learn More</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{% static 'images/card5.jpg' %}" class="card-img-top" alt="Card Image">
+                <div class="card-body">
+                    <h5 class="card-title">Card Title 5</h5>
+                    <p class="card-text">This is a short description for card 5.</p>
+                    <a href="#" class="btn btn-primary">Learn More</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{% static 'images/card6.jpg' %}" class="card-img-top" alt="Card Image">
+                <div class="card-body">
+                    <h5 class="card-title">Card Title 6</h5>
+                    <p class="card-text">This is a short description for card 6.</p>
+                    <a href="#" class="btn btn-primary">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
