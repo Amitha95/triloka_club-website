@@ -21,12 +21,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("home.urls")),
-    path("gallery/", include("gallery.urls")),
-    path("events/", include("events.urls")),
-    path("users/", include("users.urls")),
-    path("contact/", include("contact.urls")),
-    path("adminpanel/", include("adminpanel.urls")),
+    path("", include("triloka.urls")),
+    
+    
 ]
 if settings.DEBUG:  # Serve media files only in development
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
