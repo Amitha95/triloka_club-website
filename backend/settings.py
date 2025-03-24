@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-=e#elq^l4h(i2q07l%z1j!x@e@8$h0l@tvt90m-zc^z+)w2#wg'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     'triloka-club-website.onrender.com',  # Add your Render domain
@@ -58,7 +58,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+if not DEBUG:  # Ensure media files work when DEBUG=False
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+#STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -133,7 +136,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Media Files (User Uploads)
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+#MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_ROOT = "/opt/render/project/media/"
+
 
 
 
