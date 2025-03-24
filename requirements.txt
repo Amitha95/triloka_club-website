@@ -8,7 +8,7 @@ django-cloudinary-storage==0.3.0
 django-colorfield==0.12.0
 django-crispy-forms==2.3
 django-environ==0.12.0
-django-flat-responsive==2.0
+
 django-flat-theme==1.1.4
 gunicorn==20.1.0
 idna==3.10
