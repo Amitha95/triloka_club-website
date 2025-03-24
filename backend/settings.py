@@ -10,24 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
 from pathlib import Path
 import os
-
-
-from dotenv import load_dotenv
-load_dotenv()
-
-import environ
-
-# Initialize environment variables
-env = environ.Env()
-environ.Env.read_env()
-
-from cloudinary_storage.storage import MediaCloudinaryStorage
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -59,8 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'admin_interface',  # Custom Admin Theme
     'colorfield',  # Required for admin themes
-    'cloudinary',  # Add Cloudinary
-    'cloudinary_storage',  # Add Cloudinary Storage
+     # My Apps
     "triloka",
     
 ]
@@ -100,22 +83,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-cloudinary.config(
-    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
-    api_key=os.getenv('CLOUDINARY_API_KEY'),
-    api_secret=os.getenv('CLOUDINARY_API_SECRET')
-)
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',  # Specifies the database backend
-        'NAME': BASE_DIR / 'db.sqlite3',  # Path to the SQLite database file
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 
 # Password validation
@@ -157,11 +134,8 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [  os.path.join(BASE_DIR, "triloka", "static"), ]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-# Define the media URL to point to Cloudinary
-MEDIA_URL = f'https://res.cloudinary.com/{os.getenv("CLOUDINARY_CLOUD_NAME")}/image/upload/'
-
+# Media Files (User Uploads)
+MEDIA_URL = "/media/"
 #MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_ROOT = "/opt/render/project/media/"
 
