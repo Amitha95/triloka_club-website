@@ -10,8 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
+from urllib.parse import urlparse
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -33,42 +37,39 @@ ALLOWED_HOSTS = [
 
 
 # Application definition
-
 INSTALLED_APPS = [
+    # Default Django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'admin_interface',  # Custom Admin Theme
-    'colorfield',  # Required for admin themes
-     # My Apps
-    "triloka",
-    
+
+    # Cloudinary
+    'cloudinary',
+    'cloudinary_storage',
+
+    # Your apps
+    'triloka',  # Replace 'your_app' with the actual app name
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XContentOptionsMiddleware',
 ]
 
-if not DEBUG:  # Ensure media files work when DEBUG=False
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-#STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-ROOT_URLCONF = 'backend.urls'
+ROOT_URLCONF = 'backend.urls'  # Replace with your project name
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'triloka/templates')],  
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -81,23 +82,50 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'backend.wsgi.application'
+WSGI_APPLICATION = 'your_project.wsgi.application'  # Replace with your project name
 
+# Cloudinary Config
+# Cloudinary Config
+cloudinary.config(
+    cloud_name="dr9p29qpa",
+    api_key="394194926515819",
+    api_secret="W2jr5fmd7PV1Qwp-8jK7dzHuAKY"
+)
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# Cloudinary Storage Configuration for handling media files
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dr9p29qpa',
+    'API_KEY': '394194926515819',
+    'API_SECRET': 'W2jr5fmd7PV1Qwp-8jK7dzHuAKY',
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+# Database Configuration for SQLite
+DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///db.sqlite3')
 
+# Database settings for SQLite
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',  # Use sqlite3 for SQLite database
+        'NAME': BASE_DIR / 'db.sqlite3',  # Database file location
+    }
+}
+
+# If you're using another database like PostgreSQL, use this logic:
+if DATABASE_URL.startswith('postgres://'):
+    url = urlparse(DATABASE_URL)
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': url.path[1:],  # Extract database name
+        'USER': url.username,
+        'PASSWORD': url.password,
+        'HOST': url.hostname,
+        'PORT': url.port,
+    }
+
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -113,36 +141,30 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
+USE_L10N = True
+
 USE_TZ = True
 
+# Static files (CSS, JavaScript, images)
+STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
+# Media files (uploaded images/files)
+MEDIA_URL = '/media/'
 
-# Static Files (CSS, JS)
-STATIC_URL = "/static/"
-STATICFILES_DIRS = [  os.path.join(BASE_DIR, "triloka", "static"), ]
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+# Cloudinary Storage Configuration for handling media files
 
-# Media Files (User Uploads)
-MEDIA_URL = "/media/"
-#MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_ROOT = "/opt/render/project/media/"
+# Directories for static files, templates, etc.
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
-
-
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
+# Default auto field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Other settings like email, logging, etc., can go here if needed.

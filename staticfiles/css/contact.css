@@ -1,0 +1,16 @@
+.map-container {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    background: #f8f9fa;
+}
+
+.btn-primary {
+    background: linear-gradient(to right, #ff7300, #f5a623);
+    border: none;
+}
