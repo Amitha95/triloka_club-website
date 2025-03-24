@@ -1,0 +1,19 @@
+services:
+  - name: django-web
+    type: web
+    runtime: python
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+      python manage.py migrate
+    startCommand: gunicorn backend.wsgi:application
+    envVars:
+      - key: DEBUG
+        value: "false"
+      - key: DATABASE_URL
+        value: "your_database_url"  # If using PostgreSQL or MySQL
+      - key: MEDIA_URL
+        value: "/media/"
+      - key: MEDIA_ROOT
+        value: "/opt/render/project/media/"
+    staticPublishPath: staticfiles
