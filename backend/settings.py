@@ -21,7 +21,13 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+import environ
 
+# Initialize environment variables
+env = environ.Env()
+environ.Env.read_env()
+
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -94,11 +100,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
-}
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
+)
+
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -150,11 +157,11 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [  os.path.join(BASE_DIR, "triloka", "static"), ]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# Media Files (User Uploads)
-MEDIA_URL = "/media/"
+# Define the media URL to point to Cloudinary
+MEDIA_URL = f'https://res.cloudinary.com/{os.getenv("CLOUDINARY_CLOUD_NAME")}/image/upload/'
+
 #MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_ROOT = "/opt/render/project/media/"
 
