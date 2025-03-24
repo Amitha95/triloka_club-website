@@ -1,18 +1,20 @@
 from django.db import models
+import cloudinary
+import cloudinary.models
 
 class Gallery(models.Model):
     title = models.CharField(max_length=255)
-    image = models.ImageField(upload_to='gallery/')
-    date = models.DateField()  # Manually add a date instead of auto timestamp
+    image = cloudinary.models.CloudinaryField('image')
+    date = models.DateField(auto_now_add=True)  # Auto add date when created
 
     def __str__(self):
-        return f"{self.title} ({self.date})"
+        return f"{self.title} - {self.date.strftime('%Y-%m-%d')}"
 
 class Event(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
-    image = models.ImageField(upload_to='events/')
-    date = models.DateField()
+    image = cloudinary.models.CloudinaryField('image')  # Use Cloudinary instead of local storage
+    date = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return self.title
+        return f"{self.title} - {self.date.strftime('%Y-%m-%d')}"

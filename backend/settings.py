@@ -10,8 +10,18 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 from pathlib import Path
 import os
+
+
+from dotenv import load_dotenv
+load_dotenv()
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,7 +53,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'admin_interface',  # Custom Admin Theme
     'colorfield',  # Required for admin themes
-     # My Apps
+    'cloudinary',  # Add Cloudinary
+    'cloudinary_storage',  # Add Cloudinary Storage
     "triloka",
     
 ]
@@ -83,7 +94,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+}
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -133,6 +148,9 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [  os.path.join(BASE_DIR, "triloka", "static"), ]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Media Files (User Uploads)
 MEDIA_URL = "/media/"

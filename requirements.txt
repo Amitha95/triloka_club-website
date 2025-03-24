@@ -10,3 +10,4 @@ tzdata==2025.1
 whitenoise==6.9.0
 django-admin-interface==0.29.4
 django-colorfield
+cloudinary
