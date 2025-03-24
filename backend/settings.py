@@ -104,11 +104,11 @@ CLOUDINARY_STORAGE = {
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        'OPTIONS': {},
+        'ENGINE': 'django.db.backends.sqlite3',  # Specifies the database backend
+        'NAME': BASE_DIR / 'db.sqlite3',  # Path to the SQLite database file
     }
 }
+
 
 
 # Password validation
