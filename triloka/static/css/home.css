@@ -2,12 +2,9 @@
     width: 100%;
     height: 600px;
     overflow: hidden;
-    position: relative ; /* Fixes the banner */
-    top: 0;
-    left: 0;
-    z-index: 1000; /* Ensures it's above other content */
-    background-color: white; /* Optional: Prevents transparency issues */
+    background-color: white; /* Prevents transparency issues */
 }
+
 
 .banner-img {
     width: 100%;
@@ -15,15 +12,33 @@
     object-fit: cover;
 }
 .container {
-    background-color: #f5a623; /* Set background color */
-    color: white; /* Ensures text is readable */
-    border: none; /* Optional: Removes default border */
+    margin-top: 50px; /* Reduce gap so content appears naturally below the banner */
+    background-color: #f5a623; /* Keep the orange background */
+    color: white;
+    padding: 20px;
+    border-radius: 10px; /* Optional: Adds rounded corners */
+}
+.card {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Ensures all cards have the same height */
+    min-height: 450px; /* Adjust as needed */
 }
 
 .card-img-top {
-    height: 200px;
-    object-fit: cover;
+    width: 100%; /* Ensures the image fills the card width */
+    height: 250px; /* Set a fixed height */
+    object-fit: cover; /* Ensures the image fits without distortion */
 }
+
+
+.card-body {
+    flex-grow: 1; /* Ensures the content fills available space */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Keeps spacing uniform */
+}
+
 
 /* Push the content down so it's not hidden behind the fixed banner */
 .container {

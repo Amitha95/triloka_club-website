@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Gallery{% endblock %}
+
+{% block content %}
+<br><br><br>
+<h2 class="text-center">Select Year Range</h2>
+<div class="container">
+    <ul class="list-group">
+        {% for start, end in year_ranges %}
+        <li class="list-group-item">
+            <a href="{% url 'gallery' start end %}">{{ start }} - {{ end }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}
