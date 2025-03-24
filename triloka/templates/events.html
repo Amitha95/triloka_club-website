@@ -1,26 +1,67 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/events.css' %}">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let marquee = document.querySelector(".marquee");
+            if (marquee) {
+                let clone = marquee.innerHTML;
+                marquee.innerHTML += clone; // Duplicate content for seamless looping
+            }
+        });
+    </script>
+{% endblock %}
+
 {% block title %}Events{% endblock %}
 
 {% block content %}
 <br><br><br>
-<h2 class="text-center">Upcoming Events</h2>
 <div class="container">
+    <h2 class="text-center mb-4">Upcoming Events</h2>
+
+    <!-- Marquee for upcoming events (only from today onwards) -->
+    {% if upcoming_events %}
+    <marquee class="marq" bgcolor="red" direction="left" loop="">
+        <div class="marquee-wrapper">
+            <div class="marquee-content">
+                {% for event in upcoming_events %}
+                    <span class="marquee-item">
+                        <strong>{{ event.date|date:"M d, Y" }}</strong> - 
+                        <span class="event-title">{{ event.title }}</span>: 
+                        {{ event.description|truncatewords:10 }}
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+        
+    </marquee>
+    {% endif %}
+
+    <br><br><br>
+    <!-- All events displayed as cards -->
     <div class="row">
-        {% for event in events %}
-        <div class="col-md-6">
-            <div class="card mb-3">
+        {% for event in all_events %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                {% if event.image %}
                 <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}">
+                {% else %}
+                <img src="{% static 'images/default-event.jpg' %}" class="card-img-top" alt="Default Image">
+                {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ event.title }}</h5>
-                    <p class="card-text">{{ event.description }}</p>
-                    <p class="text-muted">Date: {{ event.date }}</p>
+                    <p class="card-text">{{ event.description|truncatewords:20 }}</p>
+                    <p class="text-muted"><i class="fas fa-calendar-alt"></i> {{ event.date }}</p>
+                    <a href="#" class="btn btn-primary btn-sm">Read More</a>
                 </div>
             </div>
         </div>
+        {% empty %}
+        <p class="text-center">No events available.</p>
         {% endfor %}
     </div>
 </div>
+<br><br><br>
 {% endblock %}
-<!-- Compare this snippet from triloka/templates/contact.html: -->

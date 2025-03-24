@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from .models import Gallery, Event
-
+from datetime import date
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
@@ -65,5 +65,12 @@ def gallery_view(request, year_start, year_end):
     return render(request, "gallery.html", {"photos": photos, "year_start": year_start, "year_end": year_end})
 
 def events_view(request):
-    events = Event.objects.all()
-    return render(request, 'events.html', {'events': events})
+    today = date.today()
+    
+    # Fetch all events for cards
+    all_events = Event.objects.all().order_by('date')
+
+    # Fetch only upcoming events for marquee
+    upcoming_events = Event.objects.filter(date__gte=today).order_by('date')
+
+    return render(request, 'events.html', {'all_events': all_events, 'upcoming_events': upcoming_events})
