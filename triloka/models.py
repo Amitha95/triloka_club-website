@@ -14,7 +14,11 @@ class Event(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     image = cloudinary.models.CloudinaryField('image')  # Use Cloudinary instead of local storage
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField()
+
+    def __str__(self):
+        return self.title
+
 
     def __str__(self):
         return f"{self.title} - {self.date.strftime('%Y-%m-%d')}"
