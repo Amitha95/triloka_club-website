@@ -4,6 +4,7 @@ from .models import Gallery, Event
 from datetime import date
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.utils.timezone import now
 
 def base(request):
     return render(request, 'base.html')
@@ -68,7 +69,8 @@ def events_view(request):
     today = date.today()
     
     # Fetch all events for cards
-    all_events = Event.objects.all().order_by('date')
+    
+    all_events = Event.objects.filter(date__lt=now().date()) 
 
     # Fetch only upcoming events for marquee
     upcoming_events = Event.objects.filter(date__gte=today).order_by('date')

@@ -3,58 +3,131 @@
 
 {% block head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/events.css' %}">
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            let marquee = document.querySelector(".marquee");
-            if (marquee) {
-                let clone = marquee.innerHTML;
-                marquee.innerHTML += clone; // Duplicate content for seamless looping
-            }
-        });
-    </script>
 {% endblock %}
 
 {% block title %}Events{% endblock %}
 
 {% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(to right, #c2bfba, #bf6d52);
+        color: rgb(0, 0, 0);
+    }
+
+    .marquee-container {
+        width: 100%;
+        overflow: hidden;
+        
+        padding: 10px 0;
+        white-space: nowrap;
+        position: relative;
+    }
+
+    .marquee-content {
+        display: flex;
+        gap: 30px;
+        align-items: center;
+        animation: scroll-left 20s linear infinite;
+    }
+
+    .marquee-item {
+        color: rgb(0, 0, 0);
+        font-size: 16px;
+        cursor: pointer;
+        transition: transform 0.5s ease-in-out;
+    }
+
+    .marquee-item:hover {
+        transform: scale(1.1);
+        text-decoration: underline;
+    }
+
+    @keyframes scroll-left {
+        from { transform: translateX(100%); }
+        to { transform: translateX(-100%); }
+    }
+   .modal button {
+    background-color: #bf6d52;
+   margin-left: 450px;
+    padding: 1px;
+    border: none;
+    width: 10%;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease;
+}
+
+.modal {
+    background: linear-gradient(to bottom, #ffffff, #f5a623);
+    align-items: center;
+    height: auto;
+}
+.modal-dialog {
+    display: flex;
+    
+     /* Ensures the modal is vertically centered */
+}
+
+.modal-content {
+    background: linear-gradient(to right, #c2bfba, #bf6d52); /* Set the desired background */
+    color: black;
+    border-radius: 10px;
+}
+
+@media (min-width: 576px) {
+    .modal {
+        /* --bs-modal-margin: 1.75rem; */
+        --bs-modal-box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+}
+</style>
+
 <br><br><br>
 <div class="container">
     <h2 class="text-center mb-4">Upcoming Events</h2>
 
-    <!-- Marquee for upcoming events (only from today onwards) -->
     {% if upcoming_events %}
-    <marquee class="marq" bgcolor="red" direction="left" loop="">
-        <div class="marquee-wrapper">
-            <div class="marquee-content">
-                {% for event in upcoming_events %}
-                    <span class="marquee-item">
-                        <strong>{{ event.date|date:"M d, Y" }}</strong> - 
-                        <span class="event-title">{{ event.title }}</span>: 
-                        {{ event.description|truncatewords:10 }}
-                    </span>
-                {% endfor %}
-            </div>
+    <div class="marquee-container">
+        <div class="marquee-content">
+            {% for event in upcoming_events %}
+            <img src="{% static 'images/eagle2.gif' %}" height="80"  alt="Running Boy">
+            <span class="marquee-item"
+                data-title="{{ event.title }}"
+                data-description="{{ event.description }}"
+                data-date="{{ event.date|date:'M d, Y' }}"
+                data-image="{% if event.image %}{{ event.image.url }}{% else %}{% static 'images/default-event.jpg' %}{% endif %}"
+                onclick="showEventModal(this)">
+                <strong>{{ event.date|date:'M d, Y' }}</strong> - 
+                <span class="event-title">{{ event.title }}</span>: 
+                {{ event.description|truncatewords:10 }}
+            </span>
+            {% endfor %}
         </div>
-        
-    </marquee>
+    </div>
     {% endif %}
 
     <br><br><br>
-    <!-- All events displayed as cards -->
+
     <div class="row">
         {% for event in all_events %}
         <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card shadow-sm h-100">
-                {% if event.image %}
-                <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}">
-                {% else %}
-                <img src="{% static 'images/default-event.jpg' %}" class="card-img-top" alt="Default Image">
-                {% endif %}
+            <div class="card shadow-sm h-100 w-100">
+                <img src="{% if event.image %}{{ event.image.url }}{% else %}{% static 'images/default-event.jpg' %}{% endif %}" class="card-img-top" alt="{{ event.title }}">
                 <div class="card-body">
                     <h5 class="card-title">{{ event.title }}</h5>
                     <p class="card-text">{{ event.description|truncatewords:20 }}</p>
                     <p class="text-muted"><i class="fas fa-calendar-alt"></i> {{ event.date }}</p>
-                    <a href="#" class="btn btn-primary btn-sm">Read More</a>
+                    <a href="#" class="btn btn-primary btn-sm" onclick="showEventModal(this)" 
+                        data-title="{{ event.title }}" 
+                        data-description="{{ event.description }}" 
+                        data-date="{{ event.date|date:'M d, Y' }}"
+                        data-image="{% if event.image %}{{ event.image.url }}{% else %}{% static 'images/default-event.jpg' %}{% endif %}">
+                        Read More
+                    </a>
                 </div>
             </div>
         </div>
@@ -63,5 +136,50 @@
         {% endfor %}
     </div>
 </div>
+
+<!-- Bootstrap Modal -->
+
+    <div class="modal" tabindex="-1"  id="eventModal" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
+        <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
+    <div class="modal-dialog modal-dialog-centered" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+        <div class="modal-content">
+           
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <div class="modal-body text-center">
+                <img id="modal-event-image" src="" alt="Event Image" class="img-fluid mb-3" style="max-height: 300px;">
+                <p style="display: none;"><strong>Date:</strong> <span id="modal-event-date"></span></p>
+                <p style="display: none;"><strong>Title:</strong> <span id="modal-event-title"></span></p>
+                <p style="display: none;"><strong>Description:</strong> <span id="modal-event-description"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Load Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let modalElement = document.getElementById("eventModal");
+        if (modalElement) {
+            let eventModal = new bootstrap.Modal(modalElement);
+
+            // Ensure function is globally accessible
+            window.showEventModal = function (element) {
+                console.log("Modal function triggered");
+                document.getElementById("modal-event-title").textContent = element.getAttribute("data-title");
+                document.getElementById("modal-event-description").textContent = element.getAttribute("data-description");
+                document.getElementById("modal-event-date").textContent = element.getAttribute("data-date");
+                document.getElementById("modal-event-image").src = element.getAttribute("data-image");
+
+                eventModal.show();
+            };
+        } else {
+            console.error("Modal element not found!");
+        }
+    });
+</script>
 <br><br><br>
+{% endblock %}
 {% endblock %}
