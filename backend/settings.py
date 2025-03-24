@@ -82,7 +82,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'your_project.wsgi.application'  # Replace with your project name
+WSGI_APPLICATION = 'backend.wsgi.application'  # Replace with your project name
 
 # Cloudinary Config
 # Cloudinary Config
