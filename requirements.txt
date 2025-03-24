@@ -9,7 +9,6 @@ django-colorfield==0.12.0
 django-crispy-forms==2.3
 django-environ==0.12.0
 
-django-flat-theme==1.1.4
 gunicorn==20.1.0
 idna==3.10
 packaging==24.2
