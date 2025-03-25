@@ -70,7 +70,10 @@ def register_user(request):
         dob = request.POST.get("dob")  # Get date of birth
         photo = request.FILES.get("photo")
         blood_group = request.POST.get("blood_group")
-
+        registration_number = request.POST.get("registration_number")
+        idproof = request.POST.get("idproof")
+        gaurdian_name = request.POST.get("gaurdian_name")
+        relation = request.POST.get("relation")
         # Check if username already exists
         if User.objects.filter(username=username).exists():
             return render(request, "register.html", {"error": "Username already taken"})
@@ -92,6 +95,10 @@ def register_user(request):
             age=age,
             photo=photo,
             blood_group=blood_group,
+            registration_number=registration_number,
+            idproof=idproof,
+            gaurdian_name=gaurdian_name,
+            relation=relation,
         )
 
         return redirect("login")
