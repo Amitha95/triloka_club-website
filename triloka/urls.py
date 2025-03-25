@@ -3,7 +3,7 @@ from django.urls import path
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from . import views
-from .views import login_view, logout_view, dashboard_view
+from .views import login_view, logout_view, dashboard_view, gallery_page, gallery_all
 
 # Check if user is admin or staff
 def is_admin(user):
@@ -24,7 +24,8 @@ urlpatterns = [
     path("about/", views.about, name="about"),
     path("events/", views.events_view, name="events"),
     path("gallery/", views.gallery_years, name="gallery_years"),  # Show date ranges
-    path("gallery_all/", views.gallery_all, name="gallery_all"),
+    path('gallery/', gallery_page, name='gallery_page'),
+    path('api/gallery/', gallery_all, name='gallery_all'),
     path("gallery/<int:year_start>-<int:year_end>/", views.gallery_view, name="gallery"),
     path("contact/", views.contact, name="contact"),
     path("login/", login_view, name="login"),

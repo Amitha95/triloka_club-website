@@ -49,8 +49,9 @@ def dashboard_view(request):
 
 def gallery_years(request):
     # Extract unique years from images
-    years = list(set(img.date.year for img in Gallery.objects.all()))
-    years.sort(reverse=True)  # Sort years descending
+    years = sorted(set(img.date.year for img in Gallery.objects.all()), reverse=True)
+    year_ranges = [(year, year + 1) for year in years]
+
 
     # Create year ranges like 2023-2024, 2022-2023, etc.
     year_ranges = [(year, year + 1) for year in years]
@@ -70,15 +71,24 @@ def gallery_view(request, year_start, year_end):
     return render(request, "gallery.html", {"photos": photos, "year_start": year_start, "year_end": year_end})
 
 
+def gallery_page(request):
+    return render(request, 'gallery_years.html')
+
 def gallery_all(request):
+    year_range = request.GET.get("year_range", None)
     images = Gallery.objects.all()
-    image_list = [
-        {
-            "title": img.title,
-            "image": img.image.url  # Convert CloudinaryResource to URL
-        }
-        for img in images
-    ]
+
+    if year_range:
+        try:
+            start_year, end_year = map(int, year_range.split('-'))
+            images = images.filter(date__year__gte=start_year, date__year__lte=end_year)
+        except ValueError:
+            return JsonResponse({"error": "Invalid year range format. Use YYYY-YYYY."}, status=400)
+
+    # Debugging: Print fetched images count
+    print(f"Images found: {images.count()}")
+
+    image_list = [{"image": img.image.url, "title": img.title, "year": img.date.year} for img in images]
     return JsonResponse(image_list, safe=False)
 
 def events_view(request):

@@ -10994,3 +10994,74 @@ header.masthead h1, header.masthead .h1 {
 #portfolio .container-fluid .portfolio-box:hover .portfolio-box-caption, #portfolio .container-sm .portfolio-box:hover .portfolio-box-caption, #portfolio .container-md .portfolio-box:hover .portfolio-box-caption, #portfolio .container-lg .portfolio-box:hover .portfolio-box-caption, #portfolio .container-xl .portfolio-box:hover .portfolio-box-caption, #portfolio .container-xxl .portfolio-box:hover .portfolio-box-caption {
   opacity: 1;
 }
+#gallery {
+  position: relative;
+  padding-bottom: 60px; /* Ensures space at the bottom for the button */
+}
+
+.btn-view-more {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background-color: #ff6b6b; /* Eye-catching color */
+  color: white;
+  font-weight: bold;
+  padding: 12px 24px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-view-more:hover {
+  background-color: #d64545;
+  transform: scale(1.1);
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+#galleryCarousel {
+  width: 70%; /* Reduce width for a more compact look */
+  margin: auto;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Crop images to maintain aspect ratio (16:9 or any custom) */
+.carousel-item {
+  position: relative;
+  width: 100%;
+  height: 400px; /* Set a fixed height for all images */
+  align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: 100%;
+ object-fit: fill; /* Ensures images are cropped to fit */
+  border-radius: 10px;
+}
+
+/* View More button styling */
+.btn-view-more {
+  display: block;
+  width: max-content;
+  margin: 20px auto;
+  background-color: #ff6b6b;
+  color: white;
+  font-weight: bold;
+  padding: 12px 24px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+
+.btn-view-more:hover {
+  background-color: #d64545;
+  transform: scale(1.1);
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+}

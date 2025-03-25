@@ -8,7 +8,7 @@
                 <div class="row gx-4 gx-lg-5 h-100 align-items-center justify-content-center text-center">
                     <div class="col-lg-8 align-self-end">
                         <h1 class="text-white font-weight-bold">Triloka Arts and Sports club</h1>
-                        <hr class="divider" />
+                       
                     </div>
                     <div class="col-lg-8 align-self-baseline">
                         
@@ -34,13 +34,27 @@
 
         <section class="page-section" id="gallery">
             <div class="container px-4 px-lg-5">
-                <div class="container-fluid p-0">
-                    <div class="row g-0" id="gallery-container">
+                <h2 class="text-center mt-0">Gallery</h2>
+                <hr class="divider" />
+                <div id="galleryCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner" id="gallery-container">
                         <!-- Images will be loaded here dynamically -->
                     </div>
+                    <!-- Carousel Controls -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#galleryCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#galleryCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
                 </div>
             </div>
+            <a class="btn btn-view-more" href="{% url 'gallery_page' %}">View More!</a>
+
         </section>
+        
         
         
 
@@ -285,8 +299,9 @@
         <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
         <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
         <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+        
         <script>
-            document.addEventListener("DOMContentLoaded", function() {
+            document.addEventListener("DOMContentLoaded", function () {
                 fetchGalleryImages();
             });
             
@@ -295,19 +310,22 @@
                 .then(response => response.json())
                 .then(images => {
                     let galleryContainer = document.getElementById("gallery-container");
-                    galleryContainer.innerHTML = "";  // Clear previous content
+                    galleryContainer.innerHTML = ""; // Clear previous content
             
                     if (images.length === 0) {
-                        galleryContainer.innerHTML = "<p>No images found.</p>";
+                        galleryContainer.innerHTML = "<p class='text-center'>No images found.</p>";
                         return;
                     }
             
-                    images.forEach(image => {
+                    images.forEach((image, index) => {
+                        let activeClass = index === 0 ? "active" : ""; // Set first image as active
                         let imgElement = `
-                            <div class="col-lg-4 col-sm-6">
-                                <a class="portfolio-box" href="${image.image}" title="${image.title}">
-                                    <img class="img-fluid" src="${image.image}" alt="${image.title}" />
-                                </a>
+                            <div class="carousel-item ${activeClass}">
+                                <img src="${image.image}" class="d-block w-100" alt="${image.title}" />
+                                <div class="carousel-caption d-none d-md-block">
+                                   <!-- <h5>${image.title}</h5>-->
+                                    
+                                </div>
                             </div>
                         `;
                         galleryContainer.innerHTML += imgElement;
@@ -316,5 +334,6 @@
                 .catch(error => console.error("Error fetching images:", error));
             }
             </script>
+            
             
    {% endblock %}
