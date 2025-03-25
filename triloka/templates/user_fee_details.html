@@ -2,25 +2,28 @@
 
 {% block content %}
 
-
 <div class="container mt-4">
     <h2 class="text-center">My Fee Details - {{ year }}</h2>
     <table class="table table-bordered text-center">
         <thead>
             <tr>
                 <th>Month</th>
-                <th>Fees Paid</th>
+                <th>Fees Status</th>
             </tr>
         </thead>
         <tbody>
-            {% for month, paid in fee_status %}
+            {% for month, status in fee_status %}
             <tr>
                 <td>{{ month }}</td>
                 <td>
-                    {% if paid %}
-                        <span style="color: green; font-weight: bold;">&#10004;</span>
+                    {% if status == "✔" %}
+                        <span style="color: green; font-weight: bold;">✔</span>
+                    {% elif status == "❌" %}
+                        <span style="color: red; font-weight: bold;">❌</span>
+                    {% elif status == "Pending" %}
+                        <span style="color: orange; font-weight: bold;">Pending</span>
                     {% else %}
-                        <span style="color: red; font-weight: bold;">&#10008;</span>
+                        <span style="color: gray; font-weight: bold;">-</span>
                     {% endif %}
                 </td>
             </tr>
@@ -31,4 +34,5 @@
     <h3>Total Paid: ₹{{ total_fees_paid }}</h3>
     <h3>Pending: ₹{{ pending_fees }}</h3>
 </div>
+
 {% endblock %}

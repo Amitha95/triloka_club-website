@@ -230,14 +230,29 @@ def user_fee_details(request):
     months = ["January", "February", "March", "April", "May", "June", 
               "July", "August", "September", "October", "November", "December"]
 
+    # Get current month index (0-based)
+    current_month_index = datetime.now().month - 1  # January = 0, February = 1, etc.
+
+    # Fetch months where the user has paid fees
     paid_months = set(UserFee.objects.filter(user=user).values_list('month', flat=True))
 
-    # Create a list of tuples (month, paid_status)
-    fee_status = [(month, month in paid_months) for month in months]
+    fee_status = []
+    pending_fees = 0
 
-    # Calculate total and pending fees
+    for i, month in enumerate(months):
+        if i < current_month_index:  # Past months (should be marked as paid or pending)
+            if month in paid_months:
+                fee_status.append((month, "✔"))  # Green check for paid
+            else:
+                fee_status.append((month, "❌"))  # Red cross for missed payments
+                pending_fees += 10  # Add ₹10 for each missed month
+        elif i == current_month_index:  # Current month (optional logic)
+            fee_status.append((month, "Pending"))  # Mark as pending
+        else:  # Future months
+            fee_status.append((month, "-"))  # Display hyphen for upcoming months
+
+    # Calculate total fees paid
     total_fees_paid = UserFee.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0
-    pending_fees = (12 * 10) - total_fees_paid  # Assuming ₹10 per month
 
     return render(request, 'user_fee_details.html', {
         'fee_status': fee_status,
