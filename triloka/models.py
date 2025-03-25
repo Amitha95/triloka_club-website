@@ -28,6 +28,38 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
     
+class UserFee(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    month = models.CharField(max_length=20, choices=[
+        ('January', 'January'), ('February', 'February'), ('March', 'March'),
+        ('April', 'April'), ('May', 'May'), ('June', 'June'),
+        ('July', 'July'), ('August', 'August'), ('September', 'September'),
+        ('October', 'October'), ('November', 'November'), ('December', 'December')
+    ])
+    year = models.IntegerField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        unique_together = ('user', 'month', 'year')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.month} {self.year} - ${self.amount}"
+
+
+class UserPoint(models.Model):
+    CATEGORY_CHOICES = [
+        ('Participation', 'Participation'),
+        ('Achievement', 'Achievement'),
+        ('Leadership', 'Leadership'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    points = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.user.username} - {self.category} - {self.points} points"
+    
 class Gallery(models.Model):
     title = models.CharField(max_length=255)
     image = cloudinary.models.CloudinaryField('image')

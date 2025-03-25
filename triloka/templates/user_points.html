@@ -1,0 +1,24 @@
+{% extends 'admin_dashboard.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Manage Points - {{ user.username }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Category</label>
+            <select name="category" class="form-control">
+                <option value="Participation">Participation</option>
+                <option value="Achievement">Achievement</option>
+                <option value="Leadership">Leadership</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Points</label>
+            <input type="number" name="points" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-success">Add Points</button>
+        <a href="{% url 'user_list' %}" class="btn btn-secondary">Back</a>
+    </form>
+</div>
+{% endblock %}

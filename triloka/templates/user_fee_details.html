@@ -1,0 +1,34 @@
+{% extends 'Dashboard.html' %}
+
+{% block content %}
+
+
+<div class="container mt-4">
+    <h2 class="text-center">My Fee Details - {{ year }}</h2>
+    <table class="table table-bordered text-center">
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>Fees Paid</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for month, paid in fee_status %}
+            <tr>
+                <td>{{ month }}</td>
+                <td>
+                    {% if paid %}
+                        <span style="color: green; font-weight: bold;">&#10004;</span>
+                    {% else %}
+                        <span style="color: red; font-weight: bold;">&#10008;</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <h3>Total Paid: ₹{{ total_fees_paid }}</h3>
+    <h3>Pending: ₹{{ pending_fees }}</h3>
+</div>
+{% endblock %}

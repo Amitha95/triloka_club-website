@@ -1,14 +1,16 @@
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import UserProfile, Gallery, Event
+from .models import UserProfile, UserFee, UserPoint
+from .models import  Gallery, Event
 from datetime import date
 from django.utils.timezone import now
 import re
 from datetime import datetime
 from django.contrib import messages
+from django.db.models import Sum
 
 def base(request):
     return render(request, 'base.html')
@@ -186,3 +188,77 @@ def event_list(request):
     """Displays all uploaded events."""
     events = Event.objects.all().order_by('-date')
     return render(request, "event_list.html", {"events": events})
+
+@login_required
+def user_list(request):
+    users = UserProfile.objects.select_related('user').all()  # Fetch all users sorted by username
+    print(users) 
+    return render(request, "user_list.html", {"users": users})
+
+@login_required
+def user_fees(request, user_id):
+    months = ["January", "February", "March", "April", "May", "June", 
+              "July", "August", "September", "October", "November", "December"]
+    
+    user = get_object_or_404(User, id=user_id)  # Fetch user by ID
+    
+    # Handle form submission
+    if request.method == "POST":
+        month = request.POST.get("month")
+        year = request.POST.get("year")
+        amount = request.POST.get("amount")
+
+        if month and year and amount:
+            UserFee.objects.create(user=user, month=month, year=year, amount=amount)
+        
+        return redirect('user_fees', user_id=user.id)  # Redirect to refresh page
+
+    # Calculate total fees paid
+    total_fees = UserFee.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0
+    total_fees_x10 = total_fees  # Multiply by 10 (if needed)
+
+    return render(request, 'user_fees.html', {
+        'user': user,
+        'months': months,
+        'total_fees_x10': total_fees_x10,
+    })
+
+@login_required
+def user_fee_details(request):
+    user = request.user  # Get the logged-in user
+
+    months = ["January", "February", "March", "April", "May", "June", 
+              "July", "August", "September", "October", "November", "December"]
+
+    paid_months = set(UserFee.objects.filter(user=user).values_list('month', flat=True))
+
+    # Create a list of tuples (month, paid_status)
+    fee_status = [(month, month in paid_months) for month in months]
+
+    # Calculate total and pending fees
+    total_fees_paid = UserFee.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0
+    pending_fees = (12 * 10) - total_fees_paid  # Assuming ₹10 per month
+
+    return render(request, 'user_fee_details.html', {
+        'fee_status': fee_status,
+        'total_fees_paid': total_fees_paid,
+        'pending_fees': pending_fees,
+    })
+
+@login_required
+def user_points(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    points = UserPoint.objects.filter(user=user)
+
+    if request.method == "POST":
+        category = request.POST.get("category")
+        points_value = request.POST.get("points")
+
+        point_entry, created = UserPoint.objects.get_or_create(user=user, category=category)
+        point_entry.points = points_value
+        point_entry.save()
+
+        messages.success(request, "Points updated successfully!")
+        return redirect("user_points", user_id=user.id)
+
+    return render(request, "user_points.html", {"user": user, "points": points})
