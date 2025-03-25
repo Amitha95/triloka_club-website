@@ -11035,15 +11035,13 @@ header.masthead h1, header.masthead .h1 {
 .carousel-item img {
   width: 100%; /* Make sure the image fills the full width */
   height: 400px; /* Set a fixed height for images */
-  object-fit: cover; /* Ensure images cover the container without stretching */
+   /* Ensure images cover the container without stretching */
+  object-fit: fill;
 }
 
 .carousel-control-prev, .carousel-control-next {
   color: #000; /* Customize arrow colors */
 }
-
-
-
 
 /* Make the carousel fully responsive */
 @media (max-width: 767px) {
@@ -11056,7 +11054,7 @@ header.masthead h1, header.masthead .h1 {
   }
 
   .carousel-item img {
-    object-fit: cover; /* Maintain aspect ratio without stretching */
+    object-fit: fill; /* Maintain aspect ratio without stretching */
   }
 }
 
