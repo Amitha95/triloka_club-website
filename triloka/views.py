@@ -7,6 +7,7 @@ from .models import UserProfile, Gallery, Event
 from datetime import date
 from django.utils.timezone import now
 import re
+from datetime import datetime
 
 def base(request):
     return render(request, 'base.html')
@@ -66,13 +67,20 @@ def register_user(request):
         phone_number = request.POST.get("phone_number")
         address = request.POST.get("address")
         gender = request.POST.get("gender")
-        age = request.POST.get("age")
+        dob = request.POST.get("dob")  # Get date of birth
         photo = request.FILES.get("photo")
         blood_group = request.POST.get("blood_group")
 
+        # Check if username already exists
         if User.objects.filter(username=username).exists():
             return render(request, "register.html", {"error": "Username already taken"})
-        
+
+        # Calculate age from DOB
+        birth_date = datetime.strptime(dob, "%Y-%m-%d").date()
+        today = datetime.today().date()
+        age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+
+        # Create user and profile
         user = User.objects.create_user(username=username, email=email, password=password)
         UserProfile.objects.create(
             user=user,
@@ -80,6 +88,7 @@ def register_user(request):
             phone_number=phone_number,
             address=address,
             gender=gender,
+            dob=dob,
             age=age,
             photo=photo,
             blood_group=blood_group,
@@ -88,6 +97,23 @@ def register_user(request):
         return redirect("login")
 
     return render(request, "register.html")
+
+def upload_gallery_image(request):
+    
+    if request.method == "POST":
+        title = request.POST.get("title")
+        image = request.FILES.get("image")
+        date=request.POST.get("date")
+        if title and image:
+            Gallery.objects.create(title=title, image=image, date=date)
+            return redirect("gallery_list")  # Redirect to gallery page after upload
+
+    return render(request, "galleryupload.html")
+
+def gallery_list(request):
+    """Displays all uploaded images."""
+    images = Gallery.objects.all().order_by('-date')
+    return render(request, "gallery_list.html", {"images": images})
 
 def gallery_years(request):
     years = sorted(set(img.date.year for img in Gallery.objects.all()), reverse=True)
@@ -122,3 +148,29 @@ def events_view(request):
     all_events = Event.objects.filter(date__lt=now().date())
     upcoming_events = Event.objects.filter(date__gte=today).order_by('date')
     return render(request, 'events.html', {'all_events': all_events, 'upcoming_events': upcoming_events})
+
+def upload_event(request):
+    """Handles event uploads."""
+    if request.method == "POST":
+        title = request.POST.get("title")
+        description = request.POST.get("description")
+        image = request.FILES.get("image")
+        date = request.POST.get("date")
+        end_date = request.POST.get("end_date")
+
+        if title and description and image and date and end_date:
+            Event.objects.create(
+                title=title,
+                description=description,
+                image=image,
+                date=date,
+                end_date=end_date
+            )
+            return redirect("event_list")  # Redirect to event list page after upload
+
+    return render(request, "upload_event.html")
+
+def event_list(request):
+    """Displays all uploaded events."""
+    events = Event.objects.all().order_by('-date')
+    return render(request, "event_list.html", {"events": events})

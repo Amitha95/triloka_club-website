@@ -1,0 +1,37 @@
+{% extends 'admin_dashboard.html' %}
+{% block content %}
+<style>
+    .event-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    .event-card {
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+    }
+    .event-card img {
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
+    }
+</style>
+
+<h2>Events</h2>
+<div class="event-grid">
+    {% for event in events %}
+        <div class="event-card">
+            <h3>{{ event.title }}</h3>
+            <p>{{ event.description }}</p>
+            <p><strong>Start:</strong> {{ event.date }} | <strong>End:</strong> {{ event.end_date }}</p>
+            <img src="{{ event.image.url }}" alt="{{ event.title }}">
+        </div>
+    {% empty %}
+        <p>No events available.</p>
+    {% endfor %}
+</div>
+
+<p><a href="{% url 'upload_event' %}">Upload New Event</a></p>
+{% endblock %}

@@ -3,7 +3,7 @@ from django.urls import path
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from . import views
-from .views import login_view, logout_view, dashboard_view, gallery_page, gallery_all,register_user
+from .views import login_view, logout_view, dashboard_view, gallery_page, gallery_all,register_user,upload_gallery_image,gallery_list,upload_event, event_list
 
 # Check if user is admin or staff
 def is_admin(user):
@@ -33,6 +33,10 @@ urlpatterns = [
     path("dashboard_view/", dashboard_view, name="dashboard_view"),
     path("admin_dashboard/", admin_dashboard, name="admin_dashboard"),
     path("register_user/", register_user, name="register_user"),
+    path("upload/", upload_gallery_image, name="upload_gallery"), 
+    path("gallery_list/", gallery_list, name="gallery_list"),  
+    path("upload-event/", upload_event, name="upload_event"),  # Event upload page
+    path("event_list/", event_list, name="event_list"),  # Event list page
     
     # Django Admin
     path("admin/", admin.site.urls),
