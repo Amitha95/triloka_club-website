@@ -5,12 +5,16 @@ from datetime import date
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import now
+from django.http import JsonResponse
 
 def base(request):
     return render(request, 'base.html')
 
 def home(request):
     return render(request, 'home.html')
+
+def about(request):
+    return render(request, 'about.html')
 
 def events(request):
     return render(request, 'events.html')
@@ -64,6 +68,18 @@ def gallery_view(request, year_start, year_end):
     )
 
     return render(request, "gallery.html", {"photos": photos, "year_start": year_start, "year_end": year_end})
+
+
+def gallery_all(request):
+    images = Gallery.objects.all()
+    image_list = [
+        {
+            "title": img.title,
+            "image": img.image.url  # Convert CloudinaryResource to URL
+        }
+        for img in images
+    ]
+    return JsonResponse(image_list, safe=False)
 
 def events_view(request):
     today = date.today()

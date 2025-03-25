@@ -1,72 +1,70 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Triloka Club{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</head>
-<body>
-    <!-- Header -->
-    <header>
-        <div class="logo-container">
-            <img src="{% static 'images/trilokalogo.jpeg' %}" alt="Logo" class="logo">
-        </div>
-        <nav>
-            <ul>
-                <li><a href="{% url 'home' %}">Home</a></li>
-                <li><a href="{% url 'events' %}">Events</a></li>
-                <li><a href="{% url 'gallery_years' %}">Gallery</a></li>
-                <li><a href="{% url 'contact' %}">Contact</a></li>
-            </ul>
-        </nav>
-        
-        {% if user.is_authenticated %}
-            <!--<a href="{% url 'dashboard_view' %}" class="btn btn-success">Dashboard</a>-->
-            <a href="{% url 'logout' %}" class="btn btn-danger" style=" margin-left: 20px;">Logout</a>
-        {% else %}
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal" style=" margin-left: 20px;">Login</button>
-        {% endif %}
-    </header>
-
-    <!-- Content -->
-    {% block content %}
-    {% endblock %}
-
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2025 Triloka Arts and Sports Club. All rights reserved.</p>
-    </footer>
-
-    <!-- 🔹 Login Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="loginModalLabel">Login</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="post" action="{% url 'login' %}">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Login</button>
-                    </form>
+    {% load static %}
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Creative - Start Bootstrap Theme</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />
+        <!-- Bootstrap Icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic" rel="stylesheet" type="text/css" />
+        <!-- SimpleLightbox plugin CSS-->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav" style="background-color: #000000;">
+            <div class="container px-4 px-lg-5">
+                <img class="img-fluid" src="{% static 'assets/img/trilokalogo-removebg-preview.png' %}" alt="Company Logo" width="100px" height="100px" style="opacity: 1.0;"/>
+                
+            
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#gallery">Gallery</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#portfolio">Portfolio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                        
+                    </ul>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="btn btn-danger" style=" margin-left: 20px;">Logout</a>
+                    {% else %}
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal" style="margin: 10px;">
+                        Login
+                    </button>
+                    {% endif %}
                 </div>
             </div>
-        </div>
-    </div>
+        </nav>
 
-</body>
-
+        {% block content %}
+        {% endblock %}
+        <!-- Masthead-->
+        
+        <!-- Contact-->
+      
+        <!-- Footer-->
+       
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- SimpleLightbox plugin JS-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="{% static 'js/scripts.js' %}"></script>
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <!-- * *                               SB Forms JS                               * *-->
+        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+    </body>
 </html>

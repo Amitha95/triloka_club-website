@@ -20,9 +20,11 @@ urlpatterns = [
 
     # Main App URLs
     path("", views.home, name="home"),
-    path("home/", views.home, name="home"),
+    path("base/", views.base, name="base"),
+    path("about/", views.about, name="about"),
     path("events/", views.events_view, name="events"),
     path("gallery/", views.gallery_years, name="gallery_years"),  # Show date ranges
+    path("gallery_all/", views.gallery_all, name="gallery_all"),
     path("gallery/<int:year_start>-<int:year_end>/", views.gallery_view, name="gallery"),
     path("contact/", views.contact, name="contact"),
     path("login/", login_view, name="login"),
