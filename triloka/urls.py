@@ -3,7 +3,7 @@ from django.urls import path
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from . import views
-from .views import login_view, logout_view, dashboard_view, gallery_page, gallery_all
+from .views import login_view, logout_view, dashboard_view, gallery_page, gallery_all,register_user
 
 # Check if user is admin or staff
 def is_admin(user):
@@ -31,6 +31,9 @@ urlpatterns = [
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
     path("dashboard_view/", dashboard_view, name="dashboard_view"),
+    path("admin_dashboard/", admin_dashboard, name="admin_dashboard"),
+    path("register_user/", register_user, name="register_user"),
+    
     # Django Admin
     path("admin/", admin.site.urls),
 ]
