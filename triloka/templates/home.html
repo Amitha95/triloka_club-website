@@ -179,7 +179,7 @@
                     </div>
                     <div class="col-lg-3 col-sm-6">
                         <a class="portfolio-box" href="static/assets/img/portfolio/fullsize/4.jpg" title="Project Name">
-                            <img class="img-fluid" src="static/assets/img/portfolio/thumbnails/Madhav.jpg" alt="..." />
+                            <img class="img-fluid" src="static/assets/img/portfolio/thumbnails/Sreekesh.jpg" alt="..." />
                             <div class="portfolio-box-caption">
                                 <div class="project-category text-white-50">Sreekesh S Kumar</div>
                                 <div class="project-name">Executive Member</div>
@@ -279,13 +279,16 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        <!-- Error message container -->
+                        <div id="error-container"></div>
+        
                         <form method="post" action="{% url 'login' %}">
                             {% csrf_token %}
                             <div class="mb-3">
                                 <label for="username" class="form-label">Username</label>
                                 <input type="text" class="form-control" id="username" name="username" required>
                             </div>
-
+        
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
                                 <div class="input-group">
@@ -295,14 +298,14 @@
                                     </button>
                                 </div>
                             </div>
-                            
-                            
+        
                             <button type="submit" class="btn btn-primary w-100">Login</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+        
         <!-- Contact-->
       
         <!-- Footer-->
@@ -373,5 +376,23 @@
                     }
                 });
             </script>
-            
+            {% if messages %}
+            <script>
+                window.onload = function() {
+                    var errorMessage = "{% for message in messages %}{{ message }}{% endfor %}";
+                    if (errorMessage) {
+                        // Show Bootstrap alert inside the modal
+                        var alertBox = document.createElement("div");
+                        alertBox.className = "alert alert-danger";
+                        alertBox.innerText = errorMessage;
+                        document.getElementById("error-container").appendChild(alertBox);
+        
+                        // Show login modal
+                        var loginModal = new bootstrap.Modal(document.getElementById("loginModal"));
+                        loginModal.show();
+                    }
+                };
+            </script>
+        {% endif %}
+        
    {% endblock %}

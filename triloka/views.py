@@ -8,6 +8,7 @@ from datetime import date
 from django.utils.timezone import now
 import re
 from datetime import datetime
+from django.contrib import messages
 
 def base(request):
     return render(request, 'base.html')
@@ -40,7 +41,8 @@ def login_view(request):
             else:
                 return redirect("dashboard_view")
         else:
-            return render(request, "home.html", {"error": "Invalid username or password"})
+            messages.error(request, "Invalid username or password")  # Use Django messages for error popup
+            return redirect("home")  # Redirect to home page so message can be shown
 
     return render(request, "home.html")
 
@@ -51,7 +53,10 @@ def logout_view(request):
 @login_required
 def dashboard_view(request):
     username = request.user.username if request.user.is_authenticated else ""
-    filtered_username = re.sub(r'\d+', '', username)  # Remove numbers
+    filtered_username = re.sub(r'[^a-zA-Z]', '', username)
+
+    # Remove 'TV' if it appears at the end of the username
+    filtered_username = re.sub(r'TV$', '', filtered_username, flags=re.IGNORECASE)  # Remove numbers
     return render(request, "dashboard.html", {"filtered_username": filtered_username})
 
 @login_required
