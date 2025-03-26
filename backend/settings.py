@@ -31,7 +31,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'triloka-club-website.onrender.com',  # Add your Render domain
     '127.0.0.1',  # Allow local development
-    'localhost'
+    'localhost',
     'trilokaclub-website-production.up.railway.app'
 ]
 
