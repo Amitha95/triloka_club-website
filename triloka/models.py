@@ -3,11 +3,6 @@ import cloudinary
 import cloudinary.models
 from django.contrib.auth.models import User
 
-
-from django.db import models
-from django.contrib.auth.models import User
-import cloudinary.models
-
 class UserProfile(models.Model):
     GENDER_CHOICES = [
         ('Male', 'Male'),

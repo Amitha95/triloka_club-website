@@ -213,8 +213,8 @@ def event_list(request):
 
 @login_required
 def user_list(request):
-    users = UserProfile.objects.select_related('user').all()  # Fetch all users sorted by username
-    print(users) 
+    users = UserProfile.objects.select_related('user').all()
+# Fetch all users, not just those with a UserProfile
     return render(request, "user_list.html", {"users": users})
 
 @login_required
