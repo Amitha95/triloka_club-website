@@ -37,39 +37,29 @@
             <div class="container px-4 px-lg-5">
                 <h2 class="text-center mt-0">Gallery</h2>
                 <hr class="divider" />
-                
-                <!-- Carousel Container -->
-                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner" id="gallery-container">
-                        <!-- Images will be loaded here dynamically -->
-                        <!-- Example of dynamic image item -->
-                        <div class="carousel-item active">
-                            <img class="d-block w-100" src="image1.jpg" alt="First slide">
-                        </div>
-                        <div class="carousel-item">
-                            <img class="d-block w-100" src="image2.jpg" alt="Second slide">
-                        </div>
-                        <div class="carousel-item">
-                            <img class="d-block w-100" src="image3.jpg" alt="Third slide">
+        
+                <div class="row mx-0">
+                    {% for category in categories %}
+                    <div class="col-12 col-md-4">
+                        <div class="card h-100"> <!-- Ensure the card takes the full height of the column -->
+                            <!-- Image for the category -->
+                            {% if category.image %}
+                            <img src="{{ category.image }}" class="card-img-top" alt="Thumbnail" style="object-fit: cover; height: 200px;">
+                            {% else %}
+                            <img src="default-thumbnail.jpg" class="card-img-top" alt="Default Thumbnail" style="object-fit: cover; height: 200px;"> <!-- Default image with same size -->
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ category.title }}</h5>
+                                <a href="{% url 'gallery_pages' category.title %}" class="btn btn-primary">View Photos</a>
+                            </div>
                         </div>
                     </div>
-                    <!-- Carousel Controls -->
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
+                    {% endfor %}
                 </div>
-        <br>
-                <!-- View More Button -->
-                <div class="text-center mt-3">
-                    <a class="btn btn-view-more" href="{% url 'gallery_page' %}">View More!</a>
-                </div>
+        
             </div>
         </section>
+        
         
 
         <!-- Services-->
@@ -410,6 +400,30 @@
                     }
                 };
             </script>
+
+<style>
+    .card {
+        margin-bottom: 20px; /* Add margin for spacing between cards */
+    }
+    
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%; /* Ensures card body fills the remaining space */
+    }
+
+    .card-img-top {
+        object-fit: cover; /* Ensure the image covers the entire area of the card */
+        height: 200px; /* Set a fixed height for the images */
+    }
+    
+    /* Optional: If you want to make sure the cards are of equal height */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+</style>
         {% endif %}
         
    {% endblock %}

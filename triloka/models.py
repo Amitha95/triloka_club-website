@@ -68,6 +68,9 @@ class Gallery(models.Model):
 
     def __str__(self):
         return f"{self.title} - {self.date.strftime('%Y-%m-%d') if self.date else 'No Date'}"
+    
+    class Meta:
+        ordering = ['date'] 
 
 class Event(models.Model):
     title = models.CharField(max_length=255)

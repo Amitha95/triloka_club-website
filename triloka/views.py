@@ -17,12 +17,37 @@ import io
 import urllib
 import base64
 from django.utils import timezone
+from django.db.models import Count
 
 def base(request):
     return render(request, 'base.html')
 
 def home(request):
-    return render(request, 'home.html')
+    # Group by title (used as category) and count the number of images in each group
+    categories = Gallery.objects.values('title').annotate(num_images=Count('id')).filter(num_images__gt=0)
+
+    categories_with_images = []
+
+    for category in categories:
+        # Get the first gallery image for each category (title)
+        first_gallery = Gallery.objects.filter(title=category['title']).first()
+        image_url = first_gallery.image.url if first_gallery else None
+        categories_with_images.append({
+            'title': category['title'],
+            'image': image_url
+        })
+
+    return render(request, 'home.html', {'categories': categories_with_images})
+def gallery_pages(request, title):
+    # Get the year ranges for the selected category
+    gallery_images = Gallery.objects.filter(title=title)
+    year_ranges = gallery_images.values('date__year').distinct().order_by('date__year')
+    return render(request, 'gallery_pages.html', {'year_ranges': year_ranges, 'title': title})
+
+def gallery_images(request, title, year):
+    # Fetch all images of a specific year range for the selected category
+    gallery_images = Gallery.objects.filter(title=title, date__year=year)
+    return render(request, 'gallery_images.html', {'gallery_images': gallery_images, 'year': year, 'title': title})
 
 def about(request):
     return render(request, 'about.html')

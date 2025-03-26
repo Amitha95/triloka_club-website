@@ -51,6 +51,8 @@ urlpatterns = [
     path('blood-groups/', blood_group_list, name='blood_group_list'),
     path('donors/', donor_list, name='donor_list'),
     path('edit_user/<int:user_id>/', views.edit_user, name='edit_user'),
+    path('gallery/<str:title>/', views.gallery_pages, name='gallery_pages'),
+    path('gallery/<str:title>/year/<int:year>/', views.gallery_images, name='gallery_images'),
     # Django Admin
     path("admin/", admin.site.urls),
 ]

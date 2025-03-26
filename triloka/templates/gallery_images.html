@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Gallery Images{% endblock %}
+
+{% block content %}
+<section class="page-section" id="gallery-images">
+    <div class="container px-4 px-lg-5">
+        <h2 class="text-center mt-0">{{ title }} - {{ year }} Gallery</h2>
+        <hr class="divider" />
+
+        <div class="row">
+            {% for image in gallery_images %}
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{{ image.image.url }}" class="card-img-top" alt="Image">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ image.title }}</h5>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
