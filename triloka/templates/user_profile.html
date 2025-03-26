@@ -1,0 +1,24 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+  <div class="container">
+    <h1>Profile Details</h1>
+    <div class="row">
+      <div class="col-md-4">
+        <h3>Profile Information</h3>
+        <ul class="list-group">
+          <li class="list-group-item"><strong>Full Name:</strong> {{ user_profile.user.get_full_name }}</li>
+          <li class="list-group-item"><strong>Email:</strong> {{ user_profile.user.email }}</li>
+          <li class="list-group-item"><strong>Phone:</strong> {{ user_profile.phone }}</li>
+          <li class="list-group-item"><strong>Willing to Donate Blood:</strong> 
+            {% if user_profile.willing_to_donate_blood %}
+              Yes
+            {% else %}
+              No
+            {% endif %}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endblock %}

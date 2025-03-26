@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from . import views
 from .views import login_view, logout_view, dashboard_view, gallery_page, gallery_all,register_user,upload_gallery_image,gallery_list,upload_event, event_list
 from .views import user_list,user_fees,user_points,user_fee_details,user_home, update_donation_status,point_redemption_rules, redeem_points,admin_home
-from .views import blood_group_list,donor_list
+from .views import blood_group_list,donor_list, user_profile_view
 
 # Check if user is admin or staff
 def is_admin(user):
@@ -53,6 +53,7 @@ urlpatterns = [
     path('edit_user/<int:user_id>/', views.edit_user, name='edit_user'),
     path('gallery/<str:title>/', views.gallery_pages, name='gallery_pages'),
     path('gallery/<str:title>/year/<int:year>/', views.gallery_images, name='gallery_images'),
+    path('profile/', user_profile_view, name='user_profile'),
     # Django Admin
     path("admin/", admin.site.urls),
 ]

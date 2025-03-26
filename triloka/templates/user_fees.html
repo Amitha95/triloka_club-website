@@ -9,6 +9,11 @@
         <strong>Total Fees Paid: ₹{{ total_fees_x10 }}</strong>
     </div>
 
+    <!-- Display Pending Fees -->
+    <div class="alert alert-warning text-center">
+        <strong>Pending Fees: ₹{{ pending_fees }}</strong>
+    </div>
+
     <!-- Display Fee History -->
     <table class="table table-bordered mt-3">
         <thead>
@@ -16,18 +21,26 @@
                 <th>Month</th>
                 <th>Year</th>
                 <th>Amount (₹)</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
             {% for fee in user.userfee_set.all %}
-            <tr>
-                <td>{{ fee.month }}</td>
-                <td>{{ fee.year }}</td>
-                <td>₹{{ fee.amount }}</td>
-            </tr>
+                <tr>
+                    <td>{{ fee.month }}</td>
+                    <td>{{ fee.year }}</td>
+                    <td>₹{{ fee.amount }}</td>
+                    <td>
+                        {% if fee.year < current_year or (fee.year == current_year and fee.month <= current_month) %}
+                            <span class="badge badge-success">Paid</span>
+                        {% else %}
+                            <span class="badge badge-danger">Pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
             {% empty %}
             <tr>
-                <td colspan="3" class="text-center">No fees paid yet.</td>
+                <td colspan="4" class="text-center">No fees paid yet.</td>
             </tr>
             {% endfor %}
         </tbody>

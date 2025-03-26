@@ -293,12 +293,31 @@ def user_fees(request, user_id):
 
     # Calculate total fees paid
     total_fees = UserFee.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0
-    total_fees_x10 = total_fees  # Multiply by 10 (if needed)
+    total_fees_x10 = total_fees * 10  # Multiply by 10 if needed
+
+    # Calculate the current month and year
+    current_month = datetime.now().month
+    current_year = datetime.now().year
+
+    # Get all the fees paid by the user
+    user_fees = UserFee.objects.filter(user=user).order_by('year', 'month')
+
+    # Find the last paid month
+    last_paid_fee = user_fees.last()
+
+    # Calculate the total paid till the current month (and mark months up to the current month as paid)
+    paid_months = user_fees.filter(year__lt=current_year) | user_fees.filter(year=current_year, month__lte=current_month)
+
+    # Calculate pending fees
+    paid_months_sum = paid_months.aggregate(total=Sum('amount'))['total'] or 0
+    pending_fees = total_fees - paid_months_sum
 
     return render(request, 'user_fees.html', {
         'user': user,
         'months': months,
         'total_fees_x10': total_fees_x10,
+        'paid_months': paid_months,
+        'pending_fees': pending_fees,
     })
 
 @login_required
@@ -513,3 +532,12 @@ def calculate_age(dob):
     dob = datetime.strptime(dob, "%Y-%m-%d").date()
     age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
     return age
+
+@login_required
+def user_profile_view(request):
+    # Fetch the user's profile
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+
+    return render(request, 'user_profile.html', {
+        'user_profile': user_profile,
+    })
