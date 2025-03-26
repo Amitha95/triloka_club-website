@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from . import views
 from .views import login_view, logout_view, dashboard_view, gallery_page, gallery_all,register_user,upload_gallery_image,gallery_list,upload_event, event_list
-from .views import user_list,user_fees,user_points,user_fee_details
+from .views import user_list,user_fees,user_points,user_fee_details,user_home
 # Check if user is admin or staff
 def is_admin(user):
     return user.is_superuser or user.is_staff
@@ -41,6 +41,7 @@ urlpatterns = [
     path("users/fees/<int:user_id>/", user_fees, name="user_fees"),
     path("users/points/<int:user_id>/", user_points, name="user_points"),
     path("my-fees/", user_fee_details, name="user_fee_details"),
+    path("user_home/", user_home, name="user_home"),
     
     # Django Admin
     path("admin/", admin.site.urls),

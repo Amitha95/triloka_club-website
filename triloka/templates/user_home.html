@@ -1,0 +1,64 @@
+{% extends 'Dashboard.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <!-- User Profile Section -->
+    <div class="text-center">
+        <img src="{{ user_profile.photo.url }}" class="rounded-circle" alt="Profile Picture" width="100" height="100">
+        <h2 class="mt-2">{{ user_profile.name }}</h2>
+    </div>
+
+    <div class="row mt-4">
+        <!-- Left Column: Fee Details -->
+        <div class="col-md-6 d-flex flex-column align-items-center">
+            <h3>Fee Details</h3>
+            <a href="{% url 'user_fee_details' %}" class="btn btn-primary">View Fee Details</a>
+        </div>
+
+        <!-- Right Column: Points Chart -->
+        <div class="col-md-6 text-center">
+            <h3>Points Achieved</h3>
+            <canvas id="pointsChart" style="max-width: 100%; height: 300px;"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js for Bar Graph -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var ctx = document.getElementById('pointsChart').getContext('2d');
+
+        var months = JSON.parse("{{ months|safe|escapejs }}"); // Ensures valid JS array format
+        var points = JSON.parse("{{ points|safe|escapejs }}"); // Ensures valid JS array format
+
+        var pointsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Points',
+                    data: points,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                onClick: function(event, elements) {
+                    if (elements.length > 0) {
+                        window.location.href = "{% url 'user_fee_details' %}";  // Redirect to points page
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    });
+</script>
+
+{% endblock %}

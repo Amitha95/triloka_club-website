@@ -41,7 +41,7 @@ def login_view(request):
             if user.is_superuser or user.groups.filter(name="admin").exists():
                 return redirect("admin_dashboard")
             else:
-                return redirect("dashboard_view")
+                return redirect("user_home")
         else:
             messages.error(request, "Invalid username or password")  # Use Django messages for error popup
             return redirect("home")  # Redirect to home page so message can be shown
@@ -64,6 +64,24 @@ def dashboard_view(request):
 @login_required
 def admin_dashboard(request):
     return render(request, "admin_dashboard.html")
+
+@login_required
+def user_home(request):
+    user_profile = get_object_or_404(UserProfile, user=request.user)  # Get the user's profile
+
+    # Fetch fee details (grouping by month)
+    user_fees = UserFee.objects.filter(user=request.user).order_by('year', 'month')
+    months = [fee.month for fee in user_fees]
+    
+    # Fetch points data dynamically
+    user_points = UserPoint.objects.filter(user=request.user)
+    points = [point.points for point in user_points]  
+
+    return render(request, 'user_home.html', {
+        'user_profile': user_profile,  # User's profile info
+        'months': months,  # Fee months
+        'points': points  # Dynamic points data
+    })
 
 def register_user(request):
     if request.method == "POST":
@@ -230,11 +248,11 @@ def user_fee_details(request):
     months = ["January", "February", "March", "April", "May", "June", 
               "July", "August", "September", "October", "November", "December"]
 
-    # Get current month index (0-based)
-    current_month_index = datetime.now().month - 1  # January = 0, February = 1, etc.
+    current_year = datetime.now().year
+    current_month_index = datetime.now().month - 1  # 0-based index
 
-    # Fetch months where the user has paid fees
-    paid_months = set(UserFee.objects.filter(user=user).values_list('month', flat=True))
+    # Fetch months where the user has paid fees in the current year
+    paid_months = set(UserFee.objects.filter(user=user, year=current_year).values_list('month', flat=True))
 
     fee_status = []
     pending_fees = 0
@@ -245,19 +263,20 @@ def user_fee_details(request):
                 fee_status.append((month, "✔"))  # Green check for paid
             else:
                 fee_status.append((month, "❌"))  # Red cross for missed payments
-                pending_fees += 10  # Add ₹10 for each missed month
+                pending_fees += 10  # Add ₹10 only for missed months (❌)
         elif i == current_month_index:  # Current month (optional logic)
             fee_status.append((month, "Pending"))  # Mark as pending
         else:  # Future months
             fee_status.append((month, "-"))  # Display hyphen for upcoming months
 
     # Calculate total fees paid
-    total_fees_paid = UserFee.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0
+    total_fees_paid = UserFee.objects.filter(user=user, year=current_year).aggregate(total=Sum('amount'))['total'] or 0
 
     return render(request, 'user_fee_details.html', {
         'fee_status': fee_status,
         'total_fees_paid': total_fees_paid,
-        'pending_fees': pending_fees,
+        'pending_fees': pending_fees,  # Only sum of ❌ months
+        'year': current_year
     })
 
 @login_required
