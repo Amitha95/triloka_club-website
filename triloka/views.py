@@ -44,7 +44,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             if user.is_superuser or user.groups.filter(name="admin").exists():
-                return redirect("admin_dashboard")
+                return redirect("admin_home")
             else:
                 return redirect("user_home")
         else:
@@ -406,3 +406,49 @@ def redeem_points(request):
             UserPoint.objects.create(user=request.user, category="Remaining", points=remaining_points)
 
     return redirect('point_redemption_rules')
+
+def admin_home(request):
+    today = now().date()  # Get today's date
+    new_registrations = UserProfile.objects.filter(user__date_joined__date=today).count()  # Count today's registrations
+
+    context = {
+        'title': 'Admin Dashboard',
+        'user_count': UserProfile.objects.count(),  # Total registered users
+        'new_registrations': new_registrations,  # New users today
+    }
+    return render(request, 'admin_home.html', context)
+
+ALL_BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]
+
+def blood_group_list(request):
+    selected_group = request.GET.get('blood_group', 'All')
+
+    if selected_group == "All":
+        profiles = UserProfile.objects.all()
+    else:
+        profiles = UserProfile.objects.filter(blood_group=selected_group)
+
+    # Ensure all possible blood groups appear in the dropdown
+    return render(request, 'blood_group_list.html', {
+        'profiles': profiles,
+        'blood_groups': ALL_BLOOD_GROUPS,
+        'selected_group': selected_group,
+    })
+
+
+ALL_BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]
+
+def donor_list(request):
+    selected_group = request.GET.get('blood_group', 'All')
+
+    # Filter users willing to donate blood
+    if selected_group == "All":
+        profiles = UserProfile.objects.filter(willing_to_donate_blood=True)
+    else:
+        profiles = UserProfile.objects.filter(blood_group=selected_group, willing_to_donate_blood=True)
+
+    return render(request, 'donor_list.html', {
+        'profiles': profiles,
+        'blood_groups': ALL_BLOOD_GROUPS,
+        'selected_group': selected_group,
+    })

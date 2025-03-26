@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    
+
+<div class="container mt-5">
+    <h2 class="text-center">Filter Users by Blood Group</h2>
+
+    <!-- Blood Group Filter Dropdown -->
+    <form method="GET" class="text-center mb-4">
+        <label for="blood_group" class="form-label">Select Blood Group:</label>
+        <select name="blood_group" id="blood_group" class="form-select d-inline-block w-auto" onchange="this.form.submit()">
+            <option value="All" {% if selected_group == "All" %}selected{% endif %}>All</option>
+            {% for group in blood_groups %}
+                <option value="{{ group }}" {% if selected_group == group %}selected{% endif %}>{{ group }}</option>
+            {% endfor %}
+        </select>
+        
+    </form>
+
+    <!-- Display User Profiles -->
+    <div class="card shadow-sm p-3">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="table-primary">
+                <tr>
+                    <th>Reg. Number</th>
+                    <th>Phone Number</th>
+                    <th>Blood Group</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profile in profiles %}
+                    <tr>
+                        <td>{{ profile.registration_number }}</td>
+                        <td>**********</td>
+                        <td>{{ profile.blood_group }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="2">No users found for this blood group.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

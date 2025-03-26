@@ -4,7 +4,9 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from . import views
 from .views import login_view, logout_view, dashboard_view, gallery_page, gallery_all,register_user,upload_gallery_image,gallery_list,upload_event, event_list
-from .views import user_list,user_fees,user_points,user_fee_details,user_home, update_donation_status,point_redemption_rules, redeem_points
+from .views import user_list,user_fees,user_points,user_fee_details,user_home, update_donation_status,point_redemption_rules, redeem_points,admin_home
+from .views import blood_group_list,donor_list
+
 # Check if user is admin or staff
 def is_admin(user):
     return user.is_superuser or user.is_staff
@@ -45,7 +47,9 @@ urlpatterns = [
     path("update-donation-status/", update_donation_status, name="update_donation_status"),
     path('points/redemption/', point_redemption_rules, name='point_redemption_rules'),
     path('points/redeem/', redeem_points, name='redeem_points'),
-    
+    path('admin_home', admin_home, name='admin_home'),
+    path('blood-groups/', blood_group_list, name='blood_group_list'),
+    path('donors/', donor_list, name='donor_list'),
     # Django Admin
     path("admin/", admin.site.urls),
 ]

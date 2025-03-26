@@ -1,0 +1,49 @@
+{% extends 'admin_dashboard.html' %}
+{% block content %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+<div class="container mt-5">
+    <h2 class="text-center">Filter Users by Blood Group</h2>
+
+    <!-- Blood Group Filter Dropdown -->
+    <form method="GET" class="text-center mb-4">
+        <label for="blood_group" class="form-label">Select Blood Group:</label>
+        <select name="blood_group" id="blood_group" class="form-select d-inline-block w-auto" onchange="this.form.submit()">
+            <option value="All" {% if selected_group == "All" %}selected{% endif %}>All</option>
+            {% for group in blood_groups %}
+                <option value="{{ group }}" {% if selected_group == group %}selected{% endif %}>{{ group }}</option>
+            {% endfor %}
+        </select>
+        
+    </form>
+
+    <!-- Display User Profiles -->
+    <div class="card shadow-sm p-3">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="table-primary">
+                <tr>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Blood Group</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profile in profiles %}
+                    <tr>
+                        <td>{{ profile.name }}</td>
+                        <td>{{profile.phone_number}}</td>
+                        <td>{{ profile.blood_group }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="2">No users found for this blood group.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
