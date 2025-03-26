@@ -12,6 +12,10 @@ import re
 from datetime import datetime
 from django.contrib import messages
 from django.db.models import Sum
+import matplotlib.pyplot as plt
+import io
+import urllib
+import base64
 
 def base(request):
     return render(request, 'base.html')
@@ -68,20 +72,40 @@ def admin_dashboard(request):
 
 @login_required
 def user_home(request):
-    user_profile = get_object_or_404(UserProfile, user=request.user)  # Get the user's profile
+    user_profile = get_object_or_404(UserProfile, user=request.user)
     show_donation_popup = user_profile.willing_to_donate_blood is None
+
     # Fetch fee details (grouping by month)
     user_fees = UserFee.objects.filter(user=request.user).order_by('year', 'month')
     months = [fee.month for fee in user_fees]
+
+    # Fetch points grouped by category
+    points_data = UserPoint.objects.filter(user=request.user).values('category').annotate(total_points=Sum('points'))
+    categories = [entry['category'] for entry in points_data]
+    points = [float(entry['total_points']) for entry in points_data]
+
+    # Generate the pie chart using Matplotlib
+    plt.figure(figsize=(4, 4))
     
-    # Fetch points data dynamically
-    user_points = UserPoint.objects.filter(user=request.user)
-    points = [point.points for point in user_points]  
+    # Format labels with exact points instead of percentage
+    labels = [f"{category}: {point} pts" for category, point in zip(categories, points)]
+    plt.pie(points, labels=labels, colors=['red', 'blue', 'yellow', 'green', 'purple'])
+    plt.title("Points Distribution by Category")
+
+    # Save the plot to a buffer
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    
+    # Convert plot to Base64 for embedding in HTML
+    graph_url = urllib.parse.quote(base64.b64encode(buffer.getvalue()).decode())
+    buffer.close()
 
     return render(request, 'user_home.html', {
-        'user_profile': user_profile,  # User's profile info
-        'months': months,  # Fee months
-        'points': points,  # Dynamic points data
+        'user_profile': user_profile,
+        'months': months,
+        'categories': categories,  # Updated from months
+        'graph_url': graph_url,  # Updated points data
         'show_donation_popup': show_donation_popup
     })
 
@@ -94,12 +118,12 @@ def register_user(request):
         phone_number = request.POST.get("phone_number")
         address = request.POST.get("address")
         gender = request.POST.get("gender")
-        dob = request.POST.get("dob")  # Get date of birth
+        dob = request.POST.get("dob")
         photo = request.FILES.get("photo")
         blood_group = request.POST.get("blood_group")
         registration_number = request.POST.get("registration_number")
         idproof = request.POST.get("idproof")
-        gaurdian_name = request.POST.get("gaurdian_name")
+        guardian_name = request.POST.get("gaurdian_name")
         relation = request.POST.get("relation")
 
         # Check if username already exists
@@ -111,6 +135,24 @@ def register_user(request):
         birth_date = datetime.strptime(dob, "%Y-%m-%d").date()
         today = datetime.today().date()
         age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+
+        # If age is below 18, swap guardian details
+        if age < 18:
+            messages.warning(request, "Since the applicant is under 18, the guardian is set as the primary user.")
+            
+            # Swap name with guardian_name
+            name, guardian_name = guardian_name, name
+            
+            # Adjust relation accordingly
+            relation_map = {
+                "Father": "Son/Daughter",
+                "Mother": "Son/Daughter",
+                "Husband": "Wife",
+                "Wife": "Husband",
+                "Brother": "Brother/Sister",
+                "Sister": "Brother/Sister"
+            }
+            relation = relation_map.get(relation, "Guardian")
 
         # Create user and profile
         user = User.objects.create_user(username=username, email=email, password=password)
@@ -126,14 +168,15 @@ def register_user(request):
             blood_group=blood_group,
             registration_number=registration_number,
             idproof=idproof,
-            gaurdian_name=gaurdian_name,
+            gaurdian_name=guardian_name,
             relation=relation,
         )
 
         messages.success(request, "Registered successfully!")
-        return render(request, "register.html")  # Stay on the same page
+        return redirect("user_list")  # Redirect to avoid resubmission
 
     return render(request, "register.html")
+
 def upload_gallery_image(request):
     
     if request.method == "POST":
@@ -213,9 +256,9 @@ def event_list(request):
 
 @login_required
 def user_list(request):
-    users = UserProfile.objects.select_related('user').all()
-# Fetch all users, not just those with a UserProfile
+    users = UserProfile.objects.select_related('user').order_by('registration_number')  # Order by registration number
     return render(request, "user_list.html", {"users": users})
+
 
 @login_required
 def user_fees(request, user_id):
@@ -283,6 +326,8 @@ def user_fee_details(request):
         'year': current_year
     })
 
+from decimal import Decimal
+
 @login_required
 def user_points(request, user_id):
     user = get_object_or_404(User, id=user_id)
@@ -292,14 +337,26 @@ def user_points(request, user_id):
         category = request.POST.get("category")
         points_value = request.POST.get("points")
 
+        try:
+            points_value = Decimal(points_value)  # Convert to Decimal
+        except ValueError:
+            messages.error(request, "Invalid points value!")
+            return redirect("user_points", user_id=user.id)
+
         point_entry, created = UserPoint.objects.get_or_create(user=user, category=category)
-        point_entry.points = points_value
+
+        # Ensure proper Decimal addition
+        point_entry.points += points_value  
         point_entry.save()
 
         messages.success(request, "Points updated successfully!")
         return redirect("user_points", user_id=user.id)
 
-    return render(request, "user_points.html", {"user": user, "points": points})
+    # Calculate total points correctly using Decimal
+    total_points = sum(point.points for point in points)
+
+    return render(request, "user_points.html", {"user": user, "points": points, "total_points": total_points})
+
 
 @login_required
 def update_donation_status(request):
@@ -314,3 +371,38 @@ def update_donation_status(request):
         return JsonResponse({"message": "Donation preference updated successfully"})
     
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+@login_required
+def point_redemption_rules(request):
+    user_points = UserPoint.objects.filter(user=request.user)
+    total_points = sum(point.points for point in user_points)
+    
+    # Redemption Calculation
+    redemption_rate = 10  # ₹10 for 100 points
+    redeemable_amount = (total_points // 100) * redemption_rate
+    can_redeem = total_points >= 100  # Eligible if points >= 100
+
+    context = {
+        'total_points': total_points,
+        'redeemable_amount': redeemable_amount,
+        'can_redeem': can_redeem
+    }
+    return render(request, 'point_redemption.html', context)
+
+@login_required
+def redeem_points(request):
+    user_points = UserPoint.objects.filter(user=request.user)
+    total_points = sum(point.points for point in user_points)
+
+    if total_points >= 100:
+        # Deduct redeemed points
+        redeemable_points = (total_points // 100) * 100
+        remaining_points = total_points - redeemable_points
+        UserPoint.objects.filter(user=request.user).delete()  # Reset points
+        
+        # Add remaining points back
+        if remaining_points > 0:
+            UserPoint.objects.create(user=request.user, category="Remaining", points=remaining_points)
+
+    return redirect('point_redemption_rules')

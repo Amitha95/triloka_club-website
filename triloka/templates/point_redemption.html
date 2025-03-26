@@ -1,0 +1,30 @@
+{% extends 'Dashboard.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Point Redemption Rules</h2>
+
+    <div class="card p-3 mt-3">
+        <h4>Your Total Points: <strong>{{ total_points }}</strong></h4>
+        <p>Redemption Rate: <strong>₹10 for 100 points</strong></p>
+        <p>Redeemable Amount: <strong>₹{{ redeemable_amount }}</strong></p>
+
+        {% if can_redeem %}
+            <a href="{% url 'redeem_points' %}" class="btn btn-success mt-2">Redeem Now</a>
+        {% else %}
+            <p class="text-danger mt-2">You need at least 100 points to redeem.</p>
+        {% endif %}
+    </div>
+
+    <h3 class="mt-4">How Redemption Works?</h3>
+    <ul>
+        <li>Every 100 points = ₹10.</li>
+        <li>Points are deducted after redemption.</li>
+        <li>Partial redemption is not available.</li>
+    </ul>
+
+    <div class="text-center mt-3">
+        <a href="{% url 'user_home' %}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

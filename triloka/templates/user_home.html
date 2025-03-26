@@ -98,10 +98,17 @@
         </div>
 
         <!-- Right Column: Points Chart -->
-        <div class="col-md-6 text-center">
-            <h3>Points Achieved</h3>
-            <canvas id="pointsChart" style="max-width: 100%; height: 300px;"></canvas>
-        </div>
+        <!-- Right Column: Points Chart -->
+<div class="col-md-6 text-center">
+    
+    <img src="data:image/png;base64,{{ graph_url }}" alt="Points Pie Chart" style="max-width: 100%; height: auto;">
+
+    <!-- View Details Link -->
+    <div class="mt-2">
+        <a href="{% url 'point_redemption_rules' %}" class="btn btn-link">View Details</a>
+    </div>
+</div>
+
     </div>
 </div>
 
@@ -157,37 +164,44 @@ function submitDonationChoice(choice) {
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
         var ctx = document.getElementById('pointsChart').getContext('2d');
 
-        var months = JSON.parse("{{ months|safe|escapejs }}"); // Ensures valid JS array format
-        var points = JSON.parse("{{ points|safe|escapejs }}"); // Ensures valid JS array format
+        var categories = JSON.parse("{{ categories|safe|escapejs }}");
+        var points = JSON.parse("{{ points|safe|escapejs }}");
 
         var pointsChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: months,
+                labels: categories,
                 datasets: [{
-                    label: 'Points',
+                    label: 'Points by Category',
                     data: points,
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)'
+                    ],
                     borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                onClick: function(event, elements) {
-                    if (elements.length > 0) {
-                        window.location.href = "{% url 'user_fee_details' %}";  // Redirect to points page
-                    }
-                },
                 scales: {
                     y: { beginAtZero: true }
                 }
             }
         });
-    });
+    }, 500);  // Short delay to ensure the canvas is available
+});
+
 </script>
+
 
 {% endblock %}
