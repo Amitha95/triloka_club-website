@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import io
 import urllib
 import base64
+from django.utils import timezone
 
 def base(request):
     return render(request, 'base.html')
@@ -118,12 +119,12 @@ def register_user(request):
         phone_number = request.POST.get("phone_number")
         address = request.POST.get("address")
         gender = request.POST.get("gender")
-        dob = request.POST.get("dob")
+        dob = request.POST.get("dob")  # Get date of birth
         photo = request.FILES.get("photo")
         blood_group = request.POST.get("blood_group")
         registration_number = request.POST.get("registration_number")
         idproof = request.POST.get("idproof")
-        guardian_name = request.POST.get("gaurdian_name")
+        gaurdian_name = request.POST.get("gaurdian_name")
         relation = request.POST.get("relation")
 
         # Check if username already exists
@@ -135,24 +136,6 @@ def register_user(request):
         birth_date = datetime.strptime(dob, "%Y-%m-%d").date()
         today = datetime.today().date()
         age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
-
-        # If age is below 18, swap guardian details
-        if age < 18:
-            messages.warning(request, "Since the applicant is under 18, the guardian is set as the primary user.")
-            
-            # Swap name with guardian_name
-            name, guardian_name = guardian_name, name
-            
-            # Adjust relation accordingly
-            relation_map = {
-                "Father": "Son/Daughter",
-                "Mother": "Son/Daughter",
-                "Husband": "Wife",
-                "Wife": "Husband",
-                "Brother": "Brother/Sister",
-                "Sister": "Brother/Sister"
-            }
-            relation = relation_map.get(relation, "Guardian")
 
         # Create user and profile
         user = User.objects.create_user(username=username, email=email, password=password)
@@ -168,12 +151,12 @@ def register_user(request):
             blood_group=blood_group,
             registration_number=registration_number,
             idproof=idproof,
-            gaurdian_name=guardian_name,
+            gaurdian_name=gaurdian_name,
             relation=relation,
         )
 
         messages.success(request, "Registered successfully!")
-        return redirect("user_list")  # Redirect to avoid resubmission
+        return render(request, "register.html")  # Stay on the same page
 
     return render(request, "register.html")
 
@@ -256,7 +239,12 @@ def event_list(request):
 
 @login_required
 def user_list(request):
-    users = UserProfile.objects.select_related('user').order_by('registration_number')  # Order by registration number
+    users = UserProfile.objects.select_related('user').order_by('registration_number')
+
+    # Calculate age based on DOB
+    for user in users:
+        user.age = (date.today() - user.dob).days // 365  # Calculate age in years
+
     return render(request, "user_list.html", {"users": users})
 
 
@@ -452,3 +440,51 @@ def donor_list(request):
         'blood_groups': ALL_BLOOD_GROUPS,
         'selected_group': selected_group,
     })
+
+def edit_user(request, user_id):
+    user = get_object_or_404(UserProfile, user__id=user_id)  # Assuming user has a related User model
+    
+    if request.method == 'POST':
+        # Update fields manually without using a form
+        user.name = request.POST.get('name')
+        user.username = request.POST.get('username')
+        user.email = request.POST.get('email')
+        user.phone_number = request.POST.get('phone_number')
+        user.dob = request.POST.get('dob')
+        
+        # Recalculate the age based on the updated dob
+        if user.dob:
+            user.age = calculate_age(user.dob)
+        
+        user.gaurdian_name = request.POST.get('gaurdian_name')
+        user.relation = request.POST.get('relation')
+        user.idproof = request.POST.get('idproof')
+        user.address = request.POST.get('address')
+        user.gender = request.POST.get('gender')
+        
+        # Handle file upload (for photo)
+        if request.FILES.get('photo'):
+            user.photo = request.FILES.get('photo')
+        
+        user.blood_group = request.POST.get('blood_group')
+        
+        willing_to_donate = request.POST.get('willing_to_donate_blood')
+        if willing_to_donate == 'True':
+            user.willing_to_donate_blood = True
+        elif willing_to_donate == 'False':
+            user.willing_to_donate_blood = False
+        else:
+    # Leave the field unchanged if None or not provided
+            pass
+
+        user.save()
+        return redirect('user_list')  # Redirect to the user list page after saving
+
+    return render(request, 'edit_user.html', {'user': user})
+
+def calculate_age(dob):
+    """Calculate age from DOB"""
+    today = timezone.now().date()
+    dob = datetime.strptime(dob, "%Y-%m-%d").date()
+    age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+    return age

@@ -50,6 +50,7 @@ urlpatterns = [
     path('admin_home', admin_home, name='admin_home'),
     path('blood-groups/', blood_group_list, name='blood_group_list'),
     path('donors/', donor_list, name='donor_list'),
+    path('edit_user/<int:user_id>/', views.edit_user, name='edit_user'),
     # Django Admin
     path("admin/", admin.site.urls),
 ]

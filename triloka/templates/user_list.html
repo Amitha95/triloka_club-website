@@ -29,7 +29,7 @@
             </thead>
             <tbody>
                 {% for user in users %}
-                <tr>
+                <tr  class="{% if user.age < 18 %}highlight{% endif %}">
                     <td>{{ user.registration_number }}</td>
                     <td>{{ user.name }}</td>
                     <td>{{ user.user.username }}</td>
@@ -66,8 +66,9 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="#" class="btn btn-secondary">Edit</a>
+                        <a href="{% url 'edit_user' user.user.id %}" class="btn btn-secondary">Edit</a>
                     </td>
+                    
                 </tr>
                 {% empty %}
                 <tr>
@@ -81,6 +82,10 @@
         
     </div>
 </div>
-
+<style>
+    .highlight {
+        background-color: #dcd45f;;
+    }
+    </style>
 {% endblock %}
 
