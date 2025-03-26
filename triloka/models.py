@@ -4,13 +4,17 @@ import cloudinary.models
 from django.contrib.auth.models import User
 
 
+from django.db import models
+from django.contrib.auth.models import User
+import cloudinary.models
+
 class UserProfile(models.Model):
     GENDER_CHOICES = [
         ('Male', 'Male'),
         ('Female', 'Female'),
         ('Other', 'Other'),
     ]
-    
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     registration_number = models.CharField(max_length=10, unique=True)
     dob = models.DateField()
@@ -24,9 +28,11 @@ class UserProfile(models.Model):
     photo = cloudinary.models.CloudinaryField('photo')  # Store profile photo
     blood_group = models.CharField(max_length=5)
     name = models.TextField()
+    willing_to_donate_blood = models.BooleanField(null=True, blank=True, default=None)  # Nullable field
 
     def __str__(self):
         return self.user.username
+
     
 class UserFee(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

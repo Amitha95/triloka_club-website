@@ -2,6 +2,87 @@
 
 {% block content %}
 
+<style>
+    /* Overlay background */
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;  
+    }
+    
+    /* Popup styling */
+    .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 25px;
+        box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        border-radius: 15px;
+        display: none;  
+        text-align: center;
+        width: 300px;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    /* Popup title */
+    .popup p {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #333;
+    }
+    
+    /* Buttons styling */
+    .popup button {
+        margin: 10px;
+        padding: 12px 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+    
+    .popup button:first-child {
+        background-color: #28a745;  /* Green */
+        color: white;
+    }
+    
+    .popup button:first-child:hover {
+        background-color: #218838;
+    }
+    
+    .popup button:last-child {
+        background-color: #dc3545; /* Red */
+        color: white;
+    }
+    
+    .popup button:last-child:hover {
+        background-color: #c82333;
+    }
+    
+    /* Animation for popup */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translate(-50%, -55%);
+        }
+        to {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+        }
+    }
+    </style>
+    
+
 <div class="container mt-4">
     <!-- User Profile Section -->
     <div class="text-center">
@@ -23,6 +104,54 @@
         </div>
     </div>
 </div>
+
+{% if show_donation_popup %}
+<div id="popup-overlay" class="popup-overlay"></div>
+
+<div id="donation-popup" class="popup">
+    <div class="popup-content">
+        <p>Would you like to donate blood?</p>
+        <button onclick="submitDonationChoice(true)">Yes</button>
+        <button onclick="submitDonationChoice(false)">No</button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    var popup = document.getElementById("donation-popup");
+    var overlay = document.getElementById("popup-overlay");
+
+    if (popup) {
+        popup.style.display = "block";
+        overlay.style.display = "block";
+    }
+});
+
+function submitDonationChoice(choice) {
+    fetch("{% url 'update_donation_status' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({"willing_to_donate_blood": choice})
+    })
+    .then(response => {
+        if (response.ok) {
+            document.getElementById("donation-popup").style.animation = "fadeOut 0.3s ease-in-out";
+            document.getElementById("popup-overlay").style.animation = "fadeOut 0.3s ease-in-out";
+            setTimeout(() => {
+                document.getElementById("donation-popup").style.display = "none";
+                document.getElementById("popup-overlay").style.display = "none";
+            }, 300);
+        }
+    });
+}
+
+    </script>
+    
+{% endif %}
+
 
 <!-- Chart.js for Bar Graph -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

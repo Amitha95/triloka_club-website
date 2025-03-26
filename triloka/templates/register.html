@@ -178,7 +178,15 @@
     });
 </script>
 
-
+{% if messages %}
+    <div>
+        {% for message in messages %}
+            <div class="{% if message.tags == 'error' %}alert alert-danger{% else %}alert alert-success{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
 <script>
     const togglePassword = document.getElementById('togglePassword');
     const passwordField = document.getElementById('password');

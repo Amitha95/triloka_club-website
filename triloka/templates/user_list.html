@@ -3,39 +3,53 @@
 {% block content %}
 <div class="container mt-4">
     <h2 class="text-center">Registered Users</h2>
-    <table class="table table-bordered table-striped mt-3">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Fees</th>
-                <th>Points</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ user.user.id }}</td>
-                <td>{{ user.user.username }}</td>
-                <td>{{ user.user.email }}</td>
-                <td>
-                    <a href="{% url 'user_fees' user.user.id %}" class="btn btn-info">Manage Fees</a>
-                </td>
-                <td>
-                    <a href="{% url 'user_points' user.user.id %}" class="btn btn-warning">Manage Points</a>
-                </td>
-                <td>
-                    <a href="#" class="btn btn-secondary">Edit</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6" class="text-center">No users found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">  <!-- Add this wrapper -->
+        <table class="table table-bordered table-striped mt-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Fees</th>
+                    <th>Points</th>
+                    <th>Blood Donation Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.user.id }}</td>
+                    <td>{{ user.user.username }}</td>
+                    <td>{{ user.user.email }}</td>
+                    <td>
+                        <a href="{% url 'user_fees' user.user.id %}" class="btn btn-info">Manage Fees</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'user_points' user.user.id %}" class="btn btn-warning">Manage Points</a>
+                    </td>
+                    <td class="text-center">
+                        {% if user.willing_to_donate_blood is True %}
+                               ✅ 
+                        {% elif user.willing_to_donate_blood is False %}
+                               ❌ 
+                        {% else %}
+                            <!-- Leave blank -->
+                        {% endif %}
+                    </td>
+                    
+                    <td>
+                        <a href="#" class="btn btn-secondary">Edit</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No users found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
+
 {% endblock %}

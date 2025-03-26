@@ -1,4 +1,5 @@
 from django.http import HttpResponse, JsonResponse
+import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -68,7 +69,7 @@ def admin_dashboard(request):
 @login_required
 def user_home(request):
     user_profile = get_object_or_404(UserProfile, user=request.user)  # Get the user's profile
-
+    show_donation_popup = user_profile.willing_to_donate_blood is None
     # Fetch fee details (grouping by month)
     user_fees = UserFee.objects.filter(user=request.user).order_by('year', 'month')
     months = [fee.month for fee in user_fees]
@@ -80,7 +81,8 @@ def user_home(request):
     return render(request, 'user_home.html', {
         'user_profile': user_profile,  # User's profile info
         'months': months,  # Fee months
-        'points': points  # Dynamic points data
+        'points': points,  # Dynamic points data
+        'show_donation_popup': show_donation_popup
     })
 
 def register_user(request):
@@ -99,9 +101,11 @@ def register_user(request):
         idproof = request.POST.get("idproof")
         gaurdian_name = request.POST.get("gaurdian_name")
         relation = request.POST.get("relation")
+
         # Check if username already exists
         if User.objects.filter(username=username).exists():
-            return render(request, "register.html", {"error": "Username already taken"})
+            messages.error(request, "Username already taken")
+            return render(request, "register.html")
 
         # Calculate age from DOB
         birth_date = datetime.strptime(dob, "%Y-%m-%d").date()
@@ -126,10 +130,10 @@ def register_user(request):
             relation=relation,
         )
 
-        return redirect("login")
+        messages.success(request, "Registered successfully!")
+        return render(request, "register.html")  # Stay on the same page
 
     return render(request, "register.html")
-
 def upload_gallery_image(request):
     
     if request.method == "POST":
@@ -296,3 +300,17 @@ def user_points(request, user_id):
         return redirect("user_points", user_id=user.id)
 
     return render(request, "user_points.html", {"user": user, "points": points})
+
+@login_required
+def update_donation_status(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        willing_to_donate_blood = data.get("willing_to_donate_blood")
+
+        user_profile = get_object_or_404(UserProfile, user=request.user)
+        user_profile.willing_to_donate_blood = willing_to_donate_blood
+        user_profile.save()
+
+        return JsonResponse({"message": "Donation preference updated successfully"})
+    
+    return JsonResponse({"error": "Invalid request"}, status=400)
