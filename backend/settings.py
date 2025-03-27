@@ -94,10 +94,15 @@ WSGI_APPLICATION = 'backend.wsgi.application'  # Replace with your project name
 
 # Cloudinary Config
 # Cloudinary Config
+CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_CLOUD_NAME", "dr9p29qpa")
+CLOUDINARY_API_KEY = os.environ.get("CLOUDINARY_API_KEY", "394194926515819")
+CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", "W2jr5fmd7PV1Qwp-8jK7dzHuAKY")
+
+# Configure Cloudinary
 cloudinary.config(
-    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.getenv("CLOUDINARY_API_KEY"),
-    api_secret=os.getenv("CLOUDINARY_API_SECRET")
+    cloud_name=CLOUDINARY_CLOUD_NAME,
+    api_key=CLOUDINARY_API_KEY,
+    api_secret=CLOUDINARY_API_SECRET
 )
 
 
@@ -105,9 +110,9 @@ cloudinary.config(
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+    'CLOUD_NAME': CLOUDINARY_CLOUD_NAME,
+    'API_KEY': CLOUDINARY_API_KEY,
+    'API_SECRET': CLOUDINARY_API_SECRET,
 }
 
 env = environ.Env()
