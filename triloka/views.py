@@ -152,26 +152,30 @@ def register_user(request):
         gaurdian_name = request.POST.get("gaurdian_name")
         relation = request.POST.get("relation")
 
-        # Check if username already exists
+        # Debugging print statements
+        print(f"Username: {username}, Email: {email}, DOB: {dob}, Phone: {phone_number}")
+        
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username already taken")
             return render(request, "register.html")
 
         try:
-            # Convert DOB to date object
             birth_date = datetime.strptime(dob, "%Y-%m-%d").date()
             today = datetime.today().date()
             age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
 
-            # Create user and profile
             user = User.objects.create_user(username=username, email=email, password=password)
-            UserProfile.objects.create(
+            
+            # Debugging print statement before saving UserProfile
+            print(f"Creating UserProfile for: {username}")
+
+            profile = UserProfile.objects.create(
                 user=user,
                 name=name,
                 phone_number=phone_number,
                 address=address,
                 gender=gender,
-                dob=birth_date,  # Fix: use date object
+                dob=dob,
                 age=age,
                 photo=photo,
                 blood_group=blood_group,
@@ -181,11 +185,18 @@ def register_user(request):
                 relation=relation,
             )
 
+            print("UserProfile created successfully!", profile)
+
             messages.success(request, "Registered successfully!")
+            return render(request, "register.html")
+
         except Exception as e:
+            print("Error creating user profile:", e)  # Debugging
             messages.error(request, f"Error: {e}")
+            return render(request, "register.html")
 
     return render(request, "register.html")
+
 
 def upload_gallery_image(request):
     
