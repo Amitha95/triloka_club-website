@@ -16,7 +16,6 @@ from urllib.parse import urlparse
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-import dj_database_url
 
 from dotenv import load_dotenv
 
@@ -112,21 +111,20 @@ CLOUDINARY_STORAGE = {
 }
 
 
-import dj_database_url
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neondb',
-        'USER': 'neondb_owner',
-        'PASSWORD': 'npg_lvwSxno80fYO',
-        'HOST': 'ep-hidden-smoke-a1rasv37-pooler.ap-southeast-1.aws.neon.tech',
-        'PORT': '5432',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
         'OPTIONS': {
-            'sslmode': 'require',
+            'sslmode': os.getenv('DB_SSLMODE', 'require'),  # Enforce SSL connection
         },
     }
 }
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
