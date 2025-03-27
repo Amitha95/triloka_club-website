@@ -16,6 +16,11 @@ from urllib.parse import urlparse
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+import dj_database_url
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -93,43 +98,40 @@ WSGI_APPLICATION = 'backend.wsgi.application'  # Replace with your project name
 # Cloudinary Config
 # Cloudinary Config
 cloudinary.config(
-    cloud_name="dr9p29qpa",
-    api_key="394194926515819",
-    api_secret="W2jr5fmd7PV1Qwp-8jK7dzHuAKY"
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET")
 )
+
 
 # Cloudinary Storage Configuration for handling media files
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dr9p29qpa',
-    'API_KEY': '394194926515819',
-    'API_SECRET': 'W2jr5fmd7PV1Qwp-8jK7dzHuAKY',
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
 }
 
+DATABASE_URL = os.getenv('DATABASE_URL')
 
-# Database Configuration for SQLite
-DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///db.sqlite3')
+# Default to SQLite if DATABASE_URL is not set
+import dj_database_url
 
-# Database settings for SQLite
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',  # Use sqlite3 for SQLite database
-        'NAME': BASE_DIR / 'db.sqlite3',  # Database file location
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'neondb',
+        'USER': 'neondb_owner',
+        'PASSWORD': 'npg_lvwSxno80fYO',
+        'HOST': 'ep-hidden-smoke-a1rasv37-pooler.ap-southeast-1.aws.neon.tech',
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
 }
 
-# If you're using another database like PostgreSQL, use this logic:
-if DATABASE_URL.startswith('postgres://'):
-    url = urlparse(DATABASE_URL)
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': url.path[1:],  # Extract database name
-        'USER': url.username,
-        'PASSWORD': url.password,
-        'HOST': url.hostname,
-        'PORT': url.port,
-    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
