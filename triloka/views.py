@@ -302,35 +302,54 @@ def user_fees(request, user_id):
         if month and year and amount:
             UserFee.objects.create(user=user, month=month, year=year, amount=amount)
         
-        return redirect('user_fees', user_id=user.id)  # Redirect to refresh page
+        return redirect('user_fees', user_id=user.id)  # Refresh page
 
-    # Calculate total fees paid
-    total_fees = UserFee.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0
-    total_fees_x10 = total_fees * 10  # Multiply by 10 if needed
-
-    # Calculate the current month and year
-    current_month = datetime.now().month
+    # Get the current month and year
+    current_month = datetime.now().month  # Numeric (1 = Jan, 2 = Feb, etc.)
     current_year = datetime.now().year
 
-    # Get all the fees paid by the user
-    user_fees = UserFee.objects.filter(user=user).order_by('year', 'month')
+    # Get all fees paid by the user
+    user_fees = UserFee.objects.filter(user=user)
 
-    # Find the last paid month
-    last_paid_fee = user_fees.last()
+    # Total Fees Paid (sum of all payments)
+    total_fees_paid = user_fees.aggregate(total=Sum('amount'))['total'] or 0
 
-    # Calculate the total paid till the current month (and mark months up to the current month as paid)
-    paid_months = user_fees.filter(year__lt=current_year) | user_fees.filter(year=current_year, month__lte=current_month)
+    # Expected fees till now = ₹10 × (Months between Jan 2025 and current month)
+    if current_year > 2025:
+        expected_months = (current_year - 2025) * 12 + current_month
+    else:
+        expected_months = current_month  # Only count months from Jan 2025
+    
+    expected_fees_till_now = expected_months * 10  # ₹10 per month
 
-    # Calculate pending fees
-    paid_months_sum = paid_months.aggregate(total=Sum('amount'))['total'] or 0
-    pending_fees = total_fees - paid_months_sum
+    # Pending Fees = Expected Fees - Total Fees Paid
+    pending_fees = expected_fees_till_now - total_fees_paid
+
+    # Generate fee list with statuses
+    fee_list = []
+    for year in range(2025, current_year + 1):  # Loop over years from 2025 to current
+        for month_idx in range(12):  # Loop over all months
+            month_name = months[month_idx]
+            if year == current_year and month_idx + 1 > current_month:
+                break  # Stop at the current month
+
+            paid_amount = user_fees.filter(month=month_name, year=year).aggregate(Sum('amount'))['amount__sum'] or 0
+            status = "Paid" if paid_amount >= 10 else "Pending"
+
+            fee_list.append({
+                "month": month_name,
+                "year": year,
+                "amount": "₹10.00",
+                "status": status,
+            })
 
     return render(request, 'user_fees.html', {
         'user': user,
         'months': months,
-        'total_fees_x10': total_fees_x10,
-        'paid_months': paid_months,
-        'pending_fees': pending_fees,
+        'total_fees_paid': total_fees_paid,
+        'expected_fees_till_now': expected_fees_till_now,
+        'pending_fees': pending_fees,  # Shows negative if advance payments exist
+        'fee_list': fee_list,  # Pass fee details to template
     })
 
 @login_required
