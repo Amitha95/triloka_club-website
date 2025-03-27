@@ -40,8 +40,6 @@ ALLOWED_HOSTS = [
     'trilokaclub-website-production.up.railway.app'
 ]
 
-
-
 # Application definition
 INSTALLED_APPS = [
     # Default Django apps
@@ -114,26 +112,21 @@ CLOUDINARY_STORAGE = {
 }
 
 
-DATABASE_URL = os.getenv('DATABASE_URL')
+import dj_database_url
 
-if DATABASE_URL:
-    DATABASES = {
-        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'neondb',
+        'USER': 'neondb_owner',
+        'PASSWORD': 'npg_lvwSxno80fYO',
+        'HOST': 'ep-hidden-smoke-a1rasv37-pooler.ap-southeast-1.aws.neon.tech',
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'neondb',
-            'USER': 'neondb_owner',
-            'PASSWORD': 'npg_lvwSxno80fYO',
-            'HOST': 'ep-hidden-smoke-a1rasv37-pooler.ap-southeast-1.aws.neon.tech',
-            'PORT': '5432',
-            'OPTIONS': {
-                'sslmode': 'require',
-            },
-        }
-    }
+}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
