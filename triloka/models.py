@@ -64,13 +64,14 @@ class UserPoint(models.Model):
 class Gallery(models.Model):
     title = models.CharField(max_length=255)
     image = cloudinary.models.CloudinaryField('image')
-    date = models.DateField(null=True, blank=True)  # Allow NULL values temporarily
+    date = models.DateField(null=True, blank=True)
+    subcategory = models.CharField(max_length=255, blank=True, null=True)  # Free-text input for subcategories
 
     def __str__(self):
-        return f"{self.title} - {self.date.strftime('%Y-%m-%d') if self.date else 'No Date'}"
-    
+        return f"{self.title} - {self.subcategory if self.subcategory else 'No Subcategory'} - {self.date.strftime('%Y-%m-%d') if self.date else 'No Date'}"
+
     class Meta:
-        ordering = ['date'] 
+        ordering = ['date']
 
 class Event(models.Model):
     title = models.CharField(max_length=255)

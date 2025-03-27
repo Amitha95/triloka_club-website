@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from . import views
 from .views import login_view, logout_view, dashboard_view, gallery_page, gallery_all,register_user,upload_gallery_image,gallery_list,upload_event, event_list
 from .views import user_list,user_fees,user_points,user_fee_details,user_home, update_donation_status,point_redemption_rules, redeem_points,admin_home
-from .views import blood_group_list,donor_list, user_profile_view
+from .views import blood_group_list,donor_list, user_profile_view,gallery_subcategories
 
 # Check if user is admin or staff
 def is_admin(user):
@@ -26,7 +26,9 @@ urlpatterns = [
     path("about/", views.about, name="about"),
     path("events/", views.events_view, name="events"),
     path("gallery/", views.gallery_years, name="gallery_years"),  # Show date ranges
-    path('gallery/', gallery_page, name='gallery_page'),
+    path('gallery/<str:title>/', views.gallery_subcategories, name='gallery_subcategories'),
+    path('gallery/<str:title>/<str:subcategory>/', views.gallery_pages, name='gallery_pages'),
+    path('gallery/<str:title>/<str:subcategory>/<int:year>/', views.gallery_images, name='gallery_images'),
     path('api/gallery/', gallery_all, name='gallery_all'),
     path("gallery/<int:year_start>-<int:year_end>/", views.gallery_view, name="gallery"),
     path("contact/", views.contact, name="contact"),
@@ -51,8 +53,6 @@ urlpatterns = [
     path('blood-groups/', blood_group_list, name='blood_group_list'),
     path('donors/', donor_list, name='donor_list'),
     path('edit_user/<int:user_id>/', views.edit_user, name='edit_user'),
-    path('gallery/<str:title>/', views.gallery_pages, name='gallery_pages'),
-    path('gallery/<str:title>/year/<int:year>/', views.gallery_images, name='gallery_images'),
     path('profile/', user_profile_view, name='user_profile'),
     # Django Admin
     path("admin/", admin.site.urls),

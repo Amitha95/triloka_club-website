@@ -40,17 +40,17 @@ def home(request):
         })
 
     return render(request, 'home.html', {'categories': categories_with_images})
-def gallery_pages(request, title):
-    # Get the year ranges for the selected category
-    gallery_images = Gallery.objects.filter(title=title)
+def gallery_subcategories(request, title):
+    subcategories = Gallery.objects.filter(title=title).values('subcategory').distinct()
+    return render(request, 'gallery_subcategories.html', {'subcategories': subcategories, 'title': title})
+
+def gallery_pages(request, title, subcategory):
+    gallery_images = Gallery.objects.filter(title=title, subcategory=subcategory)
     year_ranges = gallery_images.values('date__year').distinct().order_by('date__year')
-    return render(request, 'gallery_pages.html', {'year_ranges': year_ranges, 'title': title})
-
-def gallery_images(request, title, year):
-    # Fetch all images of a specific year range for the selected category
-    gallery_images = Gallery.objects.filter(title=title, date__year=year)
-    return render(request, 'gallery_images.html', {'gallery_images': gallery_images, 'year': year, 'title': title})
-
+    return render(request, 'gallery_pages.html', {'year_ranges': year_ranges, 'title': title, 'subcategory': subcategory})
+def gallery_images(request, title, subcategory, year):
+    gallery_images = Gallery.objects.filter(title=title, subcategory=subcategory, date__year=year)
+    return render(request, 'gallery_images.html', {'gallery_images': gallery_images, 'year': year, 'title': title, 'subcategory': subcategory})
 def about(request):
     return render(request, 'about.html')
 
@@ -204,10 +204,11 @@ def upload_gallery_image(request):
     
     if request.method == "POST":
         title = request.POST.get("title")
+        subcategory = request.POST.get("subcategory")
         image = request.FILES.get("image")
         date=request.POST.get("date")
         if title and image:
-            Gallery.objects.create(title=title, image=image, date=date)
+            Gallery.objects.create(title=title,subcategory=subcategory, image=image, date=date)
             return redirect("gallery_list")  # Redirect to gallery page after upload
 
     return render(request, "galleryupload.html")

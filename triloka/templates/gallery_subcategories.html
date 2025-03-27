@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="page-section" id="year-range">
+    <div class="container px-4 px-lg-5">
+        <h2 class="text-center mt-0">{{ title }} Gallery</h2>
+        <hr class="divider" />
+        
+        <div class="row">
+            {% for subcategory in subcategories %}
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ subcategory.subcategory }}</h5>
+                        <a href="{% url 'gallery_pages' title subcategory.subcategory %}" class="btn btn-primary">View Images</a>
+
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center">No subcategories available.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

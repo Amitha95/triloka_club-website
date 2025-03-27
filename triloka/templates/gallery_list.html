@@ -17,7 +17,7 @@
 <div class="gallery-grid">
 {% for image in images %}
     <div>
-        <p>{{ image.title }} - {{ image.date }}</p>
+        <p>{{ image.title }} ({{image.subcategory}})- {{ image.date }}</p>
         <img src="{{ image.image.url }}" alt="{{ image.title }}">
     </div>
 {% empty %}

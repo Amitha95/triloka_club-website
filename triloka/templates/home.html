@@ -50,7 +50,9 @@
                             {% endif %}
                             <div class="card-body">
                                 <h5 class="card-title">{{ category.title }}</h5>
-                                <a href="{% url 'gallery_pages' category.title %}" class="btn btn-primary">View Photos</a>
+                                <a href="{% url 'gallery_subcategories' category.title %}" class="btn btn-primary">View Photos</a>
+
+                                
                             </div>
                         </div>
                     </div>

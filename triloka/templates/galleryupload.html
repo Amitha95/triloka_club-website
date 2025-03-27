@@ -43,6 +43,9 @@
             {% csrf_token %}
             <label for="title">Image Title:</label>
             <input type="text" id="title" name="title" required>
+
+            <label for="title">Image Subcategory:</label>
+            <input type="text" id="subcategory" name="subcategory" required>
         
             <label for="image">Upload Image:</label>
             <input type="file" id="image" name="image" accept="image/*" required>
