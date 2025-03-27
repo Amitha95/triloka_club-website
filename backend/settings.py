@@ -16,7 +16,7 @@ from urllib.parse import urlparse
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-
+import environ
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -110,21 +110,13 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
 }
 
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-        'OPTIONS': {
-            'sslmode': os.getenv('DB_SSLMODE', 'require'),  # Enforce SSL connection
-        },
-    }
+    "default": env.db("DATABASE_URL", default="postgresql:///neondb")
 }
-
+DATABASES["default"]["OPTIONS"] = {"sslmode": "require"}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
