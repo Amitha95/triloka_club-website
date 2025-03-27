@@ -27,33 +27,31 @@
     <body id="page-top">
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav" style="background-color: #000000;">
-            <div class="container px-4 px-lg-5">
-                <img class="img-fluid" src="{% static 'assets/img/trilokalogo-removebg-preview.png' %}" alt="Company Logo" width="100px" height="100px" style="opacity: 1.0;"/>
-                
-            
-                <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav ms-auto my-2 my-lg-0">
-                        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-                        <!--<li class="nav-item"><a class="nav-link" href="#gallery">Gallery</a></li>-->
-                        <li class="nav-item"><a class="nav-link" href="{% url 'events' %}">Events</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'donor_list' %}">Donor List</a></li>
-                        
-                        <!--<li class="nav-item"><a class="nav-link" href="#portfolio">Portfolio</a></li>-->
-                        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-                        
-                    </ul>
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'logout' %}" class="btn btn-danger" style=" margin-left: 20px;">Logout</a>
-                    {% else %}
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal" style="margin: 10px;">
-                        Login
-                    </button>
-                    {% endif %}
-                </div>
-            </div>
-        </nav>
+    <div class="container px-4 px-lg-5">
+        <img class="img-fluid" src="{% static 'assets/img/trilokalogo-removebg-preview.png' %}" alt="Company Logo" width="100px" height="100px" style="opacity: 1.0;"/>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'events' %}">Events</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'donor_list' %}">Donor List</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+            </ul>
+            {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}" class="btn btn-danger" style="margin-left: 20px;">Logout</a>
+            {% else %}
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal" style="margin: 10px;">
+                Login
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
 
         {% block content %}
         {% endblock %}

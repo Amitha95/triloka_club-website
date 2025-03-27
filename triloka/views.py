@@ -553,7 +553,7 @@ def edit_user(request, user_id):
             user.willing_to_donate_blood = False
         else:
     # Leave the field unchanged if None or not provided
-            pass
+            user.willing_to_donate_blood = None
 
         user.save()
         return redirect('user_list')  # Redirect to the user list page after saving

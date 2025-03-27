@@ -3877,7 +3877,7 @@ textarea.form-control-lg {
     overflow: visible;
   }
   .navbar-expand-sm .navbar-collapse {
-    display: flex !important;
+   
     flex-basis: auto;
   }
   .navbar-expand-sm .navbar-toggler {
@@ -11087,4 +11087,21 @@ header.masthead h1, header.masthead .h1 {
   background-color: #d64545;
   transform: scale(1.1);
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+#sidebarToggleTop {
+  height: 2.5rem;
+  width: 2.5rem;
+}
+
+.topbar #sidebarToggleTop:hover {
+  background-color: #eaecf4;
+}
+
+.topbar #sidebarToggleTop:active {
+  background-color: #dddfeb;
+}
+
+.navbar-toggler {
+  z-index: 1050; /* Ensures it appears above other elements */
 }
