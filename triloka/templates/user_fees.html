@@ -6,12 +6,12 @@
 
     <!-- Display total fees paid -->
     <div class="alert alert-info text-center">
-        <strong>Total Fees Paid: ₹{{ total_fees_paid }}</strong>
+        <strong>Total Fees Paid: {{ total_fees_paid }}</strong>
     </div>
 
     <!-- Display Pending Fees -->
     <div class="alert alert-warning text-center">
-        <strong>Pending Fees: ₹{{ pending_fees }}</strong>
+        <strong>Pending Fees: {{ pending_fees }}</strong>
     </div>
 
     <!-- Display Fee History -->
@@ -25,19 +25,14 @@
             </tr>
         </thead>
         <tbody>
-            {% for fee in fee_list %}
-                <tr>
-                    <td>{{ fee.month }}</td>
-                    <td>{{ fee.year }}</td>
-                    <td>{{ fee.amount }}</td>
-                    <td>
-                        {% if fee.status == "Paid" %}
-                            <span class="badge badge-success">Paid</span>
-                        {% else %}
-                            <span class="badge badge-danger">Pending</span>
-                        {% endif %}
-                    </td>
-                </tr>
+            {% for fee in fee_table %}
+        <tr>
+            <td>{{ fee.month }}</td>
+            <td>{{ fee.year }}</td>
+            <td>{{ fee.amount }}</td>
+            <td>{{ fee.status }}</td>
+        </tr>
+       
             {% empty %}
                 <tr>
                     <td colspan="4" class="text-center">No fees recorded.</td>
@@ -52,7 +47,7 @@
         <div class="mb-3">
             <label class="form-label">Month</label>
             <select name="month" class="form-control">
-                {% for month in months %}
+                {% for month in month %}
                     <option value="{{ month }}">{{ month }}</option>
                 {% endfor %}
             </select>

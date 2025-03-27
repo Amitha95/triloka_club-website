@@ -18,6 +18,7 @@ import urllib
 import base64
 from django.utils import timezone
 from django.db.models import Count
+from decimal import Decimal 
 
 def base(request):
     return render(request, 'base.html')
@@ -288,106 +289,101 @@ def user_list(request):
 
 @login_required
 def user_fees(request, user_id):
-    months = ["January", "February", "March", "April", "May", "June", 
+    months = ["January", "February", "March", "April", "May", "June",
               "July", "August", "September", "October", "November", "December"]
-    
-    user = get_object_or_404(User, id=user_id)  # Fetch user by ID
-    
-    # Handle form submission
+
+    user = get_object_or_404(User, id=user_id)
+    current_year = datetime.now().year
+
     if request.method == "POST":
         month = request.POST.get("month")
         year = request.POST.get("year")
         amount = request.POST.get("amount")
 
         if month and year and amount:
-            UserFee.objects.create(user=user, month=month, year=year, amount=amount)
-        
-        return redirect('user_fees', user_id=user.id)  # Refresh page
+            UserFee.objects.create(user=user, month=month, year=year, amount=Decimal(amount))
+            return redirect("user_fees", user_id=user.id)  # Redirect to refresh the page
 
-    # Get the current month and year
-    current_month = datetime.now().month  # Numeric (1 = Jan, 2 = Feb, etc.)
-    current_year = datetime.now().year
+    # Fetch all fees paid by the user
+    paid_fees = UserFee.objects.filter(user=user, year=current_year).values_list('month', 'amount')
+    paid_fees_dict = {fee[0]: fee[1] for fee in paid_fees}
+    total_fees_paid = sum(paid_fees_dict.values())
 
-    # Get all fees paid by the user
-    user_fees = UserFee.objects.filter(user=user)
+    current_month = datetime.now().month
+    fee_per_month = Decimal("10.00")
+    expected_payment = sum(fee_per_month for i in range(1, current_month + 1))
 
-    # Total Fees Paid (sum of all payments)
-    total_fees_paid = user_fees.aggregate(total=Sum('amount'))['total'] or 0
+    # Build fee table
+    fee_table = []
+    for i, month in enumerate(months, start=1):
+        amount = paid_fees_dict.get(month, 0)
+        status = "✅ Paid" if amount > 0 else "❌ Pending"
 
-    # Expected fees till now = ₹10 × (Months between Jan 2025 and current month)
-    if current_year > 2025:
-        expected_months = (current_year - 2025) * 12 + current_month
-    else:
-        expected_months = current_month  # Only count months from Jan 2025
-    
-    expected_fees_till_now = expected_months * 10  # ₹10 per month
+        fee_table.append({
+            "month": month,
+            "year": current_year,
+            "amount": f"₹{amount:.2f}",
+            "status": status
+        })
 
-    # Pending Fees = Expected Fees - Total Fees Paid
-    pending_fees = expected_fees_till_now - total_fees_paid
-
-    # Generate fee list with statuses
-    fee_list = []
-    for year in range(2025, current_year + 1):  # Loop over years from 2025 to current
-        for month_idx in range(12):  # Loop over all months
-            month_name = months[month_idx]
-            if year == current_year and month_idx + 1 > current_month:
-                break  # Stop at the current month
-
-            paid_amount = user_fees.filter(month=month_name, year=year).aggregate(Sum('amount'))['amount__sum'] or 0
-            status = "Paid" if paid_amount >= 10 else "Pending"
-
-            fee_list.append({
-                "month": month_name,
-                "year": year,
-                "amount": "₹10.00",
-                "status": status,
-            })
+    pending_fees = expected_payment - total_fees_paid
 
     return render(request, 'user_fees.html', {
-        'user': user,
-        'months': months,
-        'total_fees_paid': total_fees_paid,
-        'expected_fees_till_now': expected_fees_till_now,
-        'pending_fees': pending_fees,  # Shows negative if advance payments exist
-        'fee_list': fee_list,  # Pass fee details to template
+        "user": user,
+        "months": months,  # ✅ Pass months to template
+        "fee_table": fee_table,
+        "total_fees_paid": f"₹{total_fees_paid:.2f}",
+        "pending_fees": f"₹{pending_fees:.2f}",
     })
 
 @login_required
-def user_fee_details(request):
-    user = request.user  # Get the logged-in user
 
-    months = ["January", "February", "March", "April", "May", "June", 
+def user_fee_details(request):
+    months = ["January", "February", "March", "April", "May", "June",
               "July", "August", "September", "October", "November", "December"]
 
+    user = request.user  # Get the logged-in user
     current_year = datetime.now().year
-    current_month_index = datetime.now().month - 1  # 0-based index
 
-    # Fetch months where the user has paid fees in the current year
-    paid_months = set(UserFee.objects.filter(user=user, year=current_year).values_list('month', flat=True))
+    if request.method == "POST":
+        month = request.POST.get("month")
+        year = request.POST.get("year")
+        amount = request.POST.get("amount")
 
-    fee_status = []
-    pending_fees = 0
+        if month and year and amount:
+            UserFee.objects.create(user=user, month=month, year=year, amount=Decimal(amount))
+            return redirect("user_fees")  # Redirect to refresh the page
 
-    for i, month in enumerate(months):
-        if i < current_month_index:  # Past months (should be marked as paid or pending)
-            if month in paid_months:
-                fee_status.append((month, "✔"))  # Green check for paid
-            else:
-                fee_status.append((month, "❌"))  # Red cross for missed payments
-                pending_fees += 10  # Add ₹10 only for missed months (❌)
-        elif i == current_month_index:  # Current month (optional logic)
-            fee_status.append((month, "Pending"))  # Mark as pending
-        else:  # Future months
-            fee_status.append((month, "-"))  # Display hyphen for upcoming months
+    # Fetch all fees paid by the user for the current year
+    paid_fees = UserFee.objects.filter(user=user, year=current_year).values_list('month', 'amount')
+    paid_fees_dict = {fee[0]: fee[1] for fee in paid_fees}
+    total_fees_paid = sum(paid_fees_dict.values())
 
-    # Calculate total fees paid
-    total_fees_paid = UserFee.objects.filter(user=user, year=current_year).aggregate(total=Sum('amount'))['total'] or 0
+    current_month = datetime.now().month
+    fee_per_month = Decimal("10.00")
+    expected_payment = sum(fee_per_month for i in range(1, current_month + 1))
+
+    # Build fee table to show to the user
+    fee_table = []
+    for i, month in enumerate(months, start=1):
+        amount = paid_fees_dict.get(month, 0)
+        status = "✅ Paid" if amount > 0 else "❌ Pending"
+
+        fee_table.append({
+            "month": month,
+            "year": current_year,
+            "amount": f"₹{amount:.2f}",
+            "status": status
+        })
+
+    pending_fees = expected_payment - total_fees_paid
 
     return render(request, 'user_fee_details.html', {
-        'fee_status': fee_status,
-        'total_fees_paid': total_fees_paid,
-        'pending_fees': pending_fees,  # Only sum of ❌ months
-        'year': current_year
+        "user": user,
+        "months": months,  # Pass months to template
+        "fee_table": fee_table,
+        "total_fees_paid": f"₹{total_fees_paid:.2f}",
+        "pending_fees": f"₹{pending_fees:.2f}",
     })
 
 from decimal import Decimal

@@ -1,38 +1,36 @@
 {% extends 'dashboard.html' %}
 
 {% block content %}
-
 <div class="container mt-4">
     <h2 class="text-center">My Fee Details - {{ year }}</h2>
     <table class="table table-bordered text-center">
-        <thead>
-            <tr>
-                <th>Month</th>
-                <th>Fees Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for month, status in fee_status %}
-            <tr>
-                <td>{{ month }}</td>
-                <td>
-                    {% if status == "✔" %}
-                        <span style="color: green; font-weight: bold;">✔</span>
-                    {% elif status == "❌" %}
-                        <span style="color: red; font-weight: bold;">❌</span>
-                    {% elif status == "Pending" %}
-                        <span style="color: orange; font-weight: bold;">Pending</span>
-                    {% else %}
-                        <span style="color: gray; font-weight: bold;">-</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+       
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Year</th>
+                    <th>Amount (₹)</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fee in fee_table %}
+                    <tr>
+                        <td>{{ fee.month }}</td>
+                        <td>{{ fee.year }}</td>
+                        <td>{{ fee.amount }}</td>
+                        <td>{{ fee.status }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">No fees recorded for this year.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     <br>
-    <h3>Total Paid: ₹{{ total_fees_paid }}</h3>
-    <h3>Pending: ₹{{ pending_fees }}</h3>
+    <h3>Total Paid: {{ total_fees_paid }}</h3>
+    <h3>Pending: {{ pending_fees }}</h3>
 </div>
-
 {% endblock %}
