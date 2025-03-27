@@ -157,31 +157,33 @@ def register_user(request):
             messages.error(request, "Username already taken")
             return render(request, "register.html")
 
-        # Calculate age from DOB
-        birth_date = datetime.strptime(dob, "%Y-%m-%d").date()
-        today = datetime.today().date()
-        age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+        try:
+            # Convert DOB to date object
+            birth_date = datetime.strptime(dob, "%Y-%m-%d").date()
+            today = datetime.today().date()
+            age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
 
-        # Create user and profile
-        user = User.objects.create_user(username=username, email=email, password=password)
-        UserProfile.objects.create(
-            user=user,
-            name=name,
-            phone_number=phone_number,
-            address=address,
-            gender=gender,
-            dob=dob,
-            age=age,
-            photo=photo,
-            blood_group=blood_group,
-            registration_number=registration_number,
-            idproof=idproof,
-            gaurdian_name=gaurdian_name,
-            relation=relation,
-        )
+            # Create user and profile
+            user = User.objects.create_user(username=username, email=email, password=password)
+            UserProfile.objects.create(
+                user=user,
+                name=name,
+                phone_number=phone_number,
+                address=address,
+                gender=gender,
+                dob=birth_date,  # Fix: use date object
+                age=age,
+                photo=photo,
+                blood_group=blood_group,
+                registration_number=registration_number,
+                idproof=idproof,
+                gaurdian_name=gaurdian_name,
+                relation=relation,
+            )
 
-        messages.success(request, "Registered successfully!")
-        return render(request, "register.html")  # Stay on the same page
+            messages.success(request, "Registered successfully!")
+        except Exception as e:
+            messages.error(request, f"Error: {e}")
 
     return render(request, "register.html")
 
