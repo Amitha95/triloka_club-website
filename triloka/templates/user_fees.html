@@ -31,12 +31,15 @@
                     <td>{{ fee.year }}</td>
                     <td>₹{{ fee.amount }}</td>
                     <td>
-                        {% if fee.year < current_year or (fee.year == current_year and fee.month <= current_month) %}
+                        {% if fee.year < current_year %}
+                            <span class="badge badge-success">Paid</span>
+                        {% elif fee.year == current_year and fee.month <= current_month %}
                             <span class="badge badge-success">Paid</span>
                         {% else %}
                             <span class="badge badge-danger">Pending</span>
                         {% endif %}
                     </td>
+                    
                 </tr>
             {% empty %}
             <tr>
