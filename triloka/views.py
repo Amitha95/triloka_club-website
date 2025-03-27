@@ -19,6 +19,7 @@ import base64
 from django.utils import timezone
 from django.db.models import Count
 from decimal import Decimal 
+from django.core.paginator import Paginator
 
 def base(request):
     return render(request, 'base.html')
@@ -284,7 +285,12 @@ def user_list(request):
     for user in users:
         user.age = (date.today() - user.dob).days // 365  # Calculate age in years
 
-    return render(request, "user_list.html", {"users": users})
+    # Set up pagination
+    paginator = Paginator(users, 7)  # Show 10 users per page
+    page_number = request.GET.get('page')  # Get the current page from the URL
+    page_obj = paginator.get_page(page_number)  # Get the page object for the current page
+
+    return render(request, "user_list.html", {"page_obj": page_obj})
 
 
 @login_required

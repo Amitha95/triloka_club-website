@@ -3,51 +3,35 @@
 {% block content %}
 <div class="container mt-4">
     <h2 class="text-center">Registered Users</h2>
-    <div class="table-responsive">  <!-- Add this wrapper -->
+    <div class="table-responsive">
         <table class="table table-bordered table-striped mt-3">
             <thead class="table-dark">
                 <tr>
                     <th>Registration number</th>
                     <th>Full Name</th>
+                    <th>Photo</th>
                     <th>Username</th>
-                    <th>Email</th>
                     <th>Phone Number</th>
-                    <th>Fees</th>
-                    <th>Points</th>
+                    <th>Email</th>
                     <th>DOB</th>
-                    <th>Gaurdian Name</th>
+                    <th>Blood Group</th>
+                    <th>Blood Donation Status</th>
+                    <th>Guardian Name</th>
                     <th>Relation</th>
                     <th>ID Proof</th>
                     <th>Address</th>
                     <th>Gender</th>
                     <th>Age</th>
-                    <th>Photo</th>
-                    <th>Blood Group</th>
-                    <th>Blood Donation Status</th>
+                    <th>Fees</th>
+                    <th>Points</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                {% for user in users %}
-                <tr  class="{% if user.age < 18 %}highlight{% endif %}">
+                {% for user in page_obj %}
+                <tr class="{% if user.age < 18 %}highlight{% endif %}">
                     <td>{{ user.registration_number }}</td>
                     <td>{{ user.name }}</td>
-                    <td>{{ user.user.username }}</td>
-                    <td>{{ user.user.email }}</td>
-                    <td>{{ user.phone_number }}</td>
-                    <td>
-                        <a href="{% url 'user_fees' user.user.id %}" class="btn btn-info">Manage Fees</a>
-                    </td>
-                    <td>
-                        <a href="{% url 'user_points' user.user.id %}" class="btn btn-warning">Manage Points</a>
-                    </td>
-                    <td>{{ user.dob|date:"d M Y" }}</td>
-                    <td>{{ user.gaurdian_name }}</td>
-                    <td>{{ user.relation }}</td>
-                    <td>{{ user.idproof }}</td>
-                    <td>{{ user.address }}</td>
-                    <td>{{ user.gender }}</td>
-                    <td>{{ user.age }}</td>
                     <td>
                         {% if user.photo %}
                             <img src="{{ user.photo.url }}" width="50" height="50" alt="Profile Photo">
@@ -55,9 +39,13 @@
                             No Image
                         {% endif %}
                     </td>
+                    <td>{{ user.user.username }}</td>
+                    <td>{{ user.phone_number }}</td>
+                    <td>{{ user.user.email }}</td>
+                    <td>{{ user.dob|date:"d M Y" }}</td>
                     <td>{{ user.blood_group }}</td>
                     <td class="text-center">
-                        {% if user.willing_to_donate_blood is True %}
+                        {% if user.willing_to_donate_blood %}
                             ✅ 
                         {% elif user.willing_to_donate_blood is False %}
                             ❌ 
@@ -65,10 +53,21 @@
                             <!-- Leave blank -->
                         {% endif %}
                     </td>
+                    <td>{{ user.gaurdian_name }}</td>
+                    <td>{{ user.relation }}</td>
+                    <td>{{ user.idproof }}</td>
+                    <td>{{ user.address }}</td>
+                    <td>{{ user.gender }}</td>
+                    <td>{{ user.age }}</td>
+                    <td>
+                        <a href="{% url 'user_fees' user.user.id %}" class="btn btn-info">Manage Fees</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'user_points' user.user.id %}" class="btn btn-warning">Manage Points</a>
+                    </td>
                     <td>
                         <a href="{% url 'edit_user' user.user.id %}" class="btn btn-secondary">Edit</a>
                     </td>
-                    
                 </tr>
                 {% empty %}
                 <tr>
@@ -76,16 +75,31 @@
                 </tr>
                 {% endfor %}
             </tbody>
-            
         </table>
 
-        
+        <!-- Pagination Links -->
+        <div class="pagination justify-content-center">
+            <span class="page-link {% if not page_obj.has_previous %}disabled{% endif %}">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; First</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                {% endif %}
+            </span>
+
+            <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+            <span class="page-link {% if not page_obj.has_next %}disabled{% endif %}">
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
     </div>
 </div>
 <style>
     .highlight {
-        background-color: #dcd45f;;
+        background-color: #dcd45f;
     }
-    </style>
+</style>
 {% endblock %}
-

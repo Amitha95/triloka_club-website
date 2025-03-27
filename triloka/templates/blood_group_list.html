@@ -26,6 +26,7 @@
                     <th>Name</th>
                     <th>Phone Number</th>
                     <th>Blood Group</th>
+                    <th>Blood Donation Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,6 +35,16 @@
                         <td>{{ profile.name }}</td>
                         <td>{{profile.phone_number}}</td>
                         <td>{{ profile.blood_group }}</td>
+                        
+                        <td class="text-center">
+                            {% if profile.willing_to_donate_blood %}
+                                ✅ 
+                            {% elif profile.willing_to_donate_blood is False %}
+                                ❌ 
+                            {% else %}
+                                <!-- Leave blank -->
+                            {% endif %}
+                        </td>
                     </tr>
                 {% empty %}
                     <tr>
