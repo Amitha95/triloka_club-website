@@ -66,7 +66,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    # Add Maintenance Middleware
+    'triloka.maintenance_middleware.MaintenanceMiddleware',
 ]
+
+# Enable or Disable Maintenance Mode
+MAINTENANCE_MODE = True  # Change to False to disable maintenance mode
 
 if not DEBUG:  # Ensure media files work when DEBUG=False
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

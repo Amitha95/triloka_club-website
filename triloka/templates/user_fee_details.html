@@ -4,6 +4,7 @@
 
 <div class="container mt-4">
     <h2 class="text-center">My Fee Details - {% if fee_table %}{{ fee_table.0.year }}{% else %}N/A{% endif %}</h2>
+    <div class="table-responsive">
     <table class="table table-bordered text-center">
        
         <table class="table table-bordered mt-3">
@@ -30,6 +31,7 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
     <br>
     <h3>Total Paid: {{ total_fees_paid }}</h3>
     <h3>Pending: {{ pending_fees }}</h3>

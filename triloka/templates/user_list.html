@@ -25,6 +25,7 @@
                     <th>Fees</th>
                     <th>Points</th>
                     <th>Actions</th>
+                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
@@ -68,10 +69,38 @@
                     <td>
                         <a href="{% url 'edit_user' user.user.id %}" class="btn btn-secondary">Edit</a>
                     </td>
+                    <td>
+                        <button class="btn btn-danger" data-toggle="modal" data-target="#deleteModal{{ user.user.id }}">
+                            Delete
+                        </button>
+
+                        <!-- Delete Confirmation Modal -->
+                        <div class="modal fade" id="deleteModal{{ user.user.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Confirm Deletion</h5>
+                                        
+                                    </div>
+                                    <div class="modal-body">
+                                        Do you really want to delete <strong>{{ user.name }}</strong>?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form method="POST" action="{% url 'delete_user' user.user.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                        </form>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End of Modal -->
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="15" class="text-center">No users found.</td>
+                    <td colspan="18" class="text-center">No users found.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -97,6 +126,7 @@
         </div>
     </div>
 </div>
+
 <style>
     .highlight {
         background-color: #dcd45f;

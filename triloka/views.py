@@ -27,6 +27,9 @@ import requests
 from io import BytesIO
 from PIL import Image, ImageEnhance
 
+def maintenance(request):
+    return render(request, 'maintenance.html')
+
 def add_watermark_from_cloudinary(user):
     """
     Downloads user's photo from Cloudinary, applies a watermark, and re-uploads.
@@ -447,6 +450,17 @@ def user_list(request):
     page_obj = paginator.get_page(page_number)  # Get the page object for the current page
 
     return render(request, "user_list.html", {"page_obj": page_obj})
+
+@login_required
+def delete_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+
+    if request.method == "POST":
+        user.delete()
+        messages.success(request, "User deleted successfully.")
+        return redirect("user_list")
+
+    return redirect("user_list")
 
 
 @login_required
