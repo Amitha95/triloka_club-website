@@ -20,6 +20,222 @@ from django.utils import timezone
 from django.db.models import Count
 from decimal import Decimal 
 from django.core.paginator import Paginator
+from django.core.files.base import ContentFile
+
+import cloudinary.uploader
+import requests
+from io import BytesIO
+from PIL import Image, ImageEnhance
+
+def add_watermark_from_cloudinary(user):
+    """
+    Downloads user's photo from Cloudinary, applies a watermark, and re-uploads.
+    """
+    if not user.photo:  # Ensure user has a photo
+        return None
+
+    # Fetch image from Cloudinary
+    response = requests.get(user.photo.url)
+    if response.status_code != 200:
+        return None
+
+    # Load image into PIL
+    image = Image.open(BytesIO(response.content)).convert("RGBA")
+
+    # Load watermark (ensure watermark is also in Cloudinary)
+    watermark_url = "https://res.cloudinary.com/dr9p29qpa/image/upload/v1743137961/watermark1_rv1fpm.png"
+    response_wm = requests.get(watermark_url)
+    if response_wm.status_code != 200:
+        return None
+
+    watermark = Image.open(BytesIO(response_wm.content)).convert("RGBA")
+
+    # 🔹 Increase watermark size (make it 40% of image width)
+    scale_factor = 0.4  # Increase this value to make it bigger
+    wm_width = int(image.width * scale_factor)
+    wm_height = int(watermark.height * (wm_width / watermark.width))
+    watermark = watermark.resize((wm_width, wm_height))
+
+    # 🔹 Adjust watermark transparency (optional)
+    watermark = ImageEnhance.Brightness(watermark).enhance(0.7)
+
+    # 🔹 Position watermark (centered or larger bottom-right)
+    position = ((image.width - wm_width) // 2, (image.height - wm_height) // 2)  # Center watermark
+    # Alternative: Place it slightly above bottom-right
+    # position = (image.width - wm_width - 50, image.height - wm_height - 50)
+
+    # Merge watermark with image
+    transparent = Image.new("RGBA", image.size, (0, 0, 0, 0))
+    transparent.paste(image, (0, 0))
+    transparent.paste(watermark, position, mask=watermark)
+
+    # Convert back to RGB and save to buffer
+    output_buffer = BytesIO()
+    transparent.convert("RGB").save(output_buffer, format="JPEG")
+    output_buffer.seek(0)
+
+    # Upload back to Cloudinary
+    result = cloudinary.uploader.upload(output_buffer, folder="watermarked/")
+    
+    # Update user photo URL
+    user.photo = result["secure_url"]
+    user.save()
+
+    return user.photo  # Return the new image URL
+
+
+
+
+from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+from django.core.files.base import ContentFile
+from io import BytesIO
+from PIL import Image, ImageEnhance
+import requests
+
+def add_watermark_to_uploaded_photo(photo):
+    """
+    Applies a watermark to an uploaded photo before saving it to Cloudinary.
+    """
+    WATERMARK_URL = "https://res.cloudinary.com/dr9p29qpa/image/upload/v1743137961/watermark1_rv1fpm.png"
+
+    try:
+        if not photo:
+            return None
+
+        # Ensure we can read the uploaded file
+        if isinstance(photo, TemporaryUploadedFile) or isinstance(photo, InMemoryUploadedFile):
+            photo.seek(0)  # Reset file pointer
+            image = Image.open(BytesIO(photo.read())).convert("RGBA")  # Read from memory
+        else:
+            image = Image.open(photo).convert("RGBA")  # Read from file system
+
+        # Load watermark from Cloudinary
+        response_wm = requests.get(WATERMARK_URL)
+        if response_wm.status_code != 200:
+            return None
+
+        watermark = Image.open(BytesIO(response_wm.content)).convert("RGBA")
+
+        # 🔹 Scale watermark to 40% of image width
+        scale_factor = 0.4
+        wm_width = int(image.width * scale_factor)
+        wm_height = int(watermark.height * (wm_width / watermark.width))
+        watermark = watermark.resize((wm_width, wm_height))
+
+        # 🔹 Adjust watermark transparency
+        watermark = ImageEnhance.Brightness(watermark).enhance(0.7)
+
+        # 🔹 Position watermark at the center
+        position = ((image.width - wm_width) // 2, (image.height - wm_height) // 2)
+
+        # Merge watermark with image
+        transparent = Image.new("RGBA", image.size, (0, 0, 0, 0))
+        transparent.paste(image, (0, 0))
+        transparent.paste(watermark, position, mask=watermark)
+
+        # Convert to RGB and save to buffer
+        output_buffer = BytesIO()
+        transparent.convert("RGB").save(output_buffer, format="JPEG")
+        output_buffer.seek(0)
+
+        return ContentFile(output_buffer.read(), name=photo.name)  # ✅ Return ContentFile
+
+    except Exception as e:
+        print(f"Error applying watermark: {e}")
+        return photo  # Return original file if watermarking fails
+
+
+def register_user(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        phone_number = request.POST.get("phone_number")
+        address = request.POST.get("address")
+        gender = request.POST.get("gender")
+        dob = request.POST.get("dob")
+        photo = request.FILES.get("photo")
+        blood_group = request.POST.get("blood_group")
+        registration_number = request.POST.get("registration_number")
+        idproof = request.POST.get("idproof")
+        gaurdian_name = request.POST.get("gaurdian_name")
+        relation = request.POST.get("relation")
+
+        print(f"Username: {username}, Email: {email}, DOB: {dob}, Phone: {phone_number}")
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already taken")
+            return render(request, "register.html")
+
+        try:
+            birth_date = datetime.strptime(dob, "%Y-%m-%d").date()
+            today = datetime.today().date()
+            age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+
+            user = User.objects.create_user(username=username, email=email, password=password)
+
+            if photo:
+                # ✅ Apply watermark before uploading
+                watermarked_photo = add_watermark_to_uploaded_photo(photo)
+                
+                # ✅ Upload to Cloudinary
+                cloudinary_result = cloudinary.uploader.upload(watermarked_photo, folder="watermarked/")
+                photo_url = cloudinary_result["secure_url"]
+            else:
+                photo_url = None  # No photo uploaded
+
+            print(f"Creating UserProfile for: {username}")
+
+            profile = UserProfile.objects.create(
+                user=user,
+                name=name,
+                phone_number=phone_number,
+                address=address,
+                gender=gender,
+                dob=dob,
+                age=age,
+                photo=photo_url,  # Save Cloudinary URL instead of file
+                blood_group=blood_group,
+                registration_number=registration_number,
+                idproof=idproof,
+                gaurdian_name=gaurdian_name,
+                relation=relation,
+            )
+
+            print("UserProfile created successfully!", profile)
+
+            messages.success(request, "Registered successfully!")
+            return render(request, "register.html")
+
+        except Exception as e:
+            print("Error creating user profile:", e)
+            messages.error(request, f"Error: {e}")
+            return render(request, "register.html")
+
+    return render(request, "register.html")
+
+
+
+def edit_user(request, user_id):
+    user = get_object_or_404(UserProfile, user__id=user_id)
+
+    if request.method == "POST":
+        if request.FILES.get('photo'):
+            image_path = f"media/uploads/{request.FILES['photo'].name}"
+            with open(image_path, "wb+") as destination:
+                for chunk in request.FILES["photo"].chunks():
+                    destination.write(chunk)
+
+            new_photo_url = add_watermark_from_cloudinary(user)
+
+            user.photo = image_path  # Update user's photo
+
+        user.save()
+        return redirect('user_list')
+
+    return render(request, 'edit_user.html', {'user': user})
+
 
 def base(request):
     return render(request, 'base.html')
@@ -87,12 +303,13 @@ def logout_view(request):
 
 @login_required
 def dashboard_view(request):
+    user_profile = get_object_or_404(UserProfile, user=request.user)
     username = request.user.username if request.user.is_authenticated else ""
     filtered_username = re.sub(r'[^a-zA-Z]', '', username)
 
     # Remove 'TV' if it appears at the end of the username
     filtered_username = re.sub(r'TV$', '', filtered_username, flags=re.IGNORECASE)  # Remove numbers
-    return render(request, "dashboard.html", {"filtered_username": filtered_username})
+    return render(request, "dashboard.html", {"filtered_username": filtered_username, "user_profile": user_profile})
 
 @login_required
 def admin_dashboard(request):
@@ -136,68 +353,6 @@ def user_home(request):
         'graph_url': graph_url,  # Updated points data
         'show_donation_popup': show_donation_popup
     })
-
-def register_user(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        password = request.POST.get("password")
-        phone_number = request.POST.get("phone_number")
-        address = request.POST.get("address")
-        gender = request.POST.get("gender")
-        dob = request.POST.get("dob")  # Get date of birth
-        photo = request.FILES.get("photo")
-        blood_group = request.POST.get("blood_group")
-        registration_number = request.POST.get("registration_number")
-        idproof = request.POST.get("idproof")
-        gaurdian_name = request.POST.get("gaurdian_name")
-        relation = request.POST.get("relation")
-
-        # Debugging print statements
-        print(f"Username: {username}, Email: {email}, DOB: {dob}, Phone: {phone_number}")
-        
-        if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already taken")
-            return render(request, "register.html")
-
-        try:
-            birth_date = datetime.strptime(dob, "%Y-%m-%d").date()
-            today = datetime.today().date()
-            age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
-
-            user = User.objects.create_user(username=username, email=email, password=password)
-            
-            # Debugging print statement before saving UserProfile
-            print(f"Creating UserProfile for: {username}")
-
-            profile = UserProfile.objects.create(
-                user=user,
-                name=name,
-                phone_number=phone_number,
-                address=address,
-                gender=gender,
-                dob=dob,
-                age=age,
-                photo=photo,
-                blood_group=blood_group,
-                registration_number=registration_number,
-                idproof=idproof,
-                gaurdian_name=gaurdian_name,
-                relation=relation,
-            )
-
-            print("UserProfile created successfully!", profile)
-
-            messages.success(request, "Registered successfully!")
-            return render(request, "register.html")
-
-        except Exception as e:
-            print("Error creating user profile:", e)  # Debugging
-            messages.error(request, f"Error: {e}")
-            return render(request, "register.html")
-
-    return render(request, "register.html")
 
 
 def upload_gallery_image(request):
@@ -542,8 +697,7 @@ def edit_user(request, user_id):
         user.gender = request.POST.get('gender')
         
         # Handle file upload (for photo)
-        if request.FILES.get('photo'):
-            user.photo = request.FILES.get('photo')
+        new_photo_url = add_watermark_from_cloudinary(user)
         
         user.blood_group = request.POST.get('blood_group')
         

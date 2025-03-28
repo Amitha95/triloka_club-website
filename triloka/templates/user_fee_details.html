@@ -1,8 +1,9 @@
 {% extends 'dashboard.html' %}
 
 {% block content %}
+
 <div class="container mt-4">
-    <h2 class="text-center">My Fee Details - {{ year }}</h2>
+    <h2 class="text-center">My Fee Details - {% if fee_table %}{{ fee_table.0.year }}{% else %}N/A{% endif %}</h2>
     <table class="table table-bordered text-center">
        
         <table class="table table-bordered mt-3">

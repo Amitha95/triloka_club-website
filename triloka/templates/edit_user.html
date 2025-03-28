@@ -54,7 +54,9 @@
         </div>
         <div class="form-group">
             <label for="photo">Photo</label>
-            <input type="file" name="photo" id="photo" class="form-control">
+            <input type="file" name="photo" id="photo" class="form-control" accept="image/*">
+<canvas id="canvas" style="display: none;"></canvas>
+
             {% if user.photo %}
                 <img src="{{ user.photo.url }}" width="50" height="50" alt="Profile Photo">
             {% else %}
@@ -77,4 +79,54 @@
         <button type="submit" class="btn btn-primary">Save Changes</button>
     </form>
 </div>
+
+<script>
+    document.getElementById("photo").addEventListener("change", function(event) {
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.src = e.target.result;
+        img.onload = function() {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            const watermark = new Image();
+            watermark.src = "https://res.cloudinary.com/dr9p29qpa/image/upload/v1743137961/watermark1_rv1fpm.png";
+            watermark.onload = function() {
+                const scale = Math.min(canvas.width, canvas.height) * 0.15 / watermark.width;
+                const wmWidth = watermark.width * scale;
+                const wmHeight = watermark.height * scale;
+                const wmX = canvas.width - wmWidth - 10;
+                const wmY = canvas.height - wmHeight - 10;
+
+                const tempCanvas = document.createElement("canvas");
+                const tempCtx = tempCanvas.getContext("2d");
+                tempCanvas.width = wmWidth;
+                tempCanvas.height = wmHeight;
+                tempCtx.globalAlpha = 0.7;
+                tempCtx.drawImage(watermark, 0, 0, wmWidth, wmHeight);
+                ctx.drawImage(tempCanvas, wmX, wmY);
+
+                canvas.toBlob(function(blob) {
+                    const newFile = new File([blob], file.name, { type: "image/png" });
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(newFile);
+                    event.target.files = dataTransfer.files;
+                }, "image/png");
+            };
+        };
+    };
+    reader.readAsDataURL(file);
+});
+
+    </script>
+    
+    
 {% endblock %}

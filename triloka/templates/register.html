@@ -113,7 +113,10 @@
                 <input type="text" id="idproof" name="idproof" required>
 
                 <label for="photo">Upload Photo</label>
-                <input type="file" id="photo" name="photo" required>
+                
+                <input type="file" name="photo" id="photo" class="form-control" accept="image/*">
+<canvas id="canvas" style="display: none;"></canvas>
+
 
                 <label for="blood_group">Blood Group</label>
                 <select id="blood_group" name="blood_group" required>
@@ -193,5 +196,56 @@
         this.querySelector('i').classList.toggle('fa-eye-slash');
     });
 </script>
+
+<script>
+    document.getElementById("photo").addEventListener("change", function(event) {
+        const file = event.target.files[0];
+    
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+    
+                img.onload = function() {
+                    const canvas = document.getElementById("canvas");
+                    const ctx = canvas.getContext("2d");
+    
+                    // Set canvas size to match the image
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+    
+                    // Draw the image
+                    ctx.drawImage(img, 0, 0);
+    
+                    // Load the watermark
+                    const watermark = new Image();
+                    watermark.src = "https://res.cloudinary.com/dr9p29qpa/image/upload/v1743137961/watermark1_rv1fpm.png";
+                    watermark.onload = function() {
+                        // Adjust watermark size
+                        const wmWidth = img.width * 0.25;
+                        const wmHeight = (wmWidth / watermark.width) * watermark.height;
+    
+                        // Position watermark at bottom right
+                        ctx.drawImage(watermark, img.width - wmWidth - 10, img.height - wmHeight - 10, wmWidth, wmHeight);
+    
+                        // Convert canvas to file
+                        canvas.toBlob(function(blob) {
+                            const fileInput = document.getElementById("photo");
+                            const newFile = new File([blob], file.name, { type: "image/png" });
+    
+                            // Replace file input with new watermarked file
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(newFile);
+                            fileInput.files = dataTransfer.files;
+                        }, "image/png");
+                    };
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    </script>
+    
 
 {% endblock %}
