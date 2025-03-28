@@ -72,7 +72,7 @@ MIDDLEWARE = [
 ]
 
 # Enable or Disable Maintenance Mode
-MAINTENANCE_MODE = True  # Change to False to disable maintenance mode
+MAINTENANCE_MODE = False  # Change to False to disable maintenance mode
 
 if not DEBUG:  # Ensure media files work when DEBUG=False
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

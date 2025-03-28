@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib import admin
 from django.urls import path
 from django.shortcuts import render
@@ -17,15 +16,9 @@ def is_admin(user):
 def admin_dashboard(request):
     return render(request, "admin_dashboard.html")  # Ensure this file exists
 
-
-def maintenance_view(request):
-    return render(request, "maintenance.html", status=503)
-
-if getattr(settings, "MAINTENANCE_MODE", False):
-    urlpatterns = [path("", maintenance_view)]
-else:
-    urlpatterns = [
-        path("dashboard/", admin_dashboard, name="custom-admin-dashboard"),
+urlpatterns = [
+    # Secure Admin Pages (Move Above /admin/)
+    path("dashboard/", admin_dashboard, name="custom-admin-dashboard"),
 
     # Main App URLs
     path("", views.home, name="home"),
@@ -64,6 +57,4 @@ else:
     path("users/delete/<int:user_id>/", delete_user, name="delete_user"),
     # Django Admin
     path("admin/", admin.site.urls),
-    ]
-
-
+]
