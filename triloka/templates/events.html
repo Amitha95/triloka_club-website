@@ -135,23 +135,24 @@
     <h2 class="text-center mb-4">Upcoming Events</h2>
 
     {% if upcoming_events %}
-    <div class="marquee-container">
-        <div class="marquee-content">
-            <img src="{% static 'images/eagle2.gif' %}" alt="Running Boy" height="80">
-            {% for event in upcoming_events %}
-            <div class="marquee-item"
-                data-title="{{ event.title }}"
-                data-description="{{ event.description }}"
-                data-date="{{ event.date|date:'M d, Y' }}"
-                data-image="{% if event.image %}{{ event.image.url }}{% else %}{% static 'images/default-event.jpg' %}{% endif %}"
-                onclick="showEventModal(this)">
-                <span><strong>{{ event.date|date:'M d, Y' }}</strong> -</span>
-                <span class="event-title">{{ event.title }}</span>: 
-                {{ event.description|truncatewords:10 }}
+        <div class="marquee-container">
+            <div class="marquee-content">
+                <img src="{% static 'images/eagle2.gif' %}" alt="Running Boy" height="80">
+                {% for event in upcoming_events %}
+                <div class="marquee-item"
+                    data-title="{{ event.title }}"
+                    data-description="{{ event.description }}"
+                    data-start-date="{{ event.date|date:'M d, Y' }}"
+                    data-end-date="{{ event.end_date|date:'M d, Y' }}"
+                    data-image="{% if event.image %}{{ event.image.url }}{% else %}{% static 'images/default-event.jpg' %}{% endif %}"
+                    onclick="showEventModal(this)">
+                    <span><strong>{{ event.title }}</strong></span> - 
+                    <span>Registration starts from {{ event.date|date:'M d, Y' }} to {{ event.end_date|date:'M d, Y' }}</span>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
-    </div>
+    
     {% endif %}
 <br>
 

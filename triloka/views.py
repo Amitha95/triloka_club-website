@@ -27,6 +27,8 @@ import requests
 from io import BytesIO
 from PIL import Image, ImageEnhance
 
+from django.db.models.functions import Lower
+
 def maintenance(request):
     return render(request, 'maintenance.html')
 
@@ -244,32 +246,76 @@ def base(request):
     return render(request, 'base.html')
 
 def home(request):
-    # Group by title (used as category) and count the number of images in each group
-    categories = Gallery.objects.values('title').annotate(num_images=Count('id')).filter(num_images__gt=0)
+    # Get distinct categories (grouped by title)
+    categories = (
+        Gallery.objects.values('title')
+        .annotate(num_images=Count('id'))
+        .filter(num_images__gt=0)
+    )
 
-    categories_with_images = []
+    categories_with_images = {}
 
     for category in categories:
-        # Get the first gallery image for each category (title)
-        first_gallery = Gallery.objects.filter(title=category['title']).first()
+        title = category['title']
+
+        # Get the first image for this category
+        first_gallery = Gallery.objects.filter(title=title).first()
         image_url = first_gallery.image.url if first_gallery else None
-        categories_with_images.append({
-            'title': category['title'],
-            'image': image_url
-        })
+
+        # Get subcategories under this title
+        subcategories = (
+            Gallery.objects.filter(title=title)
+            .order_by(Lower('subcategory'))
+            .values_list('subcategory', flat=True)
+            .distinct()
+        )
+
+        categories_with_images[title] = {
+            'title': title,
+            'image': image_url,
+            'subcategories': list(subcategories),  # Convert to list for iteration in template
+        }
 
     return render(request, 'home.html', {'categories': categories_with_images})
+
 def gallery_subcategories(request, title):
-    subcategories = Gallery.objects.filter(title=title).values('subcategory').distinct()
+    subcategories = (
+        Gallery.objects.filter(title=title)
+        .values('subcategory')
+        .distinct()
+        .order_by('subcategory')
+    )
+
     return render(request, 'gallery_subcategories.html', {'subcategories': subcategories, 'title': title})
 
+
 def gallery_pages(request, title, subcategory):
-    gallery_images = Gallery.objects.filter(title=title, subcategory=subcategory)
-    year_ranges = gallery_images.values('date__year').distinct().order_by('date__year')
-    return render(request, 'gallery_pages.html', {'year_ranges': year_ranges, 'title': title, 'subcategory': subcategory})
+    year_ranges = (
+        Gallery.objects.filter(title=title, subcategory=subcategory)
+        .values('date__year')
+        .distinct()
+        .order_by('date__year')
+    )
+
+    return render(request, 'gallery_pages.html', {
+        'year_ranges': year_ranges,
+        'title': title,
+        'subcategory': subcategory
+    })
+
+
 def gallery_images(request, title, subcategory, year):
     gallery_images = Gallery.objects.filter(title=title, subcategory=subcategory, date__year=year)
-    return render(request, 'gallery_images.html', {'gallery_images': gallery_images, 'year': year, 'title': title, 'subcategory': subcategory})
+
+    return render(request, 'gallery_images.html', {
+        'gallery_images': gallery_images,
+        'year': year,
+        'title': title,
+        'subcategory': subcategory
+    })
+
+
+
 def about(request):
     return render(request, 'about.html')
 
@@ -376,6 +422,13 @@ def gallery_list(request):
     images = Gallery.objects.all().order_by('-date')
     return render(request, "gallery_list.html", {"images": images})
 
+def delete_image(request, image_id):
+    """Deletes an image from the gallery."""
+    image = get_object_or_404(Gallery, id=image_id)
+    image.delete()
+    messages.success(request, "Image deleted successfully.")
+    return redirect('gallery_list')  # Redirect back to the gallery page
+
 def gallery_years(request):
     years = sorted(set(img.date.year for img in Gallery.objects.all()), reverse=True)
     year_ranges = [(year, year + 1) for year in years]
@@ -406,9 +459,13 @@ def gallery_all(request):
 
 def events_view(request):
     today = date.today()
-    all_events = Event.objects.filter(date__lt=now().date())
-    upcoming_events = Event.objects.filter(date__gte=today).order_by('date')
-    return render(request, 'events.html', {'all_events': all_events, 'upcoming_events': upcoming_events})
+    all_events = Event.objects.filter(end_date__lt=today).order_by('-date')
+    upcoming_events = Event.objects.filter(end_date__gte=today).order_by('date')  # Show till end_date
+
+    return render(request, "events.html", {
+        'all_events': all_events,
+        'upcoming_events': upcoming_events
+    })
 
 def upload_event(request):
     """Handles event uploads."""
@@ -435,6 +492,13 @@ def event_list(request):
     """Displays all uploaded events."""
     events = Event.objects.all().order_by('-date')
     return render(request, "event_list.html", {"events": events})
+
+def delete_event(request, event_id):
+    """Deletes an event from the database."""
+    event = get_object_or_404(Event, id=event_id)  # Ensure the event exists
+    event.delete()
+    messages.success(request, "Event deleted successfully.")
+    return redirect('event_list')  # Redirect back to the event list page
 
 @login_required
 def user_list(request):
@@ -744,3 +808,37 @@ def user_profile_view(request):
     return render(request, 'user_profile.html', {
         'user_profile': user_profile,
     })
+
+
+# views.py
+from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
+from django.http import JsonResponse
+import json
+from django.conf import settings
+
+@csrf_exempt  # Disable CSRF protection for this view
+def send_email(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            name = data.get('name')
+            email = data.get('email')
+            phone = data.get('phone')
+            message = data.get('message')
+
+            # Prepare the email message
+            subject = f"Contact Form Submission from {name}"
+            body = f"Name: {name}\nEmail: {email}\nPhone: {phone}\nMessage: {message}"
+            from_email = settings.EMAIL_HOST_USER
+            recipient_list = ['trilokavellimon1@gmail.com']
+
+            # Send the email
+            send_mail(subject, body, from_email, recipient_list)
+
+            return JsonResponse({"status": "success", "message": "Email sent successfully!"}, status=200)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+
+    return JsonResponse({"status": "error", "message": "Invalid request method."}, status=400)
+

@@ -15,12 +15,12 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ year.date__year }} - {{ year.date__year|add:1 }}</h5>
                         <a href="{% url 'gallery_images' title subcategory year.date__year %}" class="btn btn-primary">View Images</a>
-
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
+        
     </div>
 </section>
 

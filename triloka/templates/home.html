@@ -39,25 +39,27 @@
                 <hr class="divider" />
         
                 <div class="row mx-0">
-                    {% for category in categories %}
+                    {% for category in categories.values %}
                     <div class="col-12 col-md-4">
-                        <div class="card h-100"> <!-- Ensure the card takes the full height of the column -->
-                            <!-- Image for the category -->
+                        <div class="card h-100">
+                            <!-- Category Image -->
                             {% if category.image %}
                             <img src="{{ category.image }}" class="card-img-top" alt="Thumbnail" style="object-fit: cover; height: 200px;">
                             {% else %}
-                            <img src="default-thumbnail.jpg" class="card-img-top" alt="Default Thumbnail" style="object-fit: cover; height: 200px;"> <!-- Default image with same size -->
+                            <img src="default-thumbnail.jpg" class="card-img-top" alt="Default Thumbnail" style="object-fit: cover; height: 200px;">
                             {% endif %}
                             <div class="card-body">
                                 <h5 class="card-title">{{ category.title }}</h5>
-                                <a href="{% url 'gallery_subcategories' category.title %}" class="btn btn-primary">View Photos</a>
-
+                                <!-- Display subcategories inside the card -->
                                 
+                                <a href="{% url 'gallery_subcategories' category.title %}" class="btn btn-primary">View Photos</a>
                             </div>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
+                
+                
         
             </div>
         </section>
@@ -275,7 +277,7 @@
         
                     <!-- Right Side: Contact Form -->
                     <div class="col-lg-6">
-                        <form id="contactForm">
+                        <form id="contactForm" onsubmit="sendFormData(event)">
                             <div class="form-floating mb-3">
                                 <input class="form-control" id="name" type="text" placeholder="Enter your name..." required />
                                 <label for="name">Full name</label>
@@ -309,40 +311,6 @@
         </section>
         
 
-        <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="loginModalLabel">Login</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Error message container -->
-                        <div id="error-container"></div>
-        
-                        <form method="post" action="{% url 'login' %}">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" required>
-                            </div>
-        
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="password" name="password" required>
-                                    <button type="button" class="btn btn-outline-secondary" id="togglePassword">
-                                        <i class="fas fa-eye" id="eyeIcon"></i>
-                                    </button>
-                                </div>
-                            </div>
-        
-                            <button type="submit" class="btn btn-primary w-100">Login</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
         
         <!-- Contact-->
       
@@ -363,6 +331,40 @@
         <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5411226748990020"
         crossorigin="anonymous"></script>
+
+        <script>
+            function sendFormData(event) {
+                event.preventDefault();  // Prevent form from submitting the traditional way
+                
+                const name = document.getElementById("name").value;
+                const email = document.getElementById("email").value;
+                const phone = document.getElementById("phone").value;
+                const message = document.getElementById("message").value;
+                
+                const formData = {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    message: message
+                };
+        
+                fetch('/send-email/', {  // Replace '/send-email/' with the route you will define on the server
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert("Email sent successfully!");
+                    document.getElementById("contactForm").reset();  // Reset the form
+                })
+                .catch(error => {
+                    alert("Error sending email: " + error);
+                });
+            }
+        </script>
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 fetchGalleryImages();

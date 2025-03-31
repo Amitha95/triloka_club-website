@@ -50,6 +50,10 @@ class UserFee(models.Model):
 class UserPoint(models.Model):
     CATEGORY_CHOICES = [
         ('Participation', 'Participation'),
+        ('Electivemember', 'Electivemember'),
+        ('Joining', 'Joining'),
+        ('Willingtodonateblood', 'Willingtodonateblood'),
+        ('Fees', 'Fees'),
         ('Achievement', 'Achievement'),
         ('Leadership', 'Leadership'),
     ]

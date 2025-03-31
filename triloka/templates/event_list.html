@@ -17,6 +17,16 @@
         height: auto;
         border-radius: 5px;
     }
+    .delete-btn {
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        display: block;
+        margin: 5px auto;
+        border-radius: 3px;
+    }
 </style>
 
 <h2>Events</h2>
@@ -27,6 +37,12 @@
             <p>{{ event.description }}</p>
             <p><strong>Start:</strong> {{ event.date }} | <strong>End:</strong> {{ event.end_date }}</p>
             <img src="{{ event.image.url }}" alt="{{ event.title }}">
+
+            <!-- Delete Button -->
+            <form action="{% url 'delete_event' event.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="delete-btn">Delete</button>
+            </form>
         </div>
     {% empty %}
         <p>No events available.</p>

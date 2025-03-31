@@ -171,4 +171,12 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # Default auto field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Other settings like email, logging, etc., can go here if needed.
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'trilokavellimon1@gmail.com'  # Sender's email
+EMAIL_HOST_PASSWORD = 'ngaxzzyrtpgenjsf'  # ⚠️ NEVER expose credentials in code!
+
+
+# Other settings like email, logging, etc., can go here if needed.   ngax zzyr tpge njsf

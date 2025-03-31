@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from . import views
 from .views import login_view, logout_view, dashboard_view, gallery_page, gallery_all,register_user,upload_gallery_image,gallery_list,upload_event, event_list
 from .views import user_list,user_fees,user_points,user_fee_details,user_home, update_donation_status,point_redemption_rules, redeem_points,admin_home
-from .views import blood_group_list,donor_list, user_profile_view,delete_user,gallery_subcategories
+from .views import blood_group_list,donor_list, user_profile_view,delete_user,gallery_subcategories, gallery_pages, gallery_images,delete_image,delete_event
 
 # Check if user is admin or staff
 def is_admin(user):
@@ -26,9 +26,11 @@ urlpatterns = [
     path("about/", views.about, name="about"),
     path("events/", views.events_view, name="events"),
     path("gallery/", views.gallery_years, name="gallery_years"),  # Show date ranges
-    path('gallery/<str:title>/', views.gallery_subcategories, name='gallery_subcategories'),
-    path('gallery/<str:title>/<str:subcategory>/', views.gallery_pages, name='gallery_pages'),
-    path('gallery/<str:title>/<str:subcategory>/<int:year>/', views.gallery_images, name='gallery_images'),
+
+    path('gallery/<str:title>/', gallery_subcategories, name='gallery_subcategories'),
+    path('gallery/<str:title>/<str:subcategory>/', gallery_pages, name='gallery_pages'),
+    path('gallery/<str:title>/<str:subcategory>/<int:year>/', gallery_images, name='gallery_images'),
+
     path('api/gallery/', gallery_all, name='gallery_all'),
     path("gallery/<int:year_start>-<int:year_end>/", views.gallery_view, name="gallery"),
     path("contact/", views.contact, name="contact"),
@@ -39,8 +41,10 @@ urlpatterns = [
     path("register_user/", register_user, name="register_user"),
     path("upload/", upload_gallery_image, name="upload_gallery"), 
     path("gallery_list/", gallery_list, name="gallery_list"),  
+    path('delete/<int:image_id>/', delete_image, name='delete_image'),
     path("upload-event/", upload_event, name="upload_event"),  # Event upload page
     path("event_list/", event_list, name="event_list"),  # Event list page
+    path('events/delete/<int:event_id>/', delete_event, name='delete_event'),
     path('users/', user_list, name='user_list'),
     path("users/fees/<int:user_id>/", user_fees, name="user_fees"),
     path("users/points/<int:user_id>/", user_points, name="user_points"),
@@ -55,6 +59,8 @@ urlpatterns = [
     path('edit_user/<int:user_id>/', views.edit_user, name='edit_user'),
     path('profile/', user_profile_view, name='user_profile'),
     path("users/delete/<int:user_id>/", delete_user, name="delete_user"),
+
+    path('send-email/', views.send_email, name='send_email'),
     # Django Admin
     path("admin/", admin.site.urls),
 ]

@@ -6,23 +6,43 @@
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 10px;
     }
+    .gallery-item {
+        position: relative;
+        text-align: center;
+    }
     .gallery-grid img {
         width: 100%;
         height: auto;
         border-radius: 5px;
     }
+    .delete-btn {
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        display: block;
+        margin: 5px auto;
+        border-radius: 3px;
+    }
 </style>
 
 <h2>Gallery</h2>
 <div class="gallery-grid">
-{% for image in images %}
-    <div>
-        <p>{{ image.title }} ({{image.subcategory}})- {{ image.date }}</p>
-        <img src="{{ image.image.url }}" alt="{{ image.title }}">
-    </div>
-{% empty %}
-    <p>No images uploaded yet.</p>
-{% endfor %}
+    {% for image in images %}
+        <div class="gallery-item">
+            <p>{{ image.title }} ({{ image.subcategory }}) - {{ image.date }}</p>
+            <img src="{{ image.image.url }}" alt="{{ image.title }}">
+
+            <!-- Delete Button -->
+            <form action="{% url 'delete_image' image.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="delete-btn">Delete</button>
+            </form>
+        </div>
+    {% empty %}
+        <p>No images uploaded yet.</p>
+    {% endfor %}
 </div>
 
 <p><a href="{% url 'upload_gallery' %}">Upload New Image</a></p>
