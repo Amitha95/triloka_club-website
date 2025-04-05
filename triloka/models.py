@@ -56,6 +56,7 @@ class UserPoint(models.Model):
         ('Fees', 'Fees'),
         ('Achievement', 'Achievement'),
         ('Leadership', 'Leadership'),
+        ('DonateParticipation', 'DonateParticipation'),
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)

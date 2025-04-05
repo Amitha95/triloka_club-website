@@ -1,195 +1,130 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block head %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/events.css' %}">
-{% endblock %}
-
-{% block title %}Events{% endblock %}
-
 {% block content %}
 <style>
-    body {
+    .event-page {
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
-        background: linear-gradient(to right, #c2bfba, #bf6d52);
+        
         color: rgb(0, 0, 0);
     }
 
-    h2.text-center {
-    margin-bottom: 1rem; /* Reduced margin between the heading and marquee */
-}
-
-.marquee-container {
-    width: 100%;
-    overflow: hidden;
-    padding: 10px 0;
-    white-space: nowrap;
-    position: relative;
-}
-
-.marquee-content {
-    display: flex;
-    flex-direction: column; /* Display the items in a column (vertically) */
-    gap: 10px; /* Reduced gap between the GIF and events */
-    align-items: center;
-    animation: scroll-right-to-left 20s linear infinite; /* Right to left scroll */
-}
-
-.marquee-item {
-    color: rgb(0, 0, 0);
-    font-size: 16px;
-    cursor: pointer;
-    transition: transform 0.5s ease-in-out;
-    display: flex;
-    align-items: center;
-    gap: 10px; /* Space between the event title and its date */
-}
-
-.marquee-item:hover {
-    transform: scale(1.1);
-    text-decoration: underline;
-}
-
-.marquee-item img {
-    height: 50px; /* Adjust the GIF size */
-}
-
-@keyframes scroll-right-to-left {
-    from { transform: translateX(100%); }  /* Start off-screen on the right */
-    to { transform: translateX(-100%); }  /* End off-screen on the left */
-}
-
-.modal button {
-    background-color: #bf6d52;
-    margin-left: 450px;
-    padding: 1px;
-    border: none;
-    width: 10%;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background 0.3s ease;
-}
-
-.modal {
-    background: linear-gradient(to bottom, #ffffff, #f5a623);
-    align-items: center;
-    height: auto;
-}
-
-.modal-dialog {
-    display: flex;
-}
-
-.modal-content {
-    background: linear-gradient(to right, #c2bfba, #bf6d52);
-    color: black;
-    border-radius: 10px;
-}
-
-@media (min-width: 576px) {
-    .modal {
-        --bs-modal-box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    .event-page h2.text-center {
+        margin-bottom: 1rem;
     }
-}
 
-.card {
-    height: 350px; /* Set a fixed height for the card */
-    display: flex;
-    flex-direction: column; /* Ensure the content is arranged vertically */
-}
+    /* Marquee Styling */
+    .marquee-container {
+        width: 100%;
+        overflow: hidden;
+        padding: 10px 0;
+        white-space: nowrap;
+        position: relative;
+    }
 
-.card-body {
-    flex-grow: 1; /* Allow card body to take up remaining space */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Ensure content is evenly spaced within the card */
-}
+    .marquee-content {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+        animation: scroll-right-to-left 20s linear infinite;
+    }
 
-.card-img-top {
-    object-fit: contain; /* Ensure the image fits without being cropped */
-    height: 150px; /* Adjust image height */
-    width: 100%; /* Ensure image takes full width of the card */
-}
+    .marquee-item {
+        font-size: 16px;
+        cursor: pointer;
+        transition: transform 0.5s ease-in-out;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
 
-.card-title {
-    font-size: 1.25rem;
-}
+    .marquee-item:hover {
+        transform: scale(1.1);
+        text-decoration: underline;
+    }
 
-.card-text {
-    font-size: 1rem;
-    margin-bottom: 10px;
-}
+    .marquee-item img {
+        height: 50px;
+    }
 
-.btn-primary {
-    align-self: flex-start; /* Align the "Read More" button to the left */
-}
+    @keyframes scroll-right-to-left {
+        from { transform: translateX(100%); }
+        to { transform: translateX(-100%); }
+    }
+
+    /* Scoped Modal Styles */
+    .event-modal .modal-content {
+        background: linear-gradient(to right, #c2bfba, #bf6d52);
+        color: black;
+        border-radius: 10px;
+    }
+
+    .event-modal .btn-close {
+        background-color: #bf6d52;
+        border: none;
+        cursor: pointer;
+    }
+
+    .card {
+        height: 350px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-img-top {
+        object-fit: contain;
+        height: 150px;
+        width: 100%;
+    }
 
 </style>
 
-<br><br>
-<div class="container">
-    <br><br>
-    <h2 class="text-center mb-4">Upcoming Events</h2>
+<br><br><br><br><br>
+<div class="container event-page">
+    <h2 class="text-center">Upcoming Events</h2>
 
     {% if upcoming_events %}
-        <div class="marquee-container">
-            <div class="marquee-content">
-                <img src="{% static 'images/eagle2.gif' %}" alt="Running Boy" height="80">
-                {% for event in upcoming_events %}
-                <div class="marquee-item"
-                    data-title="{{ event.title }}"
-                    data-description="{{ event.description }}"
-                    data-start-date="{{ event.date|date:'M d, Y' }}"
-                    data-end-date="{{ event.end_date|date:'M d, Y' }}"
-                    data-image="{% if event.image %}{{ event.image.url }}{% else %}{% static 'images/default-event.jpg' %}{% endif %}"
-                    onclick="showEventModal(this)">
-                    <span><strong>{{ event.title }}</strong></span> - 
-                    <span>Registration starts from {{ event.date|date:'M d, Y' }} to {{ event.end_date|date:'M d, Y' }}</span>
-                </div>
-                {% endfor %}
+    <div class="marquee-container">
+        <div class="marquee-content">
+            <img src="{% static 'images/eagle2.gif' %}" alt="Running Boy" height="80">
+            {% for event in upcoming_events %}
+            <div class="marquee-item"
+                data-title="{{ event.title }}"
+                data-description="{{ event.description }}"
+                data-date="{{ event.date|date:'M d, Y' }}"
+                data-end-date="{{ event.end_date|date:'M d, Y' }}"
+                data-image="{% if event.image %}{{ event.image.url }}{% else %}{% static 'images/default-event.jpg' %}{% endif %}"
+                onclick="showEventModal(this)">
+                <strong>{{ event.title }}</strong> - 
+                Registration starts from {{ event.date|date:'M d, Y' }} to {{ event.end_date|date:'M d, Y' }}
             </div>
+            {% endfor %}
         </div>
-    
+    </div>
     {% endif %}
-<br>
 
-    <div class="row">
+    <div class="row" style="margin-left: 10px;">
         {% for event in all_events %}
         <div class="col-lg-4 col-md-6 mb-4">
             <div class="card shadow-sm h-100 w-100">
                 <img src="{% if event.image %}{{ event.image.url }}{% else %}{% static 'images/default-event.jpg' %}{% endif %}" 
                      class="card-img-top" alt="{{ event.title }}" 
-                     onclick="openModal(this)">
+                     onclick="openImageModal(this)">
                 <div class="card-body">
                     <h5 class="card-title">{{ event.title }}</h5>
                     <p class="card-text">{{ event.description|truncatewords:20 }}</p>
                     <p class="text-muted"><i class="fas fa-calendar-alt"></i> {{ event.date }}</p>
-                    <a href="#" class="btn btn-primary btn-sm" onclick="showEventModal(this)" 
+                    <button class="btn btn-primary btn-sm"
+                        onclick="showEventModal(this)"
                         data-title="{{ event.title }}" 
                         data-description="{{ event.description }}" 
                         data-date="{{ event.date|date:'M d, Y' }}"
                         data-image="{% if event.image %}{{ event.image.url }}{% else %}{% static 'images/default-event.jpg' %}{% endif %}">
                         Read More
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Modal for Image Enlargement -->
-            <div id="imageModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <img id="modalImage" src="" alt="Enlarged Image" style="width: 100%; max-height: 500px; object-fit: contain;">
-                        </div>
-                    </div>
+                    </button>
                 </div>
             </div>
         </div>
@@ -199,59 +134,57 @@
     </div>
 </div>
 
-<!-- Bootstrap Modal -->
-
-    <div class="modal" tabindex="-1"  id="eventModal" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
-        <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
-    <div class="modal-dialog modal-dialog-centered" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+<!-- Modal for Event Details -->
+<div class="modal fade event-modal" id="eventModalPage" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-           
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <div class="modal-header">
+                <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
             <div class="modal-body text-center">
-                <img id="modal-event-image" src="" alt="Event Image" class="img-fluid mb-3" style="max-height: 1300px;">
-                
-                <p style="display: none;"><strong>Date:</strong> <span id="modal-event-date"></span></p>
-                <p style="display: none;"><strong>Title:</strong> <span id="modal-event-title"></span></p>
-                <p style="display: none;"><strong>Description:</strong> <span id="modal-event-description"></span></p>
+                <img id="modal-event-image" src="" alt="Event Image" class="img-fluid mb-3" style="max-height: 300px;">
+                <p><strong>Title:</strong> <span id="modal-event-title"></span></p>
+                <p><strong>Date:</strong> <span id="modal-event-date"></span></p>
+                <p><strong>Description:</strong> <span id="modal-event-description"></span></p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Load Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+<!-- Modal for Image Enlargement -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <img id="modalImage" src="" alt="Enlarged Image" style="width: 100%; max-height: 500px; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+</div>
 
-{% block extra_js %}
+<!-- JavaScript -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        let modalElement = document.getElementById("eventModal");
-        if (modalElement) {
-            let eventModal = new bootstrap.Modal(modalElement);
+        let eventModal = new bootstrap.Modal(document.getElementById("eventModalPage"));
 
-            // Ensure function is globally accessible
-            window.showEventModal = function (element) {
-                console.log("Modal function triggered");
-                document.getElementById("modal-event-title").textContent = element.getAttribute("data-title");
-                document.getElementById("modal-event-description").textContent = element.getAttribute("data-description");
-                document.getElementById("modal-event-date").textContent = element.getAttribute("data-date");
-                document.getElementById("modal-event-image").src = element.getAttribute("data-image");
-
-                eventModal.show();
-            };
-        } else {
-            console.error("Modal element not found!");
-        }
+        window.showEventModal = function (element) {
+            document.getElementById("modal-event-title").textContent = element.getAttribute("data-title");
+            document.getElementById("modal-event-description").textContent = element.getAttribute("data-description");
+            document.getElementById("modal-event-date").textContent = element.getAttribute("data-date");
+            document.getElementById("modal-event-image").src = element.getAttribute("data-image");
+            eventModal.show();
+        };
     });
-</script>
-<script>
-    // Function to open the modal and display the clicked image
-    function openModal(imageElement) {
-        var modal = document.getElementById("imageModal");
-        var modalImage = document.getElementById("modalImage");
-        modalImage.src = imageElement.src;  // Set the modal image to the clicked image
-        $(modal).modal('show'); // Show the modal using jQuery
+
+    function openImageModal(imageElement) {
+        var modal = new bootstrap.Modal(document.getElementById("imageModal"));
+        document.getElementById("modalImage").src = imageElement.src;
+        modal.show();
     }
 </script>
-<br><br><br>
-{% endblock %}
+
 {% endblock %}

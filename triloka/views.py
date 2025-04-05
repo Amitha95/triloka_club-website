@@ -1,3 +1,4 @@
+import time
 from django.http import HttpResponse, JsonResponse
 import json
 from django.shortcuts import render, get_object_or_404, redirect
@@ -221,25 +222,44 @@ def register_user(request):
     return render(request, "register.html")
 
 
-
 def edit_user(request, user_id):
     user = get_object_or_404(UserProfile, user__id=user_id)
 
     if request.method == "POST":
-        if request.FILES.get('photo'):
-            image_path = f"media/uploads/{request.FILES['photo'].name}"
-            with open(image_path, "wb+") as destination:
-                for chunk in request.FILES["photo"].chunks():
-                    destination.write(chunk)
+        if request.FILES.get("photo"):
+            photo = request.FILES["photo"]
 
-            new_photo_url = add_watermark_from_cloudinary(user)
+            try:
+                # ✅ Apply watermark to the newly uploaded photo
+                watermarked_photo = add_watermark_to_uploaded_photo(photo)
 
-            user.photo = image_path  # Update user's photo
+                if watermarked_photo:
+                    # ✅ Upload to Cloudinary with a unique filename
+                    cloudinary_result = cloudinary.uploader.upload(
+                        watermarked_photo,
+                        folder="watermarked/",
+                        public_id=f"user_{user_id}_{int(time.time())}",  # Unique filename
+                        overwrite=True
+                    )
 
-        user.save()
-        return redirect('user_list')
+                    if "secure_url" in cloudinary_result:
+                        new_photo_url = cloudinary_result["secure_url"]
 
-    return render(request, 'edit_user.html', {'user': user})
+                        # ✅ Update UserProfile with new photo URL
+                        user.photo = new_photo_url
+                        user.save()
+
+                        print(f"✅ User photo updated successfully: {new_photo_url}")
+                    else:
+                        print("❌ Cloudinary upload failed")
+
+            except Exception as e:
+                print(f"❌ Error uploading to Cloudinary: {e}")
+
+        return redirect("user_list")  # Redirect after saving changes
+
+    return render(request, "edit_user.html", {"user": user})
+
 
 
 def base(request):
@@ -633,6 +653,17 @@ def user_points(request, user_id):
     user = get_object_or_404(User, id=user_id)
     points = UserPoint.objects.filter(user=user)
 
+    CATEGORY_CHOICES = [
+        ('Participation', 'Participation'),
+        ('Electivemember', 'Electivemember'),
+        ('Joining', 'Joining'),
+        ('Willingtodonateblood', 'Willingtodonateblood'),
+        ('Fees', 'Fees'),
+        ('Achievement', 'Achievement'),
+        ('Leadership', 'Leadership'),
+        ('DonateParticipation', 'DonateParticipation'),
+    ]
+
     if request.method == "POST":
         category = request.POST.get("category")
         points_value = request.POST.get("points")
@@ -655,7 +686,12 @@ def user_points(request, user_id):
     # Calculate total points correctly using Decimal
     total_points = sum(point.points for point in points)
 
-    return render(request, "user_points.html", {"user": user, "points": points, "total_points": total_points})
+    return render(request, "user_points.html", {
+        "user": user,
+        "points": points,
+        "total_points": total_points,
+        "category_choices": CATEGORY_CHOICES,  # Pass choices to template
+    })
 
 
 @login_required
@@ -743,9 +779,9 @@ def donor_list(request):
 
     # Filter users willing to donate blood
     if selected_group == "All":
-        profiles = UserProfile.objects.filter(willing_to_donate_blood=True)
+        profiles = UserProfile.objects.filter(willing_to_donate_blood=True).order_by('registration_number')
     else:
-        profiles = UserProfile.objects.filter(blood_group=selected_group, willing_to_donate_blood=True)
+        profiles = UserProfile.objects.filter(blood_group=selected_group, willing_to_donate_blood=True).order_by('registration_number')
 
     return render(request, 'donor_list.html', {
         'profiles': profiles,
@@ -753,45 +789,6 @@ def donor_list(request):
         'selected_group': selected_group,
     })
 
-def edit_user(request, user_id):
-    user = get_object_or_404(UserProfile, user__id=user_id)  # Assuming user has a related User model
-    
-    if request.method == 'POST':
-        # Update fields manually without using a form
-        user.name = request.POST.get('name')
-        user.username = request.POST.get('username')
-        user.email = request.POST.get('email')
-        user.phone_number = request.POST.get('phone_number')
-        user.dob = request.POST.get('dob')
-        
-        # Recalculate the age based on the updated dob
-        if user.dob:
-            user.age = calculate_age(user.dob)
-        
-        user.gaurdian_name = request.POST.get('gaurdian_name')
-        user.relation = request.POST.get('relation')
-        user.idproof = request.POST.get('idproof')
-        user.address = request.POST.get('address')
-        user.gender = request.POST.get('gender')
-        
-        # Handle file upload (for photo)
-        new_photo_url = add_watermark_from_cloudinary(user)
-        
-        user.blood_group = request.POST.get('blood_group')
-        
-        willing_to_donate = request.POST.get('willing_to_donate_blood')
-        if willing_to_donate == 'True':
-            user.willing_to_donate_blood = True
-        elif willing_to_donate == 'False':
-            user.willing_to_donate_blood = False
-        else:
-    # Leave the field unchanged if None or not provided
-            user.willing_to_donate_blood = None
-
-        user.save()
-        return redirect('user_list')  # Redirect to the user list page after saving
-
-    return render(request, 'edit_user.html', {'user': user})
 
 def calculate_age(dob):
     """Calculate age from DOB"""
