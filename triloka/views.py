@@ -459,6 +459,7 @@ def user_home(request):
     user_fees = UserFee.objects.filter(user=request.user).order_by('year', 'month')
     months = [fee.month for fee in user_fees]
 
+    top_users = UserPoint.objects.values('user').annotate(total_points=Sum('points')).order_by('-total_points')[:10]
     # Fetch points grouped by category
     points_data = UserPoint.objects.filter(user=request.user).values('category').annotate(total_points=Sum('points'))
     categories = [entry['category'] for entry in points_data]
@@ -481,12 +482,25 @@ def user_home(request):
     graph_url = urllib.parse.quote(base64.b64encode(buffer.getvalue()).decode())
     buffer.close()
 
+    top_user_profiles = []
+    for entry in top_users:
+        try:
+            profile = UserProfile.objects.get(user_id=entry['user'])
+            top_user_profiles.append({
+                'profile': profile,
+                'points': float(entry['total_points']),
+                'stars': min(int(entry['total_points'] // 10), 5)  # Convert points to stars (1 star per 10 points, max 5)
+            })
+        except UserProfile.DoesNotExist:
+            continue
+
     return render(request, 'user_home.html', {
         'user_profile': user_profile,
         'months': months,
         'categories': categories,  # Updated from months
         'graph_url': graph_url,  # Updated points data
-        'show_donation_popup': show_donation_popup
+        'show_donation_popup': show_donation_popup,
+        'top_user_profiles': top_user_profiles,
     })
 
 
