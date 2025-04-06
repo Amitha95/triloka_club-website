@@ -23,6 +23,7 @@
         <table class="table table-bordered table-hover text-center">
             <thead class="table-primary">
                 <tr>
+                    <th>Sl. No.</th>
                     <th>Name</th>
                     <th>Phone Number</th>
                     <th>Blood Group</th>
@@ -32,6 +33,7 @@
             <tbody>
                 {% for profile in profiles %}
                     <tr>
+                        <td>{{ forloop.counter }}</td>
                         <td>{{ profile.name }}</td>
                         <td>{{profile.phone_number}}</td>
                         <td>{{ profile.blood_group }}</td>

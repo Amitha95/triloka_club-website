@@ -859,19 +859,18 @@ def blood_group_list(request):
     selected_group = request.GET.get('blood_group', 'All')
 
     if selected_group == "All":
-        profiles = UserProfile.objects.all()
+        profiles = UserProfile.objects.all().order_by('name')  # Sort by name ASC
     else:
-        profiles = UserProfile.objects.filter(blood_group=selected_group)
+        profiles = UserProfile.objects.filter(blood_group=selected_group).order_by('name')
 
-    # Ensure all possible blood groups appear in the dropdown
     return render(request, 'blood_group_list.html', {
         'profiles': profiles,
         'blood_groups': ALL_BLOOD_GROUPS,
         'selected_group': selected_group,
     })
 
-
 ALL_BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]
+
 
 def donor_list(request):
     selected_group = request.GET.get('blood_group', 'All')
