@@ -1,6 +1,7 @@
 {% extends 'admin_dashboard.html' %}
 
 {% block content %}
+<div class="table-responsive mt-3"></div>
 <div class="container mt-4">
     <h2 class="text-center">Manage Points - {{ user.username }}</h2>
 
@@ -26,6 +27,7 @@
     <!-- Points Table -->
     <!-- Points Table -->
 <h3 class="mt-4">Points Achieved</h3>
+
 {% if points %}
     <table class="table table-bordered mt-3">
         <thead>
@@ -137,5 +139,6 @@
             </tr>
         </tbody>
     </table>
+</div>
 </div>
 {% endblock %}
