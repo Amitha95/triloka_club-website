@@ -24,26 +24,65 @@
     </form>
 
     <!-- Points Table -->
-    <h3 class="mt-4">Points Achieved</h3>
-    {% if points %}
-        <table class="table table-bordered mt-3">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Category</th>
-                    <th>Points</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for point in points %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ point.category }}</td>
-                    <td>{{ point.points }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <!-- Points Table -->
+<h3 class="mt-4">Points Achieved</h3>
+{% if points %}
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Category</th>
+                <th>Points</th>
+                <th>Action</th> <!-- New Column -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for point in points %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ point.category }}</td>
+                <td>{{ point.points }}</td>
+                <td>
+                    <!-- Edit Button triggers a modal -->
+                    <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editPointModal{{ point.id }}">
+                        Edit
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="editPointModal{{ point.id }}" tabindex="-1" aria-labelledby="editPointLabel{{ point.id }}" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <form method="POST">
+                          {% csrf_token %}
+                          <input type="hidden" name="edit_id" value="{{ point.id }}">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="editPointLabel{{ point.id }}">Edit Points - {{ point.category }}</h5>
+                              <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="mb-3">
+                                  <label>Category</label>
+                                  <input type="text" name="category" class="form-control" value="{{ point.category }}" readonly>
+                              </div>
+                              <div class="mb-3">
+                                  <label>Points</label>
+                                  <input type="number" name="points" class="form-control" step="0.01" value="{{ point.points }}" required>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="submit" class="btn btn-success">Update</button>
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 
         <!-- Total Points -->
         <h4 class="text-end mt-3">Total Points: <strong>{{ total_points }}</strong></h4>

@@ -226,41 +226,107 @@ def edit_user(request, user_id):
     user = get_object_or_404(UserProfile, user__id=user_id)
 
     if request.method == "POST":
+        user.name = request.POST.get('name')
+        user.phone_number = request.POST.get('phone_number')
+        user.dob = request.POST.get('dob')
+
+        # Recalculate the age based on the updated dob
+        if user.dob:
+            user.age = calculate_age(user.dob)
+
+        user.gaurdian_name = request.POST.get('gaurdian_name')
+        user.relation = request.POST.get('relation')
+        user.idproof = request.POST.get('idproof')
+        user.address = request.POST.get('address')
+        user.gender = request.POST.get('gender')
+        user.blood_group = request.POST.get('blood_group')
+
+        willing_to_donate = request.POST.get('willing_to_donate_blood')
+        if willing_to_donate == 'True':
+            user.willing_to_donate_blood = True
+        elif willing_to_donate == 'False':
+            user.willing_to_donate_blood = False
+        else:
+            user.willing_to_donate_blood = None
+
+        # ✅ Update related User model fields
+        user.user.username = request.POST.get('username')
+        user.user.email = request.POST.get('email')
+
+        # ✅ Save the User model first
+        user.user.save()
+
+        # ✅ Handle optional profile photo upload
         if request.FILES.get("photo"):
             photo = request.FILES["photo"]
 
             try:
-                # ✅ Apply watermark to the newly uploaded photo
                 watermarked_photo = add_watermark_to_uploaded_photo(photo)
 
                 if watermarked_photo:
-                    # ✅ Upload to Cloudinary with a unique filename
                     cloudinary_result = cloudinary.uploader.upload(
                         watermarked_photo,
                         folder="watermarked/",
-                        public_id=f"user_{user_id}_{int(time.time())}",  # Unique filename
+                        public_id=f"user_{user_id}_{int(time.time())}",
                         overwrite=True
                     )
 
                     if "secure_url" in cloudinary_result:
-                        new_photo_url = cloudinary_result["secure_url"]
-
-                        # ✅ Update UserProfile with new photo URL
-                        user.photo = new_photo_url
-                        user.save()
-
-                        print(f"✅ User photo updated successfully: {new_photo_url}")
+                        user.photo = cloudinary_result["secure_url"]
+                        print(f"✅ User photo updated successfully: {user.photo}")
                     else:
                         print("❌ Cloudinary upload failed")
 
             except Exception as e:
                 print(f"❌ Error uploading to Cloudinary: {e}")
 
-        return redirect("user_list")  # Redirect after saving changes
+        # ✅ Save the UserProfile after all updates
+        user.save()
+
+        return redirect("user_list")
 
     return render(request, "edit_user.html", {"user": user})
 
 
+def edit_user(request, user_id):
+    user = get_object_or_404(UserProfile, user__id=user_id)  # Assuming user has a related User model
+    
+    if request.method == 'POST':
+        # Update fields manually without using a form
+        user.name = request.POST.get('name')
+        user.username = request.POST.get('username')
+        user.email = request.POST.get('email')
+        user.phone_number = request.POST.get('phone_number')
+        user.dob = request.POST.get('dob')
+        
+        # Recalculate the age based on the updated dob
+        if user.dob:
+            user.age = calculate_age(user.dob)
+        
+        user.gaurdian_name = request.POST.get('gaurdian_name')
+        user.relation = request.POST.get('relation')
+        user.idproof = request.POST.get('idproof')
+        user.address = request.POST.get('address')
+        user.gender = request.POST.get('gender')
+        
+        # Handle file upload (for photo)
+        new_photo_url = add_watermark_from_cloudinary(user)
+        
+        user.blood_group = request.POST.get('blood_group')
+        
+        willing_to_donate = request.POST.get('willing_to_donate_blood')
+        if willing_to_donate == 'True':
+            user.willing_to_donate_blood = True
+        elif willing_to_donate == 'False':
+            user.willing_to_donate_blood = False
+        else:
+    # Leave the field unchanged if None or not provided
+            user.willing_to_donate_blood = None
+
+        user.save()
+        return redirect('user_list')  # Redirect to the user list page after saving
+
+    return render(request, 'edit_user.html', {'user': user})
 
 def base(request):
     return render(request, 'base.html')
@@ -399,12 +465,12 @@ def user_home(request):
     points = [float(entry['total_points']) for entry in points_data]
 
     # Generate the pie chart using Matplotlib
-    plt.figure(figsize=(4, 4))
+    plt.figure(figsize=(6, 6))
     
     # Format labels with exact points instead of percentage
     labels = [f"{category}: {point} pts" for category, point in zip(categories, points)]
     plt.pie(points, labels=labels, colors=['red', 'blue', 'yellow', 'green', 'purple'])
-    plt.title("Points Distribution by Category")
+    plt.title("Points Distribution")
 
     # Save the plot to a buffer
     buffer = io.BytesIO()
@@ -556,33 +622,42 @@ def user_fees(request, user_id):
     current_year = datetime.now().year
 
     if request.method == "POST":
+        fee_id = request.POST.get("fee_id")
         month = request.POST.get("month")
         year = request.POST.get("year")
         amount = request.POST.get("amount")
 
         if month and year and amount:
-            UserFee.objects.create(user=user, month=month, year=year, amount=Decimal(amount))
-            return redirect("user_fees", user_id=user.id)  # Redirect to refresh the page
+            if fee_id:  # Edit existing fee
+                fee = get_object_or_404(UserFee, id=fee_id, user=user)
+                fee.month = month
+                fee.year = year
+                fee.amount = Decimal(amount)
+                fee.save()
+            else:  # Create new fee
+                UserFee.objects.create(user=user, month=month, year=year, amount=Decimal(amount))
 
-    # Fetch all fees paid by the user
-    paid_fees = UserFee.objects.filter(user=user, year=current_year).values_list('month', 'amount')
-    paid_fees_dict = {fee[0]: fee[1] for fee in paid_fees}
+            return redirect("user_fees", user_id=user.id)
+
+    # Fetch fees and construct fee_table
+    paid_fees = UserFee.objects.filter(user=user, year=current_year)
+    paid_fees_dict = {fee.month: fee.amount for fee in paid_fees}
     total_fees_paid = sum(paid_fees_dict.values())
-
     current_month = datetime.now().month
     fee_per_month = Decimal("10.00")
-    expected_payment = sum(fee_per_month for i in range(1, current_month + 1))
+    expected_payment = sum(fee_per_month for _ in range(1, current_month + 1))
 
-    # Build fee table
     fee_table = []
     for i, month in enumerate(months, start=1):
-        amount = paid_fees_dict.get(month, 0)
+        fee_obj = next((f for f in paid_fees if f.month == month), None)
+        amount = fee_obj.amount if fee_obj else 0
         status = "✅ Paid" if amount > 0 else "❌ Pending"
 
         fee_table.append({
+            "id": fee_obj.id if fee_obj else '',
             "month": month,
             "year": current_year,
-            "amount": f"₹{amount:.2f}",
+            "amount": f"{amount:.2f}",
             "status": status
         })
 
@@ -590,11 +665,12 @@ def user_fees(request, user_id):
 
     return render(request, 'user_fees.html', {
         "user": user,
-        "months": months,  # ✅ Pass months to template
+        "months": months,
         "fee_table": fee_table,
         "total_fees_paid": f"₹{total_fees_paid:.2f}",
         "pending_fees": f"₹{pending_fees:.2f}",
     })
+
 
 @login_required
 
@@ -646,7 +722,7 @@ def user_fee_details(request):
         "pending_fees": f"₹{pending_fees:.2f}",
     })
 
-from decimal import Decimal
+from decimal import Decimal,InvalidOperation
 
 @login_required
 def user_points(request, user_id):
@@ -665,34 +741,41 @@ def user_points(request, user_id):
     ]
 
     if request.method == "POST":
+        edit_id = request.POST.get("edit_id")
         category = request.POST.get("category")
         points_value = request.POST.get("points")
 
         try:
-            points_value = Decimal(points_value)  # Convert to Decimal
-        except ValueError:
+            points_value = Decimal(points_value)
+        except (ValueError, InvalidOperation):
             messages.error(request, "Invalid points value!")
             return redirect("user_points", user_id=user.id)
 
-        point_entry, created = UserPoint.objects.get_or_create(user=user, category=category)
+        if edit_id:
+            # Editing an existing entry
+            point_entry = get_object_or_404(UserPoint, id=edit_id, user=user)
+            point_entry.category = category
+            point_entry.points = points_value
+            point_entry.save()
+            messages.success(request, "Points updated successfully!")
+        else:
+            # Adding new or updating existing category
+            point_entry, created = UserPoint.objects.get_or_create(user=user, category=category)
+            point_entry.points += points_value
+            point_entry.save()
+            messages.success(request, "Points added successfully!")
 
-        # Ensure proper Decimal addition
-        point_entry.points += points_value  
-        point_entry.save()
-
-        messages.success(request, "Points updated successfully!")
         return redirect("user_points", user_id=user.id)
 
-    # Calculate total points correctly using Decimal
+    # Calculate total points
     total_points = sum(point.points for point in points)
 
     return render(request, "user_points.html", {
         "user": user,
         "points": points,
         "total_points": total_points,
-        "category_choices": CATEGORY_CHOICES,  # Pass choices to template
+        "category_choices": CATEGORY_CHOICES,
     })
-
 
 @login_required
 def update_donation_status(request):

@@ -26,19 +26,58 @@
         </thead>
         <tbody>
             {% for fee in fee_table %}
-        <tr>
-            <td>{{ fee.month }}</td>
-            <td>{{ fee.year }}</td>
-            <td>{{ fee.amount }}</td>
-            <td>{{ fee.status }}</td>
-        </tr>
-       
-            {% empty %}
-                <tr>
-                    <td colspan="4" class="text-center">No fees recorded.</td>
-                </tr>
+            <tr>
+                <td>{{ fee.month }}</td>
+                <td>{{ fee.year }}</td>
+                <td>₹{{ fee.amount }}</td>
+                <td>{{ fee.status }}</td>
+                <td>
+                    
+                    <!-- Trigger Modal -->
+                    <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editFeeModal{{ fee.id }}">
+                        {% if fee.id %}Edit{% else %}Add{% endif %}
+                    </button>
+        
+                    <!-- Modal -->
+                    <div class="modal fade" id="editFeeModal{{ fee.id }}" tabindex="-1" aria-labelledby="editFeeLabel{{ fee.id }}" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <form method="POST">
+                          {% csrf_token %}
+                          <input type="hidden" name="fee_id" value="{{ fee.id }}">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title">Edit Fee - {{ fee.month }}</h5>
+                              <button type="button" class="btn-close" data-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="mb-3">
+                                  <label>Month</label>
+                                  <input type="text" name="month" class="form-control" value="{{ fee.month }}" readonly>
+                              </div>
+                              <div class="mb-3">
+                                  <label>Year</label>
+                                  <input type="number" name="year" class="form-control" value="{{ fee.year }}" readonly>
+                              </div>
+                              <div class="mb-3">
+                                  <label>Amount</label>
+                                  <input type="number" name="amount" class="form-control" step="0.01" value="{{ fee.amount }}" required>
+                              </div>
+                              
+                            </div>
+                            <div class="modal-footer">
+                              <button type="submit" class="btn btn-success">Save Changes</button>
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                 
+                </td>
+            </tr>
             {% endfor %}
         </tbody>
+        
     </table>
 
     <!-- Form to Add Fees -->
