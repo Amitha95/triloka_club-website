@@ -41,6 +41,7 @@ urlpatterns = [
     path("register_user/", register_user, name="register_user"),
     path("upload/", upload_gallery_image, name="upload_gallery"), 
     path("gallery_list/", gallery_list, name="gallery_list"),  
+    path('edit_image/<int:image_id>/', views.edit_image, name='edit_image'),
     path('delete/<int:image_id>/', delete_image, name='delete_image'),
     path("upload-event/", upload_event, name="upload_event"),  # Event upload page
     path("event_list/", event_list, name="event_list"),  # Event list page

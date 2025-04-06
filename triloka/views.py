@@ -508,6 +508,22 @@ def gallery_list(request):
     images = Gallery.objects.all().order_by('-date')
     return render(request, "gallery_list.html", {"images": images})
 
+def edit_image(request, image_id):
+    image = get_object_or_404(Gallery, id=image_id)
+
+    if request.method == 'POST':
+        image.title = request.POST.get('title')
+        image.subcategory = request.POST.get('subcategory')
+        image.date = request.POST.get('date')
+
+        if request.FILES.get('image'):
+            image.image = request.FILES['image']
+        
+        image.save()
+        return redirect('gallery_list')
+
+    return render(request, 'edit_image.html', {'image': image})
+
 def delete_image(request, image_id):
     """Deletes an image from the gallery."""
     image = get_object_or_404(Gallery, id=image_id)

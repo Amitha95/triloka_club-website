@@ -1,0 +1,33 @@
+{% extends 'admin_dashboard.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Image - {{ image.title }}</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label>Title:</label>
+            <input type="text" name="title" class="form-control" value="{{ image.title }}">
+        </div>
+
+        <div class="form-group">
+            <label>Subcategory:</label>
+            <input type="text" name="subcategory" class="form-control" value="{{ image.subcategory }}">
+        </div>
+
+        <div class="form-group">
+            <label>Date:</label>
+            <input type="date" name="date" class="form-control" value="{{ image.date|date:'Y-m-d' }}">
+        </div>
+
+        <div class="form-group">
+            <label>Current Image:</label><br>
+            <img src="{{ image.image.url }}" alt="Current Image" style="max-height: 150px;"><br><br>
+            <input type="file" name="image">
+        </div>
+
+        <button type="submit" class="btn btn-success">Save Changes</button>
+        <a href="{% url 'gallery_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
