@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth.models import User
 from .models import UserProfile, UserFee, UserPoint
 from .models import  Gallery, Event
@@ -856,6 +856,7 @@ def redeem_points(request):
 
     return redirect('point_redemption_rules')
 
+@user_passes_test(lambda u: u.is_superuser or u.groups.filter(name="admin").exists())
 def admin_home(request):
     today = now().date()  # Get today's date
     new_registrations = UserProfile.objects.filter(user__date_joined__date=today).count()  # Count today's registrations
