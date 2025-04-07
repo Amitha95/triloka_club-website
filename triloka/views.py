@@ -423,12 +423,12 @@ def login_view(request):
         if user is not None:
             login(request, user)
             if user.is_superuser or user.groups.filter(name="admin").exists():
-                return JsonResponse({'redirect_url': '/admin_home'})
+                return redirect("admin_home")  # Use name if set in urls.py
             else:
-                return JsonResponse({'redirect_url': '/user_home'})
+                return redirect("user_home")
         else:
             messages.error(request, "Invalid username or password")
-            return JsonResponse({'error': 'Invalid username or password'}, status=401)
+            return redirect("home")
 
     return render(request, "home.html")
 
