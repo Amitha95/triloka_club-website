@@ -227,6 +227,13 @@ function submitDonationChoice(choice) {
 });
 
 </script>
-
+<script>
+    // Prevent back button from navigating out of dashboard
+    history.pushState(null, "", location.href);
+    window.onpopstate = function () {
+        alert("You can't go back. Please logout to exit the dashboard.");
+        history.pushState(null, "", location.href);
+    };
+</script>
 
 {% endblock %}

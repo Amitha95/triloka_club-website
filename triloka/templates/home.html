@@ -435,6 +435,31 @@
                     }
                 };
             </script>
+            <script>
+                const form = document.getElementById('login-form');
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+        
+                    const formData = new FormData(form);
+        
+                    fetch("{% url 'login_view' %}", {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.redirect_url) {
+                            // Use replace to avoid putting home.html in history
+                            window.location.replace(data.redirect_url);
+                        } else if (data.error) {
+                            document.getElementById('error-message').innerText = data.error;
+                        }
+                    });
+                });
+            </script>
 
 <style>
     .card {
