@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% block meta_description %}
+Welcome to Triloka Arts and Sports Club - uniting people through cultural and sports events that uplift our community spirit.
+{% endblock %}
 {% block content %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" rel="stylesheet">
         <!-- Masthead-->
@@ -66,10 +69,10 @@
    
             <div id="portfolio">
   <div class="container-fluid p-0">
-                <div class="row g-4"> <!-- Added g-4 for gutter spacing -->
+                <div class="row g-4"> 
                     <div class="col-lg-3 col-sm-4 mb-4"> 
-                        <a class="portfolio-box" href="static/assets/img/portfolio/thumbnails/Abhay.jpeg" title="President">
-                            <img class="img-fluid" src="static/assets/img/portfolio/thumbnails/Abhay.jpeg" alt="..." />
+                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Abhay.jpeg' %}" title="President">
+                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Abhay.jpeg' %}" alt="Abhay Krishnan U S - President" />
                             <div class="portfolio-box-caption">
                                 <div class="project-category text-white-50">Abhay Krishnan U S</div>
                                 <div class="project-name">President</div>
@@ -77,8 +80,8 @@
                         </a>
                     </div>
                     <div class="col-lg-3 col-sm-4 mb-4">
-                        <a class="portfolio-box" href="static/assets/img/portfolio/thumbnails/Sagar.jpg" title="Secretary">
-                            <img class="img-fluid" src="static/assets/img/portfolio/thumbnails/Sagar.jpg" alt="..." />
+                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Sagar.jpg' %}" title="Secretary">
+                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Sagar.jpg' %}" alt="Sagar S - Secretary" />
                             <div class="portfolio-box-caption">
                                 <div class="project-category text-white-50">Sagar S</div>
                                 <div class="project-name">Secretary</div>
@@ -86,8 +89,8 @@
                         </a>
                     </div>
                     <div class="col-lg-3 col-sm-4 mb-4">
-                        <a class="portfolio-box" href="static/assets/img/portfolio/thumbnails/Ajal.jpg" title="Treasurer">
-                            <img class="img-fluid" src="static/assets/img/portfolio/thumbnails/Ajal.jpg" alt="..." />
+                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Ajal.jpg' %}" title="Treasurer">
+                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Ajal.jpg' %}" alt="Ajal Gopan - Treasurer" />
                             <div class="portfolio-box-caption">
                                 <div class="project-category text-white-50">Ajal Gopan</div>
                                 <div class="project-name">Treasurer</div>
@@ -95,8 +98,8 @@
                         </a>
                     </div>
                     <div class="col-lg-3 col-sm-4 mb-4">
-                        <a class="portfolio-box" href="static/assets/img/portfolio/thumbnails/Karthik.jpeg" title="Vice President">
-                            <img class="img-fluid" src="static/assets/img/portfolio/thumbnails/Karthik.jpeg" alt="..." />
+                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Karthik.jpeg' %}" title="Vice President">
+                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Karthik.jpeg' %}" alt="Karthik S - Vice President" />
                             <div class="portfolio-box-caption">
                                 <div class="project-category text-white-50">Karthik S</div>
                                 <div class="project-name">Vice President</div>
@@ -104,11 +107,11 @@
                         </a>
                     </div>
                 </div>
-                <div class="row g-4"> <!-- Added g-4 for gutter spacing -->
+                <div class="row g-4"> 
                     <div class="col-lg-3 col-sm-4 mb-4"> 
                     
-                        <a class="portfolio-box" href="static/assets/img/portfolio/thumbnails/Gouri.jpg" title="Joint Secretary">
-                            <img class="img-fluid" src="static/assets/img/portfolio/thumbnails/Gouri.jpg" alt="..." />
+                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Gouri.jpg' %}" title="Joint Secretary">
+                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Gouri.jpg' %}" alt="Gouri S - Joint Secretary" />
                             <div class="portfolio-box-caption">
                                 <div class="project-category text-white-50">Gouri S</div>
                                 <div class="project-name">Joint Secretary</div>
@@ -116,8 +119,8 @@
                         </a>
                     </div>
                     <div class="col-lg-3 col-sm-4 mb-4">
-                        <a class="portfolio-box" href="static/assets/img/portfolio/thumbnails/Amitha.jpg" title="Executive Member">
-                            <img class="img-fluid" src="static/assets/img/portfolio/thumbnails/Amitha.jpg" alt="..." />
+                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Amitha.jpg' %}" title="Executive Member">
+                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Amitha.jpg' %}" alt="Amitha S L - Executive Member" />
                             <div class="portfolio-box-caption">
                                 <div class="project-category text-white-50">Amitha S L</div>
                                 <div class="project-name">Executive Member</div>
@@ -125,8 +128,8 @@
                         </a>
                     </div>
                     <div class="col-lg-3 col-sm-4 mb-4">
-                        <a class="portfolio-box" href="static/assets/img/portfolio/thumbnails/Deepak.jpg" title="Executive Member">
-                            <img class="img-fluid" src="static/assets/img/portfolio/thumbnails/Deepak.jpg" alt="..." />
+                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Deepak.jpg' %}" title="Executive Member">
+                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Deepak.jpg' %}" alt="Deepak V - Executive Member" />
                             <div class="portfolio-box-caption">
                                 <div class="project-category text-white-50">Deepak V</div>
                                 <div class="project-name">Executive Member</div>
@@ -134,8 +137,8 @@
                         </a>
                     </div>
                     <div class="col-lg-3 col-sm-4 mb-4">
-                        <a class="portfolio-box" href="static/assets/img/portfolio/thumbnails/Gopika.jpg" title="Executive Member">
-                            <img class="img-fluid" src="static/assets/img/portfolio/thumbnails/Gopika.jpg" alt="..." />
+                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Gopika.jpg' %}" title="Executive Member">
+                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Gopika.jpg' %}" alt="Gopika Krishnan - Executive Member" />
                             <div class="portfolio-box-caption">
                                 <div class="project-category text-white-50">Gopika Krishnan</div>
                                 <div class="project-name">Executive Member</div>
@@ -143,11 +146,11 @@
                         </a>
                     </div>
                 </div>
-                <div class="row g-4"> <!-- Added g-4 for gutter spacing -->
+                <div class="row g-4"> 
                     <div class="col-lg-3 col-sm-4 "> 
                     
-                        <!--<a class="portfolio-box" href="static/assets/img/portfolio/fullsize/4.jpg" title="Project Name">
-                            <img class="img-fluid" src="static/assets/img/portfolio/thumbnails/4.jpg" alt="..." />
+                        <!--<a class="portfolio-box" href="{% static 'assets/img/portfolio/fullsize/4.jpg' %}" title="Project Name">
+                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/4.jpg' %}" alt="..." />
                             <div class="portfolio-box-caption">
                                 <div class="project-category text-white-50">Category</div>
                                 <div class="project-name">Project Name</div>
@@ -155,8 +158,8 @@
                         </a>-->
                     </div>
                     <div class="col-lg-3 col-sm-4 mb-4">
-                        <a class="portfolio-box" href="static/assets/img/portfolio/thumbnails/Madhav.jpg" title="Executive Member">
-                            <img class="img-fluid" src="static/assets/img/portfolio/thumbnails/Madhav.jpg" alt="..." />
+                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Madhav.jpg' %}" title="Executive Member">
+                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Madhav.jpg' %}" alt="Madhav M - Executive Member" />
                             <div class="portfolio-box-caption">
                                 <div class="project-category text-white-50">Madhav M</div>
                                 <div class="project-name">Executive Member</div>
@@ -164,8 +167,8 @@
                         </a>
                     </div>
                     <div class="col-lg-3 col-sm-4 mb-4">
-                        <a class="portfolio-box" href="static/assets/img/portfolio/thumbnails/Sreekesh.jpg" title="Executive Member">
-                            <img class="img-fluid" src="static/assets/img/portfolio/thumbnails/Sreekesh.jpg" alt="..." />
+                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Sreekesh.jpg' %}" title="Executive Member">
+                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Sreekesh.jpg' %}" alt="Sreekesh S Kumar - Executive Member" />
                             <div class="portfolio-box-caption">
                                 <div class="project-category text-white-50">Sreekesh S Kumar</div>
                                 <div class="project-name">Executive Member</div>
