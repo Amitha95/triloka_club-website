@@ -85,6 +85,13 @@
         font-size: 20px;
         margin: 0 1px;
     }
+
+    .carousel-inner {
+    
+    width: 200%;
+  
+}
+
     </style>
     
 
@@ -235,5 +242,81 @@ function submitDonationChoice(choice) {
         history.pushState(null, "", location.href);
     };
 </script>
+<hr>
+<h4 class="text-center text-muted">🎁 Recommended Accessories Under ₹200</h4>
+<!-- Bootstrap 4 Carousel for Recommended Accessories -->
+<div class="container mt-4" >
+   
+    <div id="accessoryCarousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+
+            <!-- Slide 1 -->
+            <div class="carousel-item active">
+                <div class="row justify-content-center">
+                    <!-- Item 1 -->
+                    <div class="col-6 col-md-3 text-center mb-4">
+
+                        
+<a href="https://www.amazon.in/dp/B0D17YXV69?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
+    <img src="https://m.media-amazon.com/images/I/61hq5xrGX4L._SX679_.jpg" alt="TORCHIT Motivational Bottle" style="width:70px; border-radius:10px;" />
+</a>
+
+
+<a href="https://www.amazon.in/dp/B0D17YXV69?tag=trilokaartscl-21" target="_blank" class="btn btn-outline-info" rel="nofollow sponsored">
+    🛒 Click here
+</a>                  
+<p>
+    <a href="https://www.amazon.in/dp/B0D17YXV69?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored" style="color: black; text-decoration: none;">
+      CLick here
+    </a>
+  </p>
+                    </div>
+                    <!-- Item 2 -->
+                    <div class="col-6 col-md-3 text-center mb-4">
+                        <a href="https://www.amazon.in/dp/B09Y39YJMN?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
+                            <img src="https://m.media-amazon.com/images/I/41MJkVVjipL._SX679_.jpg" class="img-fluid rounded" alt="USB LED Light Strip">
+                        </a>
+                        <p class="mt-2">USB LED Light Strip</p>
+                        <a href="https://www.amazon.in/dp/B09Y39YJMN?tag=trilokaartscl-21" class="btn btn-sm btn-outline-primary" target="_blank" rel="nofollow sponsored">Buy for ₹199</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="carousel-item">
+                <div class="row justify-content-center">
+                    <!-- Item 3 -->
+                    <div class="col-6 col-md-3 text-center mb-4">
+                        <a href="https://www.amazon.in/dp/B082FST8P9?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
+                            <img src="https://m.media-amazon.com/images/I/51cX-k7PoPL._SX679_.jpg" class="img-fluid rounded" alt="Mobile Phone Stand">
+                        </a>
+                        <p class="mt-2">Mobile Phone Stand</p>
+                        <a href="https://www.amazon.in/dp/B082FST8P9?tag=trilokaartscl-21" class="btn btn-sm btn-outline-primary" target="_blank" rel="nofollow sponsored">Buy for ₹120</a>
+                    </div>
+                    <!-- Item 4 -->
+                    <div class="col-6 col-md-3 text-center mb-4">
+                        <a href="https://www.amazon.in/dp/B0B4NY69K9?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
+                            <img src="https://m.media-amazon.com/images/I/71dkOIbV5dL._SX679_.jpg" class="img-fluid rounded" alt="Decor Wall Sticker">
+                        </a>
+                        <p class="mt-2">Decor Wall Sticker</p>
+                        <a href="https://www.amazon.in/dp/B0B4NY69K9?tag=trilokaartscl-21" class="btn btn-sm btn-outline-primary" target="_blank" rel="nofollow sponsored">Buy for ₹99</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Controls -->
+        <a class="carousel-control-prev" href="#accessoryCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#accessoryCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+</div>
+
 
 {% endblock %}
