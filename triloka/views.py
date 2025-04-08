@@ -589,16 +589,17 @@ def upload_event(request):
         title = request.POST.get("title")
         description = request.POST.get("description")
         image = request.FILES.get("image")
-        date = request.POST.get("date")
-        end_date = request.POST.get("end_date")
+        date = request.POST.get("date") or None
+        end_date = request.POST.get("end_date") or None
 
-        if title and description and image and date and end_date:
+        if title and description and image:
             Event.objects.create(
                 title=title,
                 description=description,
                 image=image,
-                date=date,
-                end_date=end_date
+                date=date if date else None,
+                end_date=end_date if end_date else None
+
             )
             return redirect("event_list")  # Redirect to event list page after upload
 

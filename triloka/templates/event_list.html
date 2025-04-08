@@ -32,18 +32,34 @@
 <h2>Events</h2>
 <div class="event-grid">
     {% for event in events %}
-        <div class="event-card">
-            <h3>{{ event.title }}</h3>
-            <p>{{ event.description }}</p>
-            <p><strong>Start:</strong> {{ event.date }} | <strong>End:</strong> {{ event.end_date }}</p>
-            <img src="{{ event.image.url }}" alt="{{ event.title }}">
-
-            <!-- Delete Button -->
-            <form action="{% url 'delete_event' event.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="delete-btn">Delete</button>
-            </form>
-        </div>
+    <div class="event-card">
+        <h3>{{ event.title }}</h3>
+        <p>{{ event.description }}</p>
+        
+        <p>
+          <strong>Start:</strong>
+          {% if event.date %}
+            {{ event.date }}
+          {% else %}
+            <em>Date to be announced soon</em>
+          {% endif %}
+          |
+          <strong>End:</strong>
+          {% if event.end_date %}
+            {{ event.end_date }}
+          {% else %}
+            <em>To be announced</em>
+          {% endif %}
+        </p>
+    
+        <img src="{{ event.image.url }}" alt="{{ event.title }}">
+    
+        <!-- Delete Button -->
+        <form action="{% url 'delete_event' event.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="delete-btn">Delete</button>
+        </form>
+    </div>
     {% empty %}
         <p>No events available.</p>
     {% endfor %}
