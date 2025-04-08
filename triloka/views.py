@@ -408,6 +408,7 @@ def about(request):
 def events(request):
     return render(request, 'events.html')
 
+
 def gallery(request):
     return render(request, 'gallery.html')
 

@@ -99,15 +99,17 @@ Welcome to Triloka Arts and Sports Club - uniting people through cultural and sp
             <img src="{% static 'images/eagle2.gif' %}" alt="Running Boy" height="80">
             {% for event in upcoming_events %}
             <div class="marquee-item"
-                data-title="{{ event.title }}"
-                data-description="{{ event.description }}"
-                data-date="{{ event.date|date:'M d, Y' }}"
-                data-end-date="{{ event.end_date|date:'M d, Y' }}"
-                data-image="{% if event.image %}{{ event.image.url }}{% else %}{% static 'images/default-event.jpg' %}{% endif %}"
-                onclick="showEventModal(this)">
-                <strong>{{ event.title }}</strong> - 
-                Registration starts from {{ event.date|date:'M d, Y' }} to {{ event.end_date|date:'M d, Y' }}
-            </div>
+    data-title="{{ event.title }}"
+    data-description="{{ event.description }}"
+    data-date="{{ event.date|date:'M d, Y' }}"
+    data-end-date="{{ event.end_date|date:'M d, Y' }}"
+    data-image="{% if event.image %}{{ event.image.url }}{% else %}{% static 'images/default-event.jpg' %}{% endif %}"
+    onclick="showEventModal(this)">
+    <strong>{{ event.title }}</strong> - On {{event.end_date|date:'M d, Y'}}
+   
+
+</div>
+
             {% endfor %}
         </div>
     </div>
