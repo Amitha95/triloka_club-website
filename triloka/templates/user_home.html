@@ -86,10 +86,15 @@
         margin: 0 1px;
     }
 
-    .carousel-inner {
-    
-    width: 200%;
-  
+    .carousel-image {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin: 0 auto;
+}
+.carousel-item .col-6 {
+  margin-left: -20px; /* Adjust as needed */
 }
 
     </style>
@@ -242,67 +247,129 @@ function submitDonationChoice(choice) {
         history.pushState(null, "", location.href);
     };
 </script>
+<br>
 <hr>
-<h4 class="text-center text-muted">🎁 Recommended Accessories Under ₹200</h4>
-<!-- Bootstrap 4 Carousel for Recommended Accessories -->
-<div class="container mt-4" >
-   
+<p class="text-center text-muted">🎁 Vishu Special Decoration Items</p>
+<div class="container mt-4">
     <div id="accessoryCarousel" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner">
-
+        <div class="carousel-inner text-center">
             <!-- Slide 1 -->
-            <div class="carousel-item active">
-                <div class="row justify-content-center">
-                    <!-- Item 1 -->
-                    <div class="col-6 col-md-3 text-center mb-4">
-
-                        
-<a href="https://www.amazon.in/dp/B0D17YXV69?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
-    <img src="https://m.media-amazon.com/images/I/61hq5xrGX4L._SX679_.jpg" alt="TORCHIT Motivational Bottle" style="width:70px; border-radius:10px;" />
-</a>
-
-
-<a href="https://www.amazon.in/dp/B0D17YXV69?tag=trilokaartscl-21" target="_blank" class="btn btn-outline-info" rel="nofollow sponsored">
-    🛒 Click here
-</a>                  
-<p>
-    <a href="https://www.amazon.in/dp/B0D17YXV69?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored" style="color: black; text-decoration: none;">
-      CLick here
-    </a>
-  </p>
-                    </div>
-                    <!-- Item 2 -->
-                    <div class="col-6 col-md-3 text-center mb-4">
-                        <a href="https://www.amazon.in/dp/B09Y39YJMN?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
-                            <img src="https://m.media-amazon.com/images/I/41MJkVVjipL._SX679_.jpg" class="img-fluid rounded" alt="USB LED Light Strip">
-                        </a>
-                        <p class="mt-2">USB LED Light Strip</p>
-                        <a href="https://www.amazon.in/dp/B09Y39YJMN?tag=trilokaartscl-21" class="btn btn-sm btn-outline-primary" target="_blank" rel="nofollow sponsored">Buy for ₹199</a>
-                    </div>
-                </div>
+            <div class="carousel-item">
+                <a href="https://www.amazon.in/Angroos-Golden-Blossom-Artificial-Celebration/dp/B0CZT1Z49H?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
+                    <img src="https://m.media-amazon.com/images/I/81IiHAmTYTL._SX679_.jpg" alt="TORCHIT Motivational Bottle" class="carousel-image">
+                </a>
+                <p class="mt-2">
+                    <a href="https://www.amazon.in/Angroos-Golden-Blossom-Artificial-Celebration/dp/B0CZT1Z49H?tag=trilokaartscl-21" target="_blank" class="btn btn-outline-info">
+                        🛒 Click here
+                    </a>
+                </p>
             </div>
 
             <!-- Slide 2 -->
             <div class="carousel-item">
-                <div class="row justify-content-center">
-                    <!-- Item 3 -->
-                    <div class="col-6 col-md-3 text-center mb-4">
-                        <a href="https://www.amazon.in/dp/B082FST8P9?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
-                            <img src="https://m.media-amazon.com/images/I/51cX-k7PoPL._SX679_.jpg" class="img-fluid rounded" alt="Mobile Phone Stand">
-                        </a>
-                        <p class="mt-2">Mobile Phone Stand</p>
-                        <a href="https://www.amazon.in/dp/B082FST8P9?tag=trilokaartscl-21" class="btn btn-sm btn-outline-primary" target="_blank" rel="nofollow sponsored">Buy for ₹120</a>
-                    </div>
-                    <!-- Item 4 -->
-                    <div class="col-6 col-md-3 text-center mb-4">
-                        <a href="https://www.amazon.in/dp/B0B4NY69K9?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
-                            <img src="https://m.media-amazon.com/images/I/71dkOIbV5dL._SX679_.jpg" class="img-fluid rounded" alt="Decor Wall Sticker">
-                        </a>
-                        <p class="mt-2">Decor Wall Sticker</p>
-                        <a href="https://www.amazon.in/dp/B0B4NY69K9?tag=trilokaartscl-21" class="btn btn-sm btn-outline-primary" target="_blank" rel="nofollow sponsored">Buy for ₹99</a>
-                    </div>
-                </div>
+                <a href="https://www.amazon.in/Udayada-Thaalam-Weddings-Height-Yellow/dp/B09R7P7GS9?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
+                    <img src="https://m.media-amazon.com/images/I/61G0zJm6qUL._SX679_.jpg" alt="USB LED Light Strip" class="carousel-image">
+                </a>
+                <p class="mt-2">
+                    <a href="https://www.amazon.in/Udayada-Thaalam-Weddings-Height-Yellow/dp/B09R7P7GS9?tag=trilokaartscl-21" target="_blank" class="btn btn-outline-info">
+                        🛒 Click here
+                    </a>
+                </p>
             </div>
+
+            <!-- Slide 3 -->
+            <div class="carousel-item">
+                <a href="https://www.amazon.in/Brahma-Crafts-Decorations-vaalkannadi-Traditional/dp/B08Y7WT683?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
+                    <img src="https://m.media-amazon.com/images/I/61ut4QOzt4L._SX679_.jpg" alt="Mobile Phone Stand" class="carousel-image">
+                </a>
+                <p class="mt-2">
+                    <a href="https://www.amazon.in/Brahma-Crafts-Decorations-vaalkannadi-Traditional/dp/B08Y7WT683?tag=trilokaartscl-21" target="_blank" class="btn btn-outline-info">
+                        🛒 Click here
+                    </a>
+                </p>
+            </div>
+
+            <!-- Slide 4 -->
+            <div class="carousel-item">
+                <a href="https://www.amazon.in/Anciently-Kubera-Coins-27-Pooja/dp/B09R953GY1?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
+                    <img src="https://m.media-amazon.com/images/I/91No5TAhezL._SX679_.jpg" alt="Decor Wall Sticker" class="carousel-image">
+                </a>
+                <p class="mt-2">
+                    <a href="https://www.amazon.in/Anciently-Kubera-Coins-27-Pooja/dp/B09R953GY1?tag=trilokaartscl-21" target="_blank" class="btn btn-outline-info">
+                        🛒 Click here
+                    </a>
+                </p>
+            </div>
+
+ <!-- Slide 5 -->
+            <div class="carousel-item">
+                <a href="  https://www.amazon.in/dp/B0DRF8KWDF?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
+                    <img src="https://m.media-amazon.com/images/I/81nkoLBnSXL._SX679_.jpg" alt="Decor Wall Sticker" class="carousel-image">
+                </a>
+                <p class="mt-2">
+                    <a href="  https://www.amazon.in/dp/B0DRF8KWDF?tag=trilokaartscl-21" target="_blank" class="btn btn-outline-info">
+                        🛒 Click here
+                    </a>
+                </p>
+            </div>
+             <!-- Slide 6 -->
+            <div class="carousel-item active">
+                <a href="https://www.amazon.in/Culturalshoppe-Paper-Mache-Vishu-Krishna/dp/B0C15KCGFD?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
+                    <img src="https://m.media-amazon.com/images/I/71Dt3pLupyL._SY879_.jpg" alt="Decor Wall Sticker" class="carousel-image">
+                </a>
+                <p class="mt-2">
+                    <a href="https://www.amazon.in/Culturalshoppe-Paper-Mache-Vishu-Krishna/dp/B0C15KCGFD?tag=trilokaartscl-21" target="_blank" class="btn btn-outline-info">
+                        🛒 Click here
+                    </a>
+                </p>
+            </div>
+           <!-- Slide 7 -->
+            <div class="carousel-item">
+                <a href="https://www.amazon.in/PALMY-Hammered-Traditional-Potpourri-Decorative/dp/B0D45G83MC?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
+                    <img src="https://m.media-amazon.com/images/I/51P8CbxO3eL._SX679_.jpg" alt="Decor Wall Sticker" class="carousel-image">
+                </a>
+                <p class="mt-2">
+                    <a href="https://www.amazon.in/PALMY-Hammered-Traditional-Potpourri-Decorative/dp/B0D45G83MC?tag=trilokaartscl-21" target="_blank" class="btn btn-outline-info">
+                        🛒 Click here
+                    </a>
+                </p>
+            </div>
+            
+             <!-- Slide 8 -->
+            <div class="carousel-item">
+                <a href="https://www.amazon.in/Angroos-Elegant-Yellow-Vishu-Decoration/dp/B0CZJS86Y9?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
+                    <img src="https://m.media-amazon.com/images/I/81UyBN9+BdL._SX679_.jpg" alt="Decor Wall Sticker" class="carousel-image">
+                </a>
+                <p class="mt-2">
+                    <a href="https://www.amazon.in/Angroos-Elegant-Yellow-Vishu-Decoration/dp/B0CZJS86Y9?tag=trilokaartscl-21" target="_blank" class="btn btn-outline-info">
+                        🛒 Click here
+                    </a>
+                </p>
+            </div>
+                <!-- Slide 9 -->
+            <div class="carousel-item">
+                <a href="https://www.amazon.in/Angroos-Traditional-Celebrations-Sovereign-Odakuzhal/dp/B0C1G19B4C?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
+                    <img src="https://m.media-amazon.com/images/I/91+8pmDNd8L._SX679_.jpg" alt="Decor Wall Sticker" class="carousel-image">
+                </a>
+                <p class="mt-2">
+                    <a href="https://www.amazon.in/Angroos-Traditional-Celebrations-Sovereign-Odakuzhal/dp/B0C1G19B4C?tag=trilokaartscl-21" target="_blank" class="btn btn-outline-info">
+                        🛒 Click here
+                    </a>
+                </p>
+            </div>
+         
+                <!-- Slide 10 -->
+            <div class="carousel-item">
+                <a href="https://www.amazon.in/Angroos-Traditional-Vishu-Kani-Decoration/dp/B0C1P5LCMX?tag=trilokaartscl-21" target="_blank" rel="nofollow sponsored">
+                    <img src="https://m.media-amazon.com/images/I/81omo1UKaOL._SX569_.jpg" alt="Decor Wall Sticker" class="carousel-image">
+                </a>
+                <p class="mt-2">
+                    <a href="https://www.amazon.in/Angroos-Traditional-Vishu-Kani-Decoration/dp/B0C1P5LCMX?tag=trilokaartscl-21" target="_blank" class="btn btn-outline-info">
+                        🛒 Click here
+                    </a>
+                </p>
+            </div>
+
 
         </div>
 
@@ -317,6 +384,5 @@ function submitDonationChoice(choice) {
         </a>
     </div>
 </div>
-
 
 {% endblock %}
