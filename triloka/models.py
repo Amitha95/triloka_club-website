@@ -81,9 +81,10 @@ class Gallery(models.Model):
 class Event(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
-    image = cloudinary.models.CloudinaryField('image')  # Store event images in Cloudinary
-    date = models.DateField(null=True, blank=True)  # Allow NULL values
-    end_date = models.DateField(null=True, blank=True)  # Allow NULL values
+    image = cloudinary.models.CloudinaryField('image')
+    date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)  # Used for glow logic
 
     def __str__(self):
         return f"{self.title} - {self.date.strftime('%Y-%m-%d') if self.date else 'No Date'} to {self.end_date.strftime('%Y-%m-%d') if self.end_date else 'Ongoing'}"

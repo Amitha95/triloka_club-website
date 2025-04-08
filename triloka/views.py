@@ -332,6 +332,18 @@ def base(request):
     return render(request, 'base.html')
 
 def home(request):
+    today = date.today()
+
+    glowing_events = Event.objects.filter(
+        created_at__date=today  # Added today
+    ) | Event.objects.filter(
+        created_at__date__lt=today,  # Added earlier
+        end_date__isnull=False,
+        end_date__gte=today  # Still ongoing
+    ) | Event.objects.filter(
+        created_at__date__lt=today,
+        end_date__isnull=True  # No end date
+    )
     # Get distinct categories (grouped by title)
     categories = (
         Gallery.objects.values('title')
@@ -362,7 +374,7 @@ def home(request):
             'subcategories': list(subcategories),  # Convert to list for iteration in template
         }
 
-    return render(request, 'home.html', {'categories': categories_with_images})
+    return render(request, 'home.html', {'categories': categories_with_images,'has_glowing_event': glowing_events.exists()})
 
 def gallery_subcategories(request, title):
     subcategories = (

@@ -11095,3 +11095,17 @@ header.masthead h1, header.masthead .h1 {
   height: 200px !important;
   width: 100% !important;
 }
+
+.blink {
+  animation: blinker 1.5s linear infinite;
+  color: red;
+  font-size: 1.5em;
+  /* Larger, responsive font size */
+  margin-bottom: 20px;
+}
+
+@keyframes blinker {
+  50% {
+      opacity: 0;
+  }
+}
