@@ -105,8 +105,17 @@ Welcome to Triloka Arts and Sports Club - uniting people through cultural and sp
     data-end-date="{{ event.end_date|date:'M d, Y' }}"
     data-image="{% if event.image %}{{ event.image.url }}{% else %}{% static 'images/default-event.jpg' %}{% endif %}"
     onclick="showEventModal(this)">
-    <strong>{{ event.title }}</strong> - On {{event.end_date|date:'M d, Y'}}
-   
+    <strong>{{ event.title }}</strong>
+    {% if event.date and event.end_date %}
+    - On {{ event.end_date|date:'M d, Y' }}<br>
+    Registration starts from {{ event.date|date:'M d, Y' }} to {{ event.end_date|date:'M d, Y' }}
+{% elif event.end_date %}
+    - On {{ event.end_date|date:'M d, Y' }}
+{% elif event.date %}
+    - Starting from {{ event.date|date:'M d, Y' }}
+{% else %}
+    - <em>Date to be announced soon</em>
+{% endif %}
 
 </div>
 
@@ -125,12 +134,14 @@ Welcome to Triloka Arts and Sports Club - uniting people through cultural and sp
                 <div class="card-body">
                     <h5 class="card-title">{{ event.title }}</h5>
                     <p class="card-text">{{ event.description|truncatewords:20 }}</p>
-                    <p class="text-muted"><i class="fas fa-calendar-alt"></i> {{ event.date }}</p>
+                   
+                    <p class="text-muted"><i class="fas fa-calendar-alt"></i> {{ event.end_date }}</p>
                     <button class="btn btn-primary btn-sm"
                         onclick="showEventModal(this)"
                         data-title="{{ event.title }}" 
                         data-description="{{ event.description }}" 
                         data-date="{{ event.date|date:'M d, Y' }}"
+                        data-end-date="{{ event.end_date|date:'M d, Y' }}"
                         data-image="{% if event.image %}{{ event.image.url }}{% else %}{% static 'images/default-event.jpg' %}{% endif %}">
                         Read More
                     </button>
@@ -183,7 +194,7 @@ Welcome to Triloka Arts and Sports Club - uniting people through cultural and sp
         window.showEventModal = function (element) {
             document.getElementById("modal-event-title").textContent = element.getAttribute("data-title");
             document.getElementById("modal-event-description").textContent = element.getAttribute("data-description");
-            document.getElementById("modal-event-date").textContent = element.getAttribute("data-date");
+            document.getElementById("modal-event-date").textContent = element.getAttribute("data-end-date");
             document.getElementById("modal-event-image").src = element.getAttribute("data-image");
             eventModal.show();
         };

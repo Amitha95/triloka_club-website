@@ -400,14 +400,8 @@ def gallery_images(request, title, subcategory, year):
         'subcategory': subcategory
     })
 
-
-
 def about(request):
     return render(request, 'about.html')
-
-def events(request):
-    return render(request, 'events.html')
-
 
 def gallery(request):
     return render(request, 'gallery.html')
@@ -574,10 +568,23 @@ def gallery_all(request):
     image_list = [{"image": img.image.url, "title": img.title, "year": img.date.year} for img in images]
     return JsonResponse(image_list, safe=False)
 
+from django.db.models import Q
+
 def events_view(request):
     today = date.today()
+
+    # Past events: events with end_date before today
     all_events = Event.objects.filter(end_date__lt=today).order_by('-date')
-    upcoming_events = Event.objects.filter(end_date__gte=today).order_by('date')  # Show till end_date
+
+    # Upcoming events:
+    # 1. end_date >= today
+    # 2. OR date >= today
+    # 3. OR both date and end_date are null (TBA)
+    upcoming_events = Event.objects.filter(
+        Q(end_date__gte=today) |
+        Q(date__gte=today) |
+        (Q(date__isnull=True) & Q(end_date__isnull=True))
+    ).order_by('date')
 
     return render(request, "events.html", {
         'all_events': all_events,
