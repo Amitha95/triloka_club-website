@@ -641,12 +641,19 @@ def delete_event(request, event_id):
 def user_list(request):
     users = UserProfile.objects.select_related('user').order_by('registration_number')
 
-    # Calculate age based on DOB
+    # Calculate age based on DOB and total fees/points for each user
     for user in users:
         user.age = (date.today() - user.dob).days // 365  # Calculate age in years
 
+        # Calculate total fees for the user
+        
+        user.total_fees = UserFee.objects.filter(user=user.user).aggregate(total_fees=Sum('amount'))['total_fees'] or 0
+
+        # Calculate total points for the user
+        user.total_points = UserPoint.objects.filter(user=user.user).aggregate(total_points=Sum('points'))['total_points'] or 0
+
     # Set up pagination
-    paginator = Paginator(users, 7)  # Show 10 users per page
+    paginator = Paginator(users, 7)  # Show 7 users per page
     page_number = request.GET.get('page')  # Get the current page from the URL
     page_obj = paginator.get_page(page_number)  # Get the page object for the current page
 

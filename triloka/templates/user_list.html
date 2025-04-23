@@ -10,22 +10,23 @@
                     <th>Registration number</th>
                     <th>Full Name</th>
                     <th>Photo</th>
-                    <th>Username</th>
+                    <th>Blood Donation Status</th>
+                    <th>Fees</th>
+                    <th>Points</th>
+                    <th>Actions</th>
+                    <th>Delete</th>
+                    <th>Profile</th>
+                   <!-- <th>Username</th>
                     <th>Phone Number</th>
                     <th>Email</th>
                     <th>DOB</th>
                     <th>Blood Group</th>
-                    <th>Blood Donation Status</th>
                     <th>Guardian Name</th>
                     <th>Relation</th>
                     <th>ID Proof</th>
                     <th>Address</th>
                     <th>Gender</th>
-                    <th>Age</th>
-                    <th>Fees</th>
-                    <th>Points</th>
-                    <th>Actions</th>
-                    <th>Delete</th>
+                    <th>Age</th>-->
                 </tr>
             </thead>
             <tbody>
@@ -40,67 +41,102 @@
                             No Image
                         {% endif %}
                     </td>
-                    <td>{{ user.user.username }}</td>
-                    <td>{{ user.phone_number }}</td>
-                    <td>{{ user.user.email }}</td>
-                    <td>{{ user.dob|date:"d M Y" }}</td>
-                    <td>{{ user.blood_group }}</td>
                     <td class="text-center">
                         {% if user.willing_to_donate_blood %}
-                            ✅ 
+                            ✅
                         {% elif user.willing_to_donate_blood is False %}
-                            ❌ 
+                            ❌
                         {% else %}
                             <!-- Leave blank -->
                         {% endif %}
                     </td>
+
+                    <td>
+                        <a href="{% url 'user_fees' user.user.id %}" class="btn btn-info">₹{{ user.total_fees|floatformat:2 }} Manage Fees</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'user_points' user.user.id %}" class="btn btn-warning">{{ user.total_points }} Manage Points</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'edit_user' user.user.id %}" class="btn btn-secondary">Edit</a>
+                    </td>
+                    <!--<td>{{ user.user.username }}</td>
+                    <td>{{ user.phone_number }}</td>
+                    <td>{{ user.user.email }}</td>
+                    <td>{{ user.dob|date:"d M Y" }}</td>
+                    <td>{{ user.blood_group }}</td>
+                    
                     <td>{{ user.gaurdian_name }}</td>
                     <td>{{ user.relation }}</td>
                     <td>{{ user.idproof }}</td>
                     <td>{{ user.address }}</td>
                     <td>{{ user.gender }}</td>
-                    <td>{{ user.age }}</td>
-                    <td>
-                        <a href="{% url 'user_fees' user.user.id %}" class="btn btn-info">Manage Fees</a>
-                    </td>
-                    <td>
-                        <a href="{% url 'user_points' user.user.id %}" class="btn btn-warning">Manage Points</a>
-                    </td>
-                    <td>
-                        <a href="{% url 'edit_user' user.user.id %}" class="btn btn-secondary">Edit</a>
-                    </td>
+                    <td>{{ user.age }}</td>-->
+                    
                     <td>
                         <button class="btn btn-danger" data-toggle="modal" data-target="#deleteModal{{ user.user.id }}">
                             Delete
                         </button>
-
-                        <!-- Delete Confirmation Modal -->
-                        <div class="modal fade" id="deleteModal{{ user.user.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Confirm Deletion</h5>
-                                        
-                                    </div>
-                                    <div class="modal-body">
-                                        Do you really want to delete <strong>{{ user.name }}</strong>?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <form method="POST" action="{% url 'delete_user' user.user.id %}">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                                        </form>
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- End of Modal -->
+                    </td>
+                    <td>
+                        <!-- Profile Button -->
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#profileModal{{ user.user.id }}">
+                            Profile
+                        </button>
                     </td>
                 </tr>
+
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="deleteModal{{ user.user.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirm Deletion</h5>
+                            </div>
+                            <div class="modal-body">
+                                Do you really want to delete <strong>{{ user.name }}</strong>?
+                            </div>
+                            <div class="modal-footer">
+                                <form method="POST" action="{% url 'delete_user' user.user.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                </form>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Modal -->
+                <div class="modal fade" id="profileModal{{ user.user.id }}" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">User Profile: {{ user.name }}</h5>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong>Full Name:</strong> {{ user.name }}</p>
+                                <p><strong>Registration Number:</strong> {{ user.registration_number }}</p>
+                                <p><strong>Email:</strong> {{ user.user.email }}</p>
+                                <p><strong>Phone Number:</strong> {{ user.phone_number }}</p>
+                                <p><strong>Gender:</strong> {{ user.gender }}</p>
+                                <p><strong>Blood Group:</strong> {{ user.blood_group }}</p>
+                                <p><strong>DOB:</strong> {{ user.dob|date:"d M Y" }}</p>
+                                <p><strong>Age:</strong> {{ user.age }}</p>
+                                <p><strong>Guardian Name:</strong> {{ user.gaurdian_name }}</p>
+                                <p><strong>Relation:</strong> {{ user.relation }}</p>
+                                <p><strong>Address:</strong> {{ user.address }}</p>
+                                <p><strong>ID Proof:</strong> {{ user.idproof }}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {% empty %}
                 <tr>
-                    <td colspan="18" class="text-center">No users found.</td>
+                    <td colspan="19" class="text-center">No users found.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -114,9 +150,15 @@
                     <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
                 {% endif %}
             </span>
-
+        
             <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-
+        
+            <!-- Page Number Input -->
+            <form method="get" class="d-inline">
+                <input type="number" name="page" class="form-control d-inline" value="{{ page_obj.number }}" min="1" max="{{ page_obj.paginator.num_pages }}" style="width: 70px;">
+                <button type="submit" class="btn btn-primary btn-sm">Go</button>
+            </form>
+        
             <span class="page-link {% if not page_obj.has_next %}disabled{% endif %}">
                 {% if page_obj.has_next %}
                     <a href="?page={{ page_obj.next_page_number }}">Next</a>
