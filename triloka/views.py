@@ -33,22 +33,28 @@ from django.db.models.functions import Lower
 def maintenance(request):
     return render(request, 'maintenance.html')
 
-def add_watermark_from_cloudinary(user):
+from PIL import Image, ImageEnhance
+from io import BytesIO
+import requests
+import cloudinary.uploader
+
+
+def add_watermark_from_cloudinary(user,new_photo_file):
     """
-    Downloads user's photo from Cloudinary, applies a watermark, and re-uploads.
+    Applies a watermark to the uploaded new photo (on user edit), uploads to Cloudinary,
+    and updates the user's photo URL.
+    
+    :param user: User instance being edited
+    :param new_photo_file: Uploaded file object (e.g., request.FILES.get('photo'))
+    :return: Updated photo URL or None
     """
-    if not user.photo:  # Ensure user has a photo
-        return None
+    if not new_photo_file:
+        return None  # No new photo uploaded
 
-    # Fetch image from Cloudinary
-    response = requests.get(user.photo.url)
-    if response.status_code != 200:
-        return None
+    # Load the new uploaded photo
+    image = Image.open(new_photo_file).convert("RGBA")
 
-    # Load image into PIL
-    image = Image.open(BytesIO(response.content)).convert("RGBA")
-
-    # Load watermark (ensure watermark is also in Cloudinary)
+    # Load watermark from Cloudinary (or replace with a local path if needed)
     watermark_url = "https://res.cloudinary.com/dr9p29qpa/image/upload/v1743137961/watermark1_rv1fpm.png"
     response_wm = requests.get(watermark_url)
     if response_wm.status_code != 200:
@@ -56,40 +62,36 @@ def add_watermark_from_cloudinary(user):
 
     watermark = Image.open(BytesIO(response_wm.content)).convert("RGBA")
 
-    # 🔹 Increase watermark size (make it 40% of image width)
-    scale_factor = 0.4  # Increase this value to make it bigger
+    # Resize watermark to 40% of image width
+    scale_factor = 0.4
     wm_width = int(image.width * scale_factor)
     wm_height = int(watermark.height * (wm_width / watermark.width))
     watermark = watermark.resize((wm_width, wm_height))
 
-    # 🔹 Adjust watermark transparency (optional)
+    # Adjust transparency of watermark
     watermark = ImageEnhance.Brightness(watermark).enhance(0.7)
 
-    # 🔹 Position watermark (centered or larger bottom-right)
-    position = ((image.width - wm_width) // 2, (image.height - wm_height) // 2)  # Center watermark
-    # Alternative: Place it slightly above bottom-right
-    # position = (image.width - wm_width - 50, image.height - wm_height - 50)
+    # Position watermark in the center
+    position = ((image.width - wm_width) // 2, (image.height - wm_height) // 2)
 
-    # Merge watermark with image
+    # Combine original image with watermark
     transparent = Image.new("RGBA", image.size, (0, 0, 0, 0))
     transparent.paste(image, (0, 0))
     transparent.paste(watermark, position, mask=watermark)
 
-    # Convert back to RGB and save to buffer
+    # Convert to JPEG and save to buffer
     output_buffer = BytesIO()
     transparent.convert("RGB").save(output_buffer, format="JPEG")
     output_buffer.seek(0)
 
-    # Upload back to Cloudinary
+    # Upload to Cloudinary
     result = cloudinary.uploader.upload(output_buffer, folder="watermarked/")
-    
-    # Update user photo URL
+
+    # Update user photo
     user.photo = result["secure_url"]
     user.save()
 
-    return user.photo  # Return the new image URL
-
-
+    return user.photo
 
 
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
@@ -98,57 +100,62 @@ from io import BytesIO
 from PIL import Image, ImageEnhance
 import requests
 
-def add_watermark_to_uploaded_photo(photo):
+from PIL import Image, ImageEnhance
+from io import BytesIO
+import requests
+import cloudinary.uploader
+
+def add_watermark_to_uploaded_photo(photo_file, user):
     """
-    Applies a watermark to an uploaded photo before saving it to Cloudinary.
+    Applies a watermark to a newly uploaded photo and uploads it to Cloudinary.
+    
+    :param photo_file: In-memory uploaded file object (e.g., request.FILES['photo'])
+    :param user: The user instance to update with the new photo URL
     """
-    WATERMARK_URL = "https://res.cloudinary.com/dr9p29qpa/image/upload/v1743137961/watermark1_rv1fpm.png"
+    if not photo_file:
+        return None
 
-    try:
-        if not photo:
-            return None
+    # Load uploaded photo into PIL
+    image = Image.open(photo_file).convert("RGBA")
 
-        # Ensure we can read the uploaded file
-        if isinstance(photo, TemporaryUploadedFile) or isinstance(photo, InMemoryUploadedFile):
-            photo.seek(0)  # Reset file pointer
-            image = Image.open(BytesIO(photo.read())).convert("RGBA")  # Read from memory
-        else:
-            image = Image.open(photo).convert("RGBA")  # Read from file system
+    # Load watermark image from Cloudinary (or use a local path if preferred)
+    watermark_url = "https://res.cloudinary.com/dr9p29qpa/image/upload/v1743137961/watermark1_rv1fpm.png"
+    response_wm = requests.get(watermark_url)
+    if response_wm.status_code != 200:
+        return None
 
-        # Load watermark from Cloudinary
-        response_wm = requests.get(WATERMARK_URL)
-        if response_wm.status_code != 200:
-            return None
+    watermark = Image.open(BytesIO(response_wm.content)).convert("RGBA")
 
-        watermark = Image.open(BytesIO(response_wm.content)).convert("RGBA")
+    # Resize watermark to 40% of image width
+    scale_factor = 0.4
+    wm_width = int(image.width * scale_factor)
+    wm_height = int(watermark.height * (wm_width / watermark.width))
+    watermark = watermark.resize((wm_width, wm_height))
 
-        # 🔹 Scale watermark to 40% of image width
-        scale_factor = 0.4
-        wm_width = int(image.width * scale_factor)
-        wm_height = int(watermark.height * (wm_width / watermark.width))
-        watermark = watermark.resize((wm_width, wm_height))
+    # Optional: Reduce watermark brightness
+    watermark = ImageEnhance.Brightness(watermark).enhance(0.7)
 
-        # 🔹 Adjust watermark transparency
-        watermark = ImageEnhance.Brightness(watermark).enhance(0.7)
+    # Position watermark at center
+    position = ((image.width - wm_width) // 2, (image.height - wm_height) // 2)
 
-        # 🔹 Position watermark at the center
-        position = ((image.width - wm_width) // 2, (image.height - wm_height) // 2)
+    # Create new image with watermark
+    transparent = Image.new("RGBA", image.size, (0, 0, 0, 0))
+    transparent.paste(image, (0, 0))
+    transparent.paste(watermark, position, mask=watermark)
 
-        # Merge watermark with image
-        transparent = Image.new("RGBA", image.size, (0, 0, 0, 0))
-        transparent.paste(image, (0, 0))
-        transparent.paste(watermark, position, mask=watermark)
+    # Save image to buffer
+    output_buffer = BytesIO()
+    transparent.convert("RGB").save(output_buffer, format="JPEG")
+    output_buffer.seek(0)
 
-        # Convert to RGB and save to buffer
-        output_buffer = BytesIO()
-        transparent.convert("RGB").save(output_buffer, format="JPEG")
-        output_buffer.seek(0)
+    # Upload to Cloudinary
+    result = cloudinary.uploader.upload(output_buffer, folder="watermarked/")
 
-        return ContentFile(output_buffer.read(), name=photo.name)  # ✅ Return ContentFile
+    # Save new Cloudinary URL to user
+    user.photo = result["secure_url"]
+    user.save()
 
-    except Exception as e:
-        print(f"Error applying watermark: {e}")
-        return photo  # Return original file if watermarking fails
+    return user.photo
 
 
 def register_user(request):
@@ -310,7 +317,11 @@ def edit_user(request, user_id):
         user.gender = request.POST.get('gender')
         
         # Handle file upload (for photo)
-        new_photo_url = add_watermark_from_cloudinary(user)
+        new_photo_file = request.FILES.get('photo')
+        # other user updates here
+
+        if new_photo_file:
+            add_watermark_from_cloudinary(user, new_photo_file)
         
         user.blood_group = request.POST.get('blood_group')
         
