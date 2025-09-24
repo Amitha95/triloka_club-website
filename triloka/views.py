@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth.models import User
-from .models import UserProfile, UserFee, UserPoint
+from .models import UserProfile, UserFee, UserPoint, WeeklyTask
 from .models import  Gallery, Event
 from datetime import date
 from django.utils.timezone import now
@@ -387,15 +387,76 @@ def home(request):
 
     return render(request, 'home.html', {'categories': categories_with_images,'has_glowing_event': glowing_events.exists()})
 
-def gallery_subcategories(request, title):
+# Main Gallery → Categories
+from django.utils.text import slugify
+
+def main_gallery(request):
+    categories = (
+        Gallery.objects.values('title')
+        .annotate(num_images=Count('id'))
+        .filter(num_images__gt=0)
+    )
+
+    categories_with_images = {}
+    for category in categories:
+        title = category['title']
+        first_gallery = Gallery.objects.filter(title=title).first()
+        image_url = first_gallery.image.url if first_gallery else None
+
+        categories_with_images[title] = {
+            'title': title,
+            'slug': slugify(title),  # <-- add slug
+            'image': image_url,
+        }
+
+    return render(request, 'main_gallery.html', {'categories': categories_with_images})
+
+
+# Step 2: Show available years for a category
+from django.db.models.functions import ExtractYear, Substr
+
+def gallery_years(request, title):
+    year_ranges = (
+        Gallery.objects.filter(title__iexact=title)   # <-- ignore case
+        .values('date__year')
+        .distinct()
+        .order_by('date__year')
+    )
+
+    return render(request, 'gallery_years.html', {
+        'year_ranges': year_ranges,
+        'title': title.upper()  # or keep as is
+    })
+
+
+# Step 3: Show subcategories inside a year
+def gallery_subcategories(request, title, year):
     subcategories = (
-        Gallery.objects.filter(title=title)
+        Gallery.objects.filter(title=title, date__year=year)
         .values('subcategory')
         .distinct()
         .order_by('subcategory')
     )
 
-    return render(request, 'gallery_subcategories.html', {'subcategories': subcategories, 'title': title})
+    return render(request, 'gallery_subcategories.html', {
+        'subcategories': subcategories,
+        'title': title,
+        'year': year
+    })
+
+
+# Step 4: Show images for a subcategory & year
+def gallery_images(request, title, year, subcategory):
+    gallery_images = Gallery.objects.filter(
+        title=title, subcategory=subcategory, date__year=year
+    )
+
+    return render(request, 'gallery_images.html', {
+        'gallery_images': gallery_images,
+        'year': year,
+        'title': title,
+        'subcategory': subcategory
+    })
 
 
 def gallery_pages(request, title, subcategory):
@@ -413,18 +474,11 @@ def gallery_pages(request, title, subcategory):
     })
 
 
-def gallery_images(request, title, subcategory, year):
-    gallery_images = Gallery.objects.filter(title=title, subcategory=subcategory, date__year=year)
-
-    return render(request, 'gallery_images.html', {
-        'gallery_images': gallery_images,
-        'year': year,
-        'title': title,
-        'subcategory': subcategory
-    })
-
 def about(request):
     return render(request, 'about.html')
+
+def focus(request):
+    return render(request, 'focus.html')
 
 def gallery(request):
     return render(request, 'gallery.html')
@@ -523,17 +577,30 @@ def user_home(request):
 
 
 def upload_gallery_image(request):
-    
     if request.method == "POST":
-        title = request.POST.get("title")
-        subcategory = request.POST.get("subcategory")
+        title = request.POST.get("title") or request.POST.get("new_title")
+        subcategory = request.POST.get("subcategory") or request.POST.get("new_subcategory")
         image = request.FILES.get("image")
-        date=request.POST.get("date")
-        if title and image:
-            Gallery.objects.create(title=title,subcategory=subcategory, image=image, date=date)
-            return redirect("gallery_list")  # Redirect to gallery page after upload
+        date = request.POST.get("date")
 
-    return render(request, "galleryupload.html")
+        if title and image:
+            Gallery.objects.create(
+                title=title,
+                subcategory=subcategory,
+                image=image,
+                date=date
+            )
+            return redirect("gallery_list")
+
+    # Get distinct titles & subcategories for dropdowns
+    titles = Gallery.objects.values_list("title", flat=True).distinct()
+    subcategories = Gallery.objects.values_list("subcategory", flat=True).distinct()
+
+    return render(request, "galleryupload.html", {
+        "titles": titles,
+        "subcategories": subcategories,
+    })
+
 
 def gallery_list(request):
     """Displays all uploaded images."""
@@ -563,10 +630,7 @@ def delete_image(request, image_id):
     messages.success(request, "Image deleted successfully.")
     return redirect('gallery_list')  # Redirect back to the gallery page
 
-def gallery_years(request):
-    years = sorted(set(img.date.year for img in Gallery.objects.all()), reverse=True)
-    year_ranges = [(year, year + 1) for year in years]
-    return render(request, "gallery_years.html", {"year_ranges": year_ranges})
+
 
 def gallery_view(request, year_start, year_end):
     year_start = int(year_start)
@@ -669,6 +733,7 @@ def user_list(request):
     page_obj = paginator.get_page(page_number)  # Get the page object for the current page
 
     return render(request, "user_list.html", {"page_obj": page_obj})
+
 
 @login_required
 def delete_user(request, user_id):
@@ -991,3 +1056,39 @@ def send_email(request):
 
     return JsonResponse({"status": "error", "message": "Invalid request method."}, status=400)
 
+def elective_members(request):
+    # Example static data (you can load from DB instead)
+    
+
+    return render(request, "elective_members.html")
+
+def add_weekly_task(request):
+    months = ["January","February","March","April","May","June",
+              "July","August","September","October","November","December"]
+
+    if request.method == "POST":
+        month = request.POST.get("month")
+        week = request.POST.get("week")
+        user_id = request.POST.get("user")
+        new_mark = int(request.POST.get("new_mark") or 0)
+        old_mark = int(request.POST.get("old_mark") or 0)
+        total = int(request.POST.get("total") or 0)
+        
+        user = UserProfile.objects.get(id=user_id)
+
+        WeeklyTask.objects.create(
+            user=user,
+            month=month,
+            week=week,
+            total=total
+        )
+        return redirect("add_weekly_task")
+
+    users = UserProfile.objects.all().order_by("name")
+    tasks = WeeklyTask.objects.select_related("user").all()
+
+    return render(request, "add_weekly_task.html", {
+        "months": months,
+        "users": users,
+        "old_mark": 0
+    })

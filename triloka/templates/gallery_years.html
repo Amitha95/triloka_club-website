@@ -1,77 +1,25 @@
 {% extends 'base.html' %}
+
+{% block title %}Gallery - {{ title }}{% endblock %}
+
 {% block content %}
-<section class="page-section">
-    <div class="container">
-        <h2 class="text-center mt-0">Gallery</h2>
+<section class="page-section" id="year-range">
+    <div class="container px-4 px-lg-5">
+        <h2 class="text-center mt-0">{{ title }} Gallery Years</h2>
         <hr class="divider" />
-
-        <!-- Dropdown to Filter by Year Range -->
-        <div class="d-flex justify-content-end mb-4">
-            <label for="yearRangeFilter" class="me-2 mt-2">Select Year Range:</label>
-            <select id="yearRangeFilter" class="form-select w-auto">
-                <option value="">All Years</option>
-                <option value="2025-2026">2025-2026</option>
-                <option value="2023-2024">2023-2024</option>
-            </select>
-        </div>
         
-
-        <!-- Gallery Grid -->
-        <div id="gallery-container"></div>
-            <!-- Images will be dynamically loaded here -->
+        <div class="row">
+            {% for year in year_ranges %}
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ year.date__year }}</h5>
+                        <a href="{% url 'gallery_subcategories' title year.date__year %}" class="btn btn-primary">View Subcategories</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
 </section>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        fetchGalleryImages();
-
-        // Event listener for year range selection
-        document.getElementById("yearRangeFilter").addEventListener("change", function () {
-    let selectedYearRange = this.value;
-    fetchGalleryImages(selectedYearRange);
-});
-    });
-
-    function fetchGalleryImages(yearRange = "") {
-    let url = "{% url 'gallery_all' %}"; 
-    if (yearRange) {
-        url += `?year_range=${yearRange}`;
-    }
-
-    fetch(url)
-    .then(response => response.json())
-    .then(images => {
-        let galleryContainer = document.getElementById("gallery-container");
-        galleryContainer.innerHTML = "";
-
-        if (images.length === 0) {
-            galleryContainer.innerHTML = "<p class='text-center'>No images found.</p>";
-            return;
-        }
-
-        let rowElement = `<div class="row">`;
-
-        images.forEach(image => {
-            rowElement += `
-                <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                    <div class="card shadow-sm">
-                        <img src="${image.image}" class="card-img-top" alt="${image.title}">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">${image.title}</h5>
-                            <p class="card-text">Year: ${image.year}</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-
-        rowElement += `</div>`;
-        galleryContainer.innerHTML = rowElement;
-    })
-    .catch(error => console.error("Error fetching images:", error));
-}
-
-</script>
 {% endblock %}

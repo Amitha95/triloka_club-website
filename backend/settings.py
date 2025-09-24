@@ -30,15 +30,34 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-=e#elq^l4h(i2q07l%z1j!x@e@8$h0l@tvt90m-zc^z+)w2#wg'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "True") == "True"
 
+# Allowed Hosts
 ALLOWED_HOSTS = [
-    'triloka-club-website.onrender.com',  # Add your Render domain
-    '127.0.0.1',  # Allow local development
+    '127.0.0.1',
     'localhost',
+    'triloka-club-website.onrender.com',
     'trilokaclub-website-production.up.railway.app',
-    'www.trilokavellimon.com'
+    'www.trilokavellimon.com',
 ]
+
+# Initialize environment variables
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+
+# Database
+if os.getenv("DATABASE_URL"):
+    DATABASES = {
+        "default": env.db("DATABASE_URL")
+    }
+    DATABASES["default"]["OPTIONS"] = {"sslmode": "require"}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 # Application definition
 INSTALLED_APPS = [

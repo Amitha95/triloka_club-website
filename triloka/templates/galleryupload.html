@@ -3,7 +3,7 @@
 <style>
     body {font-family: Arial, Helvetica, sans-serif;}
     * {box-sizing: border-box;}
-    
+
     input[type=text], select, textarea, input[type=email], input[type=password], input[type=number], input[type=file] {
       width: 100%;
       padding: 12px;
@@ -14,7 +14,7 @@
       margin-bottom: 16px;
       resize: vertical;
     }
-    
+
     input[type=submit] {
       background-color: #04AA6D;
       color: white;
@@ -23,42 +23,57 @@
       border-radius: 4px;
       cursor: pointer;
     }
-    
+
     input[type=submit]:hover {
       background-color: #45a049;
     }
-    
+
     .container {
       border-radius: 5px;
       background-color: #f2f2f2;
       padding: 20px;
     }
-    </style>
-    
-    
-    <h2>Upload Image to Gallery</h2>
-    
-    <div class="container">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <label for="title">Image Title:</label>
-            <input type="text" id="title" name="title" required>
+</style>
 
-            <label for="title">Image Subcategory:</label>
-            <input type="text" id="subcategory" name="subcategory" required>
-        
-            <label for="image">Upload Image:</label>
-            <input type="file" id="image" name="image" accept="image/*" required>
+<h2>Upload Image to Gallery</h2>
 
-            <label for="image">Upload Date:</label>
-            <input type="date" id="date" name="date" required>
-            <br>
-        
-            <input type="submit" value="Upload">
-        </form>
-        
-        <p><a href="{% url 'gallery_list' %}">View Gallery</a></p>
-    </div>
+<div class="container">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
 
-    
-    {% endblock %}
+        <!-- Title: Dropdown + New -->
+        <label for="title">Image Title:</label>
+        <select id="title" name="title">
+            <option value="">-- Select Existing Title --</option>
+            {% for t in titles %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" id="new_title" name="new_title" placeholder="Or enter new title">
+
+        <!-- Subcategory: Dropdown + New -->
+        <label for="subcategory">Image Subcategory:</label>
+        <select id="subcategory" name="subcategory">
+            <option value="">-- Select Existing Subcategory --</option>
+            {% for s in subcategories %}
+                <option value="{{ s }}">{{ s }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" id="new_subcategory" name="new_subcategory" placeholder="Or enter new subcategory">
+
+        <!-- Image Upload -->
+        <label for="image">Upload Image:</label>
+        <input type="file" id="image" name="image" accept="image/*" required>
+
+        <!-- Date -->
+        <label for="date">Upload Date:</label>
+        <input type="date" id="date" name="date" required>
+        <br>
+
+        <input type="submit" value="Upload">
+    </form>
+
+    <p><a href="{% url 'gallery_list' %}">View Gallery</a></p>
+</div>
+
+{% endblock %}

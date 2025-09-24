@@ -88,3 +88,9 @@ class Event(models.Model):
 
     def __str__(self):
         return f"{self.title} - {self.date.strftime('%Y-%m-%d') if self.date else 'No Date'} to {self.end_date.strftime('%Y-%m-%d') if self.end_date else 'Ongoing'}"
+    
+class WeeklyTask(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    month = models.CharField(max_length=20)
+    week = models.CharField(max_length=20)
+    total = models.IntegerField(default=0)

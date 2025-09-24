@@ -32,154 +32,95 @@ Welcome to Triloka Arts and Sports Club - uniting people through cultural and sp
             </div>
         </section>
 
-        <section class="page-section" id="gallery">
-            <div class="container px-4 px-lg-5">
-                <h2 class="text-center mt-0">Gallery</h2>
-                <hr class="divider" />
-        
-                <div class="row mx-0">
-                    {% for category in categories.values %}
-                    <div class="col-12 col-md-4">
-                        <div class="card h-100">
-                            <!-- Category Image -->
-                            {% if category.image %}
-<img src="{{ category.image }}" class="card-img-top gallery-thumb" alt="Thumbnail">
-{% else %}
-<img src="default-thumbnail.jpg" class="card-img-top gallery-thumb" alt="Default Thumbnail">
-{% endif %}
+       <section class="page-section py-5" id="features" style="margin-bottom: 30px;">
+    <div class="container px-4 px-lg-5">
+        <h2 class="text-center mt-0">Explore More</h2>
+        <hr class="divider" />
 
-                            <div class="card-body">
-                                <h5 class="card-title">{{ category.title }}</h5>
-                                <a href="{% url 'gallery_subcategories' category.title %}" class="btn btn-primary">View Photos</a>
-                            </div>
-                        </div>
+        <div class="row mx-0">
+            <!-- Card 1 -->
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <img src="{% static 'assets/img/portfolio/thumbnails/focus.png' %}" class="card-img-top" alt="About Us" style="padding: 5px;  width: 70px; height: 70px; object-fit: contain; margin-left: 125px;">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Focus</h5>
+                        <a href="{% url 'focus' %}" class="btn btn-primary">View More</a>
                     </div>
-                    {% endfor %}
                 </div>
+            </div>
+
+            <!-- Card 2 (Elective Members Page) -->
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <img src="{% static 'assets/img/portfolio/thumbnails/team_member.jpeg' %}" class="card-img-top" alt="Elective Members" style="padding: 5px; border-radius: 50%; width: 70px; height: 70px; object-fit: contain; margin-left: 125px;">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Our Elective Members</h5>
+                        <a href="{% url 'elective_members' %}" class="btn btn-primary">View Members</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                   <img src="{% static 'assets/img/portfolio/thumbnails/supporters.png' %}" class="card-img-top" alt="Gallery" style="padding: 5px;  width: 90px; height: 80px; margin-left: 125px; margin-bottom: -10px;">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Our Supporters</h5>
+                        <a href="#" class="btn btn-primary">View Photos</a>
+                    </div>
+                </div>
+            </div>
         </div>
-        </section>
+    </div>
+</section>
+
+       <section class="page-section py-5" id="gallery" style="margin-top: 0;">
+    <div class="container px-4 px-lg-5">
+        <h2 class="text-center mt-0">Gallery</h2>
+        <hr class="divider" />
+
+        <div class="row mx-0">
+            <!-- Static Image 1 -->
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <img src="#" class="card-img-top gallery-thumb" alt="Static Image 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Category 1</h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Static Image 2 -->
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <img src="#" class="card-img-top gallery-thumb" alt="Static Image 2">
+                    <div class="card-body">
+                        <h5 class="card-title">Category 2</h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Static Image 3 -->
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <img src="#" class="card-img-top gallery-thumb" alt="Static Image 3">
+                    <div class="card-body">
+                        <h5 class="card-title">Category 3</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View More Button -->
+        <div class="text-center mt-4">
+            <a href="{% url 'main_gallery' %}" class="btn btn-primary">View More</a>
+        </div>
+    </div>
+</section>
+
  
         <!-- Services-->
-        <section class="page-section" id="services">
-            <div class="container px-4 px-lg-5">
-                <h2 class="text-center mt-0">Our Elective Members</h2>
-                <hr class="divider" />
-               
-            </div>
-   
-            <div id="portfolio">
-  <div class="container-fluid p-0">
-                <div class="row g-4"> 
-                    <div class="col-lg-3 col-sm-4 mb-4"> 
-                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Abhay.jpeg' %}" title="President">
-                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Abhay.jpeg' %}" alt="Abhay Krishnan U S - President" />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Abhay Krishnan U S</div>
-                                <div class="project-name">President</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-sm-4 mb-4">
-                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Sagar.jpg' %}" title="Secretary">
-                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Sagar.jpg' %}" alt="Sagar S - Secretary" />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Sagar S</div>
-                                <div class="project-name">Secretary</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-sm-4 mb-4">
-                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Ajal.jpg' %}" title="Treasurer">
-                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Ajal.jpg' %}" alt="Ajal Gopan - Treasurer" />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Ajal Gopan</div>
-                                <div class="project-name">Treasurer</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-sm-4 mb-4">
-                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Karthik.jpeg' %}" title="Vice President">
-                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Karthik.jpeg' %}" alt="Karthik S - Vice President" />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Karthik S</div>
-                                <div class="project-name">Vice President</div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="row g-4"> 
-                    <div class="col-lg-3 col-sm-4 mb-4"> 
-                    
-                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Gouri.jpg' %}" title="Joint Secretary">
-                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Gouri.jpg' %}" alt="Gouri S - Joint Secretary" />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Gouri S</div>
-                                <div class="project-name">Joint Secretary</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-sm-4 mb-4">
-                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Amitha.jpg' %}" title="Executive Member">
-                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Amitha.jpg' %}" alt="Amitha S L - Executive Member" />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Amitha S L</div>
-                                <div class="project-name">Executive Member</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-sm-4 mb-4">
-                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Deepak.jpg' %}" title="Executive Member">
-                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Deepak.jpg' %}" alt="Deepak V - Executive Member" />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Deepak V</div>
-                                <div class="project-name">Executive Member</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-sm-4 mb-4">
-                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Gopika.jpg' %}" title="Executive Member">
-                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Gopika.jpg' %}" alt="Gopika Krishnan - Executive Member" />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Gopika Krishnan</div>
-                                <div class="project-name">Executive Member</div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="row g-4"> 
-                    <div class="col-lg-3 col-sm-4 "> 
-                    
-                        <!--<a class="portfolio-box" href="{% static 'assets/img/portfolio/fullsize/4.jpg' %}" title="Project Name">
-                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/4.jpg' %}" alt="..." />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Category</div>
-                                <div class="project-name">Project Name</div>
-                            </div>
-                        </a>-->
-                    </div>
-                    <div class="col-lg-3 col-sm-4 mb-4">
-                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Madhav.jpg' %}" title="Executive Member">
-                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Madhav.jpg' %}" alt="Madhav M - Executive Member" />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Madhav M</div>
-                                <div class="project-name">Executive Member</div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-sm-4 mb-4">
-                        <a class="portfolio-box" href="{% static 'assets/img/portfolio/thumbnails/Sreekesh.jpg' %}" title="Executive Member">
-                            <img class="img-fluid" src="{% static 'assets/img/portfolio/thumbnails/Sreekesh.jpg' %}" alt="Sreekesh S Kumar - Executive Member" />
-                            <div class="portfolio-box-caption">
-                                <div class="project-category text-white-50">Sreekesh S Kumar</div>
-                                <div class="project-name">Executive Member</div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </section>
-
+        
 <!----------------------------------------------------Ads section--------------------------------------------------->
 
 <div style="text-align: center; margin: 20px 0;">

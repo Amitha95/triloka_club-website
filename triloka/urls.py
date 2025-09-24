@@ -24,12 +24,14 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("base/", views.base, name="base"),
     path("about/", views.about, name="about"),
+    path("focus/", views.focus, name="focus"),
     path("events/", views.events_view, name="events"),
-    path("gallery/", views.gallery_years, name="gallery_years"),  # Show date ranges
 
-    path('gallery/<str:title>/', gallery_subcategories, name='gallery_subcategories'),
-    path('gallery/<str:title>/<str:subcategory>/', gallery_pages, name='gallery_pages'),
-    path('gallery/<str:title>/<str:subcategory>/<int:year>/', gallery_images, name='gallery_images'),
+    path('main_gallery/', views.main_gallery, name='main_gallery'),
+    path('gallery/<str:title>/years/', views.gallery_years, name='gallery_years'),
+    path('gallery/<str:title>/<int:year>/subcategories/', views.gallery_subcategories, name='gallery_subcategories'),
+    path('gallery/<str:title>/<int:year>/<str:subcategory>/images/', views.gallery_images, name='gallery_images'),
+
 
     path('api/gallery/', gallery_all, name='gallery_all'),
     path("gallery/<int:year_start>-<int:year_end>/", views.gallery_view, name="gallery"),
@@ -64,4 +66,11 @@ urlpatterns = [
     path('send-email/', views.send_email, name='send_email'),
     # Django Admin
     path("admin/", admin.site.urls),
+    
+    
+    path("elective-members/", views.elective_members, name="elective_members"),
+    path("weekly_task/", views.add_weekly_task, name="weekly_task"),
+     path('main_gallery/', views.main_gallery, name='main_gallery'),
+    #path('membership/', views.membership, name='membership'),
+
 ]
