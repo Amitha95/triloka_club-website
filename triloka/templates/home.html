@@ -37,40 +37,50 @@ Welcome to Triloka Arts and Sports Club - uniting people through cultural and sp
         <h2 class="text-center mt-0">Explore More</h2>
         <hr class="divider" />
 
-        <div class="row mx-0">
-            <!-- Card 1 -->
-            <div class="col-12 col-md-4">
-                <div class="card h-100">
-                    <img src="{% static 'assets/img/portfolio/thumbnails/focus.png' %}" class="card-img-top" alt="About Us" style="padding: 5px;  width: 70px; height: 70px; object-fit: contain; margin-left: 125px;">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Focus</h5>
-                        <a href="{% url 'focus' %}" class="btn btn-primary">View More</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 2 (Elective Members Page) -->
-            <div class="col-12 col-md-4">
-                <div class="card h-100">
-                    <img src="{% static 'assets/img/portfolio/thumbnails/team_member.jpeg' %}" class="card-img-top" alt="Elective Members" style="padding: 5px; border-radius: 50%; width: 70px; height: 70px; object-fit: contain; margin-left: 125px;">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Our Elective Members</h5>
-                        <a href="{% url 'elective_members' %}" class="btn btn-primary">View Members</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="col-12 col-md-4">
-                <div class="card h-100">
-                   <img src="{% static 'assets/img/portfolio/thumbnails/supporters.png' %}" class="card-img-top" alt="Gallery" style="padding: 5px;  width: 90px; height: 80px; margin-left: 125px; margin-bottom: -10px;">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Our Supporters</h5>
-                        <a href="#" class="btn btn-primary">View Photos</a>
-                    </div>
-                </div>
+      <div class="row mx-0">
+    <!-- Card 1 -->
+    <div class="col-12 col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center d-flex flex-column align-items-center">
+                <img src="{% static 'assets/img/portfolio/thumbnails/focus.png' %}" 
+                     class="mb-3" 
+                     alt="About Us" 
+                     style="padding: 5px; width: 70px; height: 70px; object-fit: contain;">
+                <h5 class="card-title">Focus</h5>
+                <a href="{% url 'focus' %}" class="btn btn-primary mt-auto">View More</a>
             </div>
         </div>
+    </div>
+
+    <!-- Card 2 (Elective Members Page) -->
+    <div class="col-12 col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center d-flex flex-column align-items-center">
+                <img src="{% static 'assets/img/portfolio/thumbnails/team_member.jpeg' %}" 
+                     class="mb-3 rounded-circle" 
+                     alt="Elective Members" 
+                     style="padding: 5px; width: 70px; height: 70px; object-fit: cover;">
+                <h5 class="card-title">Our Elective Members</h5>
+                <a href="{% url 'elective_members' %}" class="btn btn-primary mt-auto">View Members</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="col-12 col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center d-flex flex-column align-items-center">
+                <img src="{% static 'assets/img/portfolio/thumbnails/supporters.png' %}" 
+                     class="mb-3" 
+                     alt="Gallery" 
+                     style="padding: 5px; width: 90px; height: 80px; object-fit: contain;">
+                <h5 class="card-title">Our Supporters</h5>
+                <a href="#" class="btn btn-primary mt-auto">View Photos</a>
+            </div>
+        </div>
+    </div>
+</div>
+
     </div>
 </section>
 

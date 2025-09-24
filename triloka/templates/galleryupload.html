@@ -42,24 +42,23 @@
         {% csrf_token %}
 
         <!-- Title: Dropdown + New -->
-        <label for="title">Image Title:</label>
-        <select id="title" name="title">
-            <option value="">-- Select Existing Title --</option>
-            {% for t in titles %}
-                <option value="{{ t }}">{{ t }}</option>
-            {% endfor %}
-        </select>
-        <input type="text" id="new_title" name="new_title" placeholder="Or enter new title">
+<label for="title">Image Title:</label>
+<select id="title" name="title" onchange="updateSubcategories(this.value)">
+    <option value="">-- Select Existing Title --</option>
+    {% for t in titles %}
+        <option value="{{ t }}">{{ t }}</option>
+    {% endfor %}
+</select>
+<input type="text" id="new_title" name="new_title" placeholder="Or enter new title">
 
-        <!-- Subcategory: Dropdown + New -->
-        <label for="subcategory">Image Subcategory:</label>
-        <select id="subcategory" name="subcategory">
-            <option value="">-- Select Existing Subcategory --</option>
-            {% for s in subcategories %}
-                <option value="{{ s }}">{{ s }}</option>
-            {% endfor %}
-        </select>
-        <input type="text" id="new_subcategory" name="new_subcategory" placeholder="Or enter new subcategory">
+<label for="subcategory">Image Subcategory:</label>
+<select id="subcategory" name="subcategory">
+    <option value="">-- Select Existing Subcategory --</option>
+</select>
+<input type="text" id="new_subcategory" name="new_subcategory" placeholder="Or enter new subcategory">
+
+
+
 
         <!-- Image Upload -->
         <label for="image">Upload Image:</label>
@@ -75,5 +74,25 @@
 
     <p><a href="{% url 'gallery_list' %}">View Gallery</a></p>
 </div>
+
+{% load static %}
+{{ title_subcategories|json_script:"title-subcategories-data" }}
+<script>
+    const titleSubcategories = JSON.parse(document.getElementById('title-subcategories-data').textContent);
+
+    function updateSubcategories(selectedTitle) {
+        const subSelect = document.getElementById('subcategory');
+        subSelect.innerHTML = '<option value="">-- Select Existing Subcategory --</option>';
+        if (selectedTitle in titleSubcategories) {
+            titleSubcategories[selectedTitle].forEach(sub => {
+                const opt = document.createElement('option');
+                opt.value = sub;
+                opt.text = sub;
+                subSelect.add(opt);
+            });
+        }
+    }
+</script>
+
 
 {% endblock %}

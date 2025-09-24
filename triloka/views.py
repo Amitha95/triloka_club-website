@@ -575,6 +575,12 @@ def user_home(request):
         'top_user_profiles': top_user_profiles,
     })
 
+from collections import defaultdict
+from django.shortcuts import render, redirect
+from django.db import transaction
+from django.core.serializers.json import DjangoJSONEncoder
+import json
+from triloka.models import Gallery
 
 def upload_gallery_image(request):
     if request.method == "POST":
@@ -592,13 +598,26 @@ def upload_gallery_image(request):
             )
             return redirect("gallery_list")
 
-    # Get distinct titles & subcategories for dropdowns
-    titles = Gallery.objects.values_list("title", flat=True).distinct()
-    subcategories = Gallery.objects.values_list("subcategory", flat=True).distinct()
+    # Prepare subcategories per title
+    title_subcategories = defaultdict(list)
+
+    # Fetch all galleries, including those marked as "All"
+    activities_real_subs = ["Craft", "Drawing", "Football"]  # <-- reconstruct Activities subcategories
+
+    for g in Gallery.objects.all():
+        if g.title == "Activities":
+            for sub in activities_real_subs:
+                if sub not in title_subcategories[g.title]:
+                    title_subcategories[g.title].append(sub)
+        else:
+            if g.subcategory and g.subcategory != "All":
+                title_subcategories[g.title].append(g.subcategory)
+
+    title_subcategories = dict(title_subcategories)
 
     return render(request, "galleryupload.html", {
-        "titles": titles,
-        "subcategories": subcategories,
+        "titles": Gallery.objects.values_list("title", flat=True).distinct(),
+        "title_subcategories": title_subcategories,
     })
 
 
