@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<section class="page-section py-5" id="gallery" style="margin-top: 0;">
+    <div class="container px-4 px-lg-5">
+        <h2 class="text-center mt-0">Gallery</h2>
+        <hr class="divider" />
+        
+        <div class="row mx-0">
+            {% for category in categories.values %}
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    {% if category.image %}
+                        <img src="{{ category.image }}" class="card-img-top gallery-thumb" alt="Thumbnail">
+                    {% else %}
+                        <img src="{% static 'images/default-thumbnail.jpg' %}" class="card-img-top gallery-thumb" alt="Default Thumbnail">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ category.title }}</h5>
+                        <a href="{% url 'gallery_years' category.slug %}" class="btn btn-primary">View Years</a>
+
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
