@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from . import views
 from .views import login_view, logout_view, dashboard_view, gallery_page, gallery_all,register_user,upload_gallery_image,gallery_list,upload_event, event_list
 from .views import user_list,user_fees,user_points,user_fee_details,user_home, update_donation_status,point_redemption_rules, redeem_points,admin_home
-from .views import blood_group_list,donor_list, user_profile_view,delete_user,gallery_subcategories, gallery_pages, gallery_images,delete_image,delete_event
+from .views import blood_group_list,donor_list, user_profile_view,delete_user,gallery_subcategories, gallery_pages, gallery_images,delete_image,delete_event,membership
 
 # Check if user is admin or staff
 def is_admin(user):
@@ -71,6 +71,9 @@ urlpatterns = [
     path("elective-members/", views.elective_members, name="elective_members"),
     path("weekly_task/", views.add_weekly_task, name="weekly_task"),
      path('main_gallery/', views.main_gallery, name='main_gallery'),
-    #path('membership/', views.membership, name='membership'),
+    path('membership/', views.membership, name='membership'),
+    path('supporters/', views.supporters, name='supporters'),
+     path('test-500/', views.test_500),
+
 
 ]

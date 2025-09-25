@@ -75,7 +75,7 @@ Welcome to Triloka Arts and Sports Club - uniting people through cultural and sp
                      alt="Gallery" 
                      style="padding: 5px; width: 90px; height: 80px; object-fit: contain;">
                 <h5 class="card-title">Our Supporters</h5>
-                <a href="#" class="btn btn-primary mt-auto">View Photos</a>
+                <a href="{% url 'supporters' %}" class="btn btn-primary mt-auto">View Photos</a>
             </div>
         </div>
     </div>
@@ -89,38 +89,43 @@ Welcome to Triloka Arts and Sports Club - uniting people through cultural and sp
         <h2 class="text-center mt-0">Gallery</h2>
         <hr class="divider" />
 
-        <div class="row mx-0">
-            <!-- Static Image 1 -->
-            <div class="col-12 col-md-4">
-                <div class="card h-100">
-                    <img src="#" class="card-img-top gallery-thumb" alt="Static Image 1">
-                    <div class="card-body">
-                        <h5 class="card-title">Category 1</h5>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Static Image 2 -->
-            <div class="col-12 col-md-4">
-                <div class="card h-100">
-                    <img src="#" class="card-img-top gallery-thumb" alt="Static Image 2">
-                    <div class="card-body">
-                        <h5 class="card-title">Category 2</h5>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Static Image 3 -->
-            <div class="col-12 col-md-4">
-                <div class="card h-100">
-                    <img src="#" class="card-img-top gallery-thumb" alt="Static Image 3">
-                    <div class="card-body">
-                        <h5 class="card-title">Category 3</h5>
-                    </div>
-                </div>
-            </div>
+<div class="row mx-0">
+    <!-- Static Image 1 - fit inside (no crop) -->
+    <div class="col-4 col-md-4 mb-4">
+        <div class="card h-100" style="height: 500px;">
+            <img src="{% static 'assets/img/portfolio/thumbnails/onam.jpeg' %}" 
+                 class="card-img-top gallery-thumb" 
+                 alt="Static Image 1" 
+                 style="width: 100%; height: 100%; object-fit: cover;">
         </div>
+    </div>
 
+    <!-- Static Image 2 - cropped -->
+    <div class="col-12 col-md-4 mb-4">
+        <div class="card h-100" style="height: 300px;">
+            <img src="{% static 'assets/img/portfolio/thumbnails/chithrarachana.jpg' %}" 
+                 class="card-img-top gallery-thumb" 
+                 alt="Static Image 2" 
+                 style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+    </div>
+
+    <!-- Static Image 3 - cropped -->
+    <div class="col-12 col-md-4 mb-4">
+        <div class="card h-100" style="height: 300px;">
+            <img src="{% static 'assets/img/portfolio/thumbnails/mla_medical.jpg' %}" 
+                 class="card-img-top gallery-thumb" 
+                 alt="Static Image 3" 
+                 style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+    </div>
+</div>
+
+</div>
+
+
+
+       
         <!-- View More Button -->
         <div class="text-center mt-4">
             <a href="{% url 'main_gallery' %}" class="btn btn-primary">View More</a>

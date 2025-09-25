@@ -1081,33 +1081,102 @@ def elective_members(request):
 
     return render(request, "elective_members.html")
 
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import WeeklyTask, UserProfile
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import WeeklyTask, UserProfile
+
 def add_weekly_task(request):
-    months = ["January","February","March","April","May","June",
-              "July","August","September","October","November","December"]
-
-    if request.method == "POST":
-        month = request.POST.get("month")
-        week = request.POST.get("week")
-        user_id = request.POST.get("user")
-        new_mark = int(request.POST.get("new_mark") or 0)
-        old_mark = int(request.POST.get("old_mark") or 0)
-        total = int(request.POST.get("total") or 0)
-        
-        user = UserProfile.objects.get(id=user_id)
-
-        WeeklyTask.objects.create(
-            user=user,
-            month=month,
-            week=week,
-            total=total
-        )
-        return redirect("add_weekly_task")
+    months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ]
 
     users = UserProfile.objects.all().order_by("name")
     tasks = WeeklyTask.objects.select_related("user").all()
 
+    if request.method == "POST":
+        print("POST data:", request.POST)  # <<< DEBUG
+
+        month = request.POST.get("month", "").strip()
+        week = request.POST.get("week", "").strip()
+        user_id = request.POST.get("user", "").strip()
+        marks = request.POST.get("marks", "0").strip()
+
+        # Debugging each field
+        print(f"month: {month}, week: {week}, user_id: {user_id}, marks: {marks}")
+
+        # Validate marks
+        try:
+            marks = int(marks)
+        except ValueError:
+            marks = 0
+
+        # Validation
+        if not month or not week or not user_id:
+            print("Validation failed: Missing fields")  # <<< DEBUG
+            return render(request, "add_weekly_task.html", {
+                "months": months,
+                "users": users,
+                "tasks": tasks,
+                "error": "Please select Month, Week, and User."
+            })
+
+        try:
+            user = get_object_or_404(UserProfile, id=user_id)
+        except Exception as e:
+            print("User lookup failed:", e)  # <<< DEBUG
+            return render(request, "add_weekly_task.html", {
+                "months": months,
+                "users": users,
+                "tasks": tasks,
+                "error": f"Invalid user selected: {user_id}"
+            })
+
+        # Try creating WeeklyTask
+        try:
+            print("Creating WeeklyTask...")  # <<< DEBUG
+            WeeklyTask.objects.create(
+                user=user,
+                month=month,
+                week=str(week),
+                total=marks
+            )
+            print("Created successfully!")  # <<< DEBUG
+        except Exception as e:
+            import traceback
+            print("❌ Error while creating WeeklyTask:", e)
+            traceback.print_exc()  # <<< FULL TRACEBACK
+            return render(request, "add_weekly_task.html", {
+                "months": months,
+                "users": users,
+                "tasks": tasks,
+                "error": f"Error while saving task: {e}"
+            })
+
+        return redirect("weekly_task")
+
+    # GET request
     return render(request, "add_weekly_task.html", {
         "months": months,
         "users": users,
-        "old_mark": 0
+        "tasks": tasks
     })
+    
+def membership(request):
+    return render(request, 'membership.html')
+
+def supporters(request):
+    return render(request, 'supporters.html')
+
+from django.shortcuts import render
+
+def maintenance_view(request, exception=None):
+    return render(request, 'maintenance.html', status=503)
+
+from django.http import HttpResponse
+
+def test_500(request):
+    1 / 0  # deliberate error
+    return HttpResponse("This won't be reached")
+

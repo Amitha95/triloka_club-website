@@ -2,30 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maintenance Mode</title>
+    <title>Site Under Maintenance</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        html, body {
+            height: 100%;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            text-align: center;
             background-color: #f8f9fa;
         }
-        .container {
-            padding: 20px;
-            background: white;
-            box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
-            border-radius: 10px;
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🚧 Site Under Maintenance 🚧</h1>
-        <p>We are currently upgrading our system. Please check back soon!</p>
-    </div>
+    <img src="{% static 'assets/img/portfolio/thumbnails/maintenance.jpg' %}" alt="Site Under Maintenance">
 </body>
 </html>

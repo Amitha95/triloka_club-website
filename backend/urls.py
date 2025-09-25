@@ -27,3 +27,8 @@ urlpatterns = [
 ]
 if settings.DEBUG:  # Serve media files only in development
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    
+handler400 = 'triloka.views.maintenance_view'  # Bad Request
+handler403 = 'triloka.views.maintenance_view'  # Permission Denied
+handler404 = 'triloka.views.maintenance_view'  # Page Not Found
+handler500 = 'triloka.views.maintenance_view'  # Server Error

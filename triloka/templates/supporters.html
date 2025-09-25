@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="container py-5">
+    <h2 class="text-center mb-4">Our Supporters</h2>
+    <p class="text-center">We are proud to be supported and affiliated with the following organizations:</p>
+
+    <div class="row mt-4">
+        <!-- Nehru Yuva Kendra -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-lg border-0 text-white" style="background: linear-gradient(135deg, #28a745, #218838);">
+                <div class="card-body text-center">
+                    <h4 class="card-title mb-3">Nehru Yuva Kendra, Kollam</h4>
+                    <p class="card-text">
+                        Our club is registered and affiliated under Nehru Yuva Kendra, Kollam.  
+                        <br><a href="https://nyks.nic.in/" target="_blank" class="text-light fw-bold">Visit NYKS Website</a>
+                    </p>
+                    <p>
+                        <span >
+                            Affiliation No: <strong>NYK/4915/792/2022</strong><br>
+                            Dated: 04/03/2022
+                        </span>
+                    </p>
+                  <a href="{% static 'assets/img/portfolio/thumbnails/yuyvakendra.png' %}" 
+   target="_blank" 
+   class="btn btn-outline-light btn-sm mt-2">
+   View Certificate
+</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Act -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-lg border-0 text-white" style="background: linear-gradient(135deg, #007bff, #0056b3);">
+                <div class="card-body text-center">
+                    <h4 class="card-title mb-3">The Travancore-Cochin Literary, Scientific and Charitable Societies Registration Act, 1955</h4>
+                    <p class="card-text">
+                        The club is officially registered under the Travancore-Cochin Act, 1955.
+                    </p>
+                    <p>
+                        <span class=>
+                            Registration No: <strong>KLM/TC/270/2021</strong><br>
+                            Dated: 18/08/2021
+                        </span>
+                    </p>
+                   <a href="{% static 'assets/img/portfolio/thumbnails/certificate.png' %}" 
+   target="_blank" 
+   class="btn btn-outline-light btn-sm mt-2">
+   View Certificate
+</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
